@@ -7,7 +7,6 @@
 
 
 function coffee_init() {
-
     include_once(elgg_get_plugins_path() . 'coffee/vendors/coffee.conf.php');
     include_once(elgg_get_plugins_path() . 'coffee/vendors/coffee.lib.php');
 
@@ -19,8 +18,10 @@ function coffee_init() {
 
     // Register a page handler, so we can have nice URLs
     elgg_register_page_handler('userIcon','coffee_page_handler');
+    elgg_register_page_handler('userCover','coffee_page_handler');
     elgg_register_page_handler('dwl','coffee_page_handler');
     elgg_register_page_handler('upl','coffee_page_handler');
+    elgg_register_page_handler('testApi','coffee_page_handler');
 
 }
 

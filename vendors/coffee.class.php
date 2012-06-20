@@ -107,6 +107,7 @@ class ElggCoffee {
 
                     $return[$key]['likes'] = ElggCoffee::get_likes ($post->guid, 0, 3);
                     $return[$key]['comment'] = ElggCoffee::get_comments ($post->guid, 0, 2);
+                    $return[$key]['attachment'] = coffee_get_relationships($post->guid, COFFEE_COMMENT_ATTACHMENT_RELATIONSHIP);
                 }
 
             }
@@ -116,25 +117,29 @@ class ElggCoffee {
 
     public function get_activity ($offset = 0, $limit = 10) {}
 
-    public function get_user_data ($guid = false, $size = 'medium') {
+    public function get_user_data ($guid, $extended = false) {
         if (!$guid) {
             $user_ent           = elgg_get_logged_in_user_entity();
         } else {
             $user_ent           = get_entity($guid);
         }
-
         if ($user_ent instanceof ElggUser) {
+            if (is_array($extended)) {
+                $extended = static::get_user_extra_info($extended);
+            }
             return array('id'         => $user_ent->guid
                             , 'username'       => $user_ent->username
                             , 'name'           => $user_ent->name
-                            , 'icon_url'        => ElggCoffee::_get_user_icon_url($user_ent,'medium')
+                            , 'icon_url'       => ElggCoffee::_get_user_icon_url($user_ent)
+                            , 'cover_url'      => ElggCoffee::_get_user_cover_url($user_ent)
+                            , 'extended'       => $extended
                     );
         }
         return false;
     }
 
     public static function get_comments ($guid, $offset = 0, $limit = 2) {
-        $comments = ElggCoffee::_get_comments ($guid, $offset = 0, $limit = 2);
+        $comments = ElggCoffee::_get_comments ($guid, $offset, $limit);
         if ($comments['count'] > 0) {
             $return['total'] = $comments['count'];
             foreach ($comments['details'] as $comment) {
@@ -264,22 +269,38 @@ class ElggCoffee {
     public static function get_url_data ($url) {
         require_once elgg_get_plugins_path() . "coffee/vendors/link_data/Embedly.php";
         require_once elgg_get_plugins_path() . "coffee/vendors/link_data/EmbedUrl.php";
+        $return = false;
         try {
             $api = new Embedly_API(array('user_agent' => 'Mozilla/5.0 (compatible; embedly/example-app; support@embed.ly)'));
             $oembed = $api->oembed(array('url' => $url));
             if (!isset($oembed[0]->error_code)) {
-                return array('title' => $oembed[0]->title
+                $return = array('title' => $oembed[0]->title
                                 , 'description' => $oembed[0]->description
                                 , 'thumbnail' => $oembed[0]->thumbnail_url
+                                , 'width' => $oembed[0]->width
+                                , 'height' => $oembed[0]->height
                                 , 'html' => $oembed[0]->html);
             }
         } catch (Exception $e) {}
-        $embedUrl = new Embed_url(array('url' => $url));
-        $embedUrl->embed();
-        return array('title' => $embedUrl->title
-                                , 'description' => $embedUrl->description
-                                , 'thumbnail' => $embedUrl->sortedImage[0]);
-        return false;
+        if (!is_array($return)) {
+            $embedUrl = new Embed_url(array('url' => $url));
+            $embedUrl->embed();
+            $return = array('title' => $embedUrl->title
+                                    , 'description' => $embedUrl->description
+                                    , 'thumbnail' => $embedUrl->sortedImage[0]);
+        }
+        if (is_array($return)) {
+            $link = new ElggObject();
+            $link->subtype = COFFEE_LINK_SUBTYPE;
+            $link->access_id = COFFEE_DEFAULT_ACCESS_ID;
+            $link->title = $return['title'];
+            $link->description = $return['description'];
+            $link->thumbnail = $return['thumbnail'];
+            $link->html = $return['html'];
+            $link->save();
+            $return['guid'] = $link->guid;
+        }
+        return $return;
     }
 
     public static function send_new_password ($username) {
@@ -388,7 +409,63 @@ class ElggCoffee {
         $file->setFilename("cover/{$guid}.jpg");
         $file->open('write');
         $file->close();
-        move_uploaded_file($_FILES['upload']['tmp_name'], $file->getFilenameOnFilestore());
+        $file->save();
+        move_uploaded_file($_FILES['cover']['tmp_name'], $file->getFilenameOnFilestore());
+        return static::_get_user_cover_url($owner);
+    }
+
+    public static function set_user_extra_info ($name, $value) {
+        $guid = elgg_get_logged_in_user_guid();
+        $user_ent = get_user($guid);
+        if ($user_ent instanceof ElggUser) {
+            $value = sanitise_string($value);
+            $user_ent->$name = $value;
+            if ($user_ent->save()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function get_user_extra_info ($names) {
+        $guid = elgg_get_logged_in_user_guid();
+        $user_ent = get_user($guid);
+        $names = is_array($names)?$names:array($names);
+        if ($user_ent instanceof ElggUser) {
+            $return = array();
+            foreach ($names as $name) {
+                if (isset( $user_ent->$name)) {
+                    $return[$name] = $user_ent->$name;
+                }
+            }
+            return $return;
+        }
+        return false;
+    }
+
+    public static function edit_user_detail($language = false, $name = false, $email = false, $curent_password = false, $password = false) {
+        set_input('language', $language);
+        set_input('current_password', $curent_password);
+        set_input('password', $password);
+        set_input('password2', $password);
+        set_input('name', $name);
+        set_input('email', $email);
+        if ($language) {
+            elgg_set_user_language();
+        }
+        if ($name) {
+            elgg_set_user_name();
+        }
+        if ($email) {
+            elgg_set_user_email();
+        }
+        if ($password && $curent_password) {
+            elgg_set_user_password();
+        }
+        if (count_messages("error") === 0) {
+            return true;
+        }
+        return false;
     }
 
     private static function _add_attachment ($guid_parent, $attachment) {
@@ -401,6 +478,10 @@ class ElggCoffee {
 
     private static function _get_user_icon_url ($entity,$size) {
         return $GLOBALS['CONFIG']->url . 'userIcon/' . $GLOBALS['CONFIG']->auth_token . '/' . $entity->guid . '/' . $size;
+    }
+
+    private static function _get_user_cover_url ($entity) {
+        return $GLOBALS['CONFIG']->url . 'userCover/' . $GLOBALS['CONFIG']->auth_token . '/' . $entity->guid;
     }
 
     private static function _get_dwl_url ($guid) {

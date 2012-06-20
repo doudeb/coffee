@@ -26,7 +26,15 @@ function coffee_api_set_site_id () {
         $CONFIG->auth_token = $token;
         $time_refresh = $time + (60*60);
         update_data("Update {$CONFIG->dbprefix}users_apisessions Set expires = $time_refresh Where id = " . $user_session->id);
-	}
+	} elseif (elgg_is_logged_in()) {
+        $time = time();
+        $user_ent = elgg_get_logged_in_user_entity();
+        $time_refresh = $time + (60*60);
+        $user_token = get_data_row("SELECT * from {$CONFIG->dbprefix}users_apisessions where user_guid='$user_ent->guid'");
+        update_data("Update {$CONFIG->dbprefix}users_apisessions Set expires = $time_refresh Where id = " . $user_token->id);
+        $CONFIG->auth_token = $user_token->token;
+        set_input('auth_token', $user_token->token);
+    }
 	if (isset($user_ent->site_guid)) {
 		$CONFIG->site_guid = $CONFIG->site_id = $user_ent->site_guid;
 		return true;
@@ -40,7 +48,7 @@ function coffee_api_set_site_id () {
  *
  */
 function coffee_api_public_pages($hook, $handler, $return, $params){
-	$pages = array('userIcon/.*','dwl/*','upl/*');
+	$pages = array('userIcon/.*','dwl/*','upl/*', 'testApi');
 	return array_merge($pages, $return);
 }
 
@@ -53,27 +61,51 @@ function coffee_api_public_pages($hook, $handler, $return, $params){
  */
 function coffee_page_handler($page,$handler) {
     global $CONFIG;
+    $CONFIG->auth_token = $page[0];
 	switch ($handler) {
 		case "userIcon":
             set_input('auth_token', $page[0]);
             set_input('size', $page[2]);
             if (!coffee_api_set_site_id ()) break;
-            $CONFIG->auth_token = $page[0];
             $user_guid = isset($page[1]) ? $page[1]:elgg_get_logged_in_user_guid();
             elgg_set_page_owner_guid($user_guid);
 			include_once ($CONFIG->path . 'pages/avatar/view.php');
             //echo elgg_view_page('toto', 'toto','default');
             exit();
 			break;
+		case "userCover":
+            set_input('auth_token', $page[0]);
+            $user_guid = isset($page[1]) ? $page[1]:elgg_get_logged_in_user_guid();
+            if (!coffee_api_set_site_id ()) break;
+            $filehandler = new ElggFile();
+            $filehandler->owner_guid = $user_guid;
+            $filehandler->setFilename("cover/{$user_guid}.jpg");
+            try {
+                if ($filehandler->open("read")) {
+                    if ($contents = $filehandler->read($filehandler->size())) {
+                        header("Content-type: image/jpeg", true);
+                        header('Expires: ' . date('r', strtotime("+6 months")), true);
+                        header("Pragma: public", true);
+                        header("Cache-Control: public", true);
+                        header("Content-Length: " . strlen($contents));
+
+                        echo $contents;
+                    }
+                }
+            } catch (InvalidParameterException $e) {}
+            exit();
+			break;
  		case "dwl":
             set_input('auth_token', $page[0]);
             set_input('file_guid', $page[1]);
             if (!coffee_api_set_site_id ()) break;
-            $CONFIG->auth_token = $page[0];
             elgg_set_page_owner_guid($user_guid);
 			include_once elgg_get_plugins_path() . 'file/download.php';
-            //echo elgg_view_page('toto', 'toto','default');
             exit();
+			break;
+   		case "testApi":
+			$body =  elgg_view('coffee/test/testApi', array('exposed' => $CONFIG->exposed));
+            echo page_draw('API coffee test', $body);
 			break;
         default:
 			break;

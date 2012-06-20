@@ -1,10 +1,7 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 define('COFFEE_SUBTYPE', 'coffee_subtype');
+define('COFFEE_LINK_SUBTYPE', 'coffee_link');
 define('COFFEE_COMMENT', 'coffee_comment');
 define('COFFEE_DEFAULT_ACCESS_ID', ACCESS_LOGGED_IN);
 define('COFFEE_LIKE_RELATIONSHIP', 'coffee_like');
@@ -15,28 +12,20 @@ define('COFFEE_COMMENT_TYPE', 'generic_comment');
 
 
 /*
- * expose function array
+ * exposed function array
  *
  */
 $i                                  = 0;
-$exposed[++$i]['method']            = "coffee.getPosts";
-$exposed[$i]['function']            = "ElggCoffee::get_post";
-$exposed[$i]['params']          	= array(
-                                            "offset" => array('type' => 'int'
-                                                                , 'required' => false )
-                                            ,"limit" => array('type' => 'int'
-                                                                , 'required' => false ));
-$exposed[$i]['comment']          	= 'Retreive all last post.';
-$exposed[$i]['call_method']      	= 'GET';
-$exposed[$i]['require_api_auth']    = false;
-$exposed[$i]['require_user_auth']   = true;
 
 $exposed[++$i]['method']            = "coffee.getUserData";
 $exposed[$i]['function']            = "ElggCoffee::get_user_data";
-$exposed[$i]['params']          	= array(
-                                             "id" => array('type' => 'int'
-                                                            , 'required' => false ));
-$exposed[$i]['comment']          	= 'Retreive user data.';
+$exposed[$i]['params']          	= array("guid" => array('type' => 'int'
+                                                            , 'required' => true )
+                                                    , "extended" => array('type' => 'array'
+                                                            , 'required' => false )
+                                                );
+$exposed[$i]['comment']          	= 'Retreive user data.
+                                        @param extended is an array of profil name';
 $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
@@ -148,7 +137,7 @@ $exposed[++$i]['method']            = "coffee.uploadData";
 $exposed[$i]['function']            = "ElggCoffee::upload_data";
 $exposed[$i]['params']          	= array();
 $exposed[$i]['comment']          	= 'Upload a file. Name must be "upload".
-                                        Will return the download url on success';
+                                        Will return the download url on success and the associated id';
 $exposed[$i]['call_method']      	= 'POST';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
@@ -163,6 +152,14 @@ $exposed[$i]['call_method']      	= 'POST';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
 
+$exposed[++$i]['method']            = "coffee.uploadUserCover";
+$exposed[$i]['function']            = "ElggCoffee::upload_user_cover";
+$exposed[$i]['params']          	= array();
+$exposed[$i]['comment']          	= 'Upload a file. Name must be "cover".';
+$exposed[$i]['call_method']      	= 'POST';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
+
 $exposed[++$i]['method']            = "coffee.sendNewPassword";
 $exposed[$i]['function']            = "ElggCoffee::send_new_password";
 $exposed[$i]['params']          	= array("username" => array('type' => 'string'
@@ -172,3 +169,46 @@ $exposed[$i]['comment']          	= 'Send a new password by email to the user.
 $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = false;
+
+$exposed[++$i]['method']            = "coffee.getUserExtraInfo";
+$exposed[$i]['function']            = "ElggCoffee::get_user_extra_info";
+$exposed[$i]['params']          	= array("names" => array('type' => 'array'
+                                                            , 'required' => true));
+$exposed[$i]['comment']          	= 'Get user extra information.
+                                        @names array|string that will contain profile names.';
+$exposed[$i]['call_method']      	= 'GET';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
+
+$exposed[++$i]['method']            = "coffee.setUserExtraInfo";
+$exposed[$i]['function']            = "ElggCoffee::set_user_extra_info";
+$exposed[$i]['params']          	= array("name" => array('type' => 'string'
+                                                            , 'required' => true)
+                                                        , "value" => array('type' => 'string'
+                                                            , 'required' => true));
+$exposed[$i]['comment']          	= 'Set user extra information.
+                                        @name string profile name
+                                        @value string profile value';
+$exposed[$i]['call_method']      	= 'GET';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
+
+$exposed[++$i]['method']            = "coffee.editUserDetail";
+$exposed[$i]['function']            = "ElggCoffee::edit_user_detail";
+$exposed[$i]['params']          	= array("language" => array('type' => 'string'
+                                                            , 'required' => true)
+                                                        , "name" => array('type' => 'string'
+                                                            , 'required' => true)
+                                                        , "email" => array('type' => 'string'
+                                                            , 'required' => true)
+                                                        , "current_password" => array('type' => 'string'
+                                                            , 'required' => true)
+                                                        , "password" => array('type' => 'string'
+                                                            , 'required' => true));
+$exposed[$i]['comment']          	= '';
+$exposed[$i]['call_method']      	= 'GET';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
+
+
+$GLOBALS['CONFIG']->exposed                    = $exposed;

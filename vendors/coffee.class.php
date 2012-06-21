@@ -70,7 +70,7 @@ class ElggCoffee {
             $site_background = elgg_get_entities($options);
             $custom_css = $site_background[0]->description;
             return array(
-                    'id' => $site->guid
+                    'user_guid' => elgg_get_logged_in_user_guid()
                     , 'name' => $site->name
                     , 'logo_url' => ElggCoffee::_get_dwl_url($site_logo[0]->guid)
                     , 'background_url' => ElggCoffee::_get_dwl_url($site_background[0]->guid)

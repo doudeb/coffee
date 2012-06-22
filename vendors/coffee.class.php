@@ -74,7 +74,8 @@ class ElggCoffee {
                     , 'name' => $site->name
                     , 'logo_url' => ElggCoffee::_get_dwl_url($site_logo[0]->guid)
                     , 'background_url' => ElggCoffee::_get_dwl_url($site_background[0]->guid)
-                    , 'custom_css' => $custom_css
+                    , 'background_pos' => $site_background[0]->description
+                    //, 'custom_css' => $custom_css
             );
 
         }

@@ -79,7 +79,7 @@ class ElggCoffee {
                             , 'limit'=> $limit
                             , 'offset'=> $offset
                             , 'owner_guids' => $owner_guids);
-        if (isset($guid)) {
+        if ($guid) {
             $posts = array(get_entity($guid));
         } else {
             $posts = elgg_get_entities($options);

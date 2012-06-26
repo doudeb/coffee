@@ -49,7 +49,7 @@
 				<div id="microblogging" class="content-module">
 					<div class="primary-content">
 						<div class="update-content">
-							<div class="avatar"><img src="userpics/user_avatar.png" width="60" height="60" /></div>
+							<div class="avatar"><img src="{{icon_url}}" width="60" height="60" /></div>
 							<textarea class="update-text input-xlarge" placeholder="Share something with your colleagues…"></textarea>
 						</div>
 						<div class="update-actions">
@@ -85,9 +85,9 @@
 							<p class="time"><i class="icon-time"></i> {{content.friendly_time}}</p>
 							{{#attachment}}
 							<div class="attachment">
-								<a class="thumbnail" href=""><img width="100" src="{{thumbnail}}" /></a>
+								<a class="thumbnail" href="{{url}}" target="_blank"><img width="100" src="{{thumbnail}}" /></a>
 								<div class="info">
-									<a class="title">{{title}}</a>
+									<a href="{{url}}" class="title" target="_blank">{{title}}</a>
 									<span class="description">{{description}}</span>
 								</div>
 							</div>
@@ -104,7 +104,7 @@
 							<ul class="comments">
 								{{#comment.comments}}
 									<li class="comment">
-										<a class="avatar" href="#profile/{{owner_guid}}"><img src="userpics/avatar/{{user.avatar}}" title="{{name}}" width="35" height="35" /></a>
+										<a class="avatar" href="#profile/{{owner_guid}}"><img src="{{icon_url}}" title="{{name}}" width="35" height="35" /></a>
 										<div class="comment-content">
 											<a href="#profile/{{owner_guid}}" class="name">{{name}}</a>
 											<p class="text">{{text}}</p>
@@ -135,10 +135,46 @@
 		<script type="text/html" id="menuTemplate">
 			<div id="menu">
 				<ul id="navigation">
-					<li class="active"><a href="" rel="tooltip" title="News Feed" data-action="feed"><i class="icon-home icon-white"></i></a></li>
-					<li><a href="" rel="tooltip" title="Profile" data-action="profile"><i class="icon-user icon-white" data-page="profile"></i></a></li>
+					<li><a href="" rel="tooltip" title="News Feed" data-action="feed"><i class="icon-home icon-white"></i></a></li>
+					<li><a href="" rel="tooltip" title="Profile" data-action="profile"><i class="icon-user icon-white"></i></a></li>
 					<li><a href="" rel="tooltip" title="Log out" data-action="logout"><i class="icon-off icon-white"></i></a></li>
 				</ul>
+			</div>
+		</script>
+		
+		<script type="text/html" id="profileTemplate">
+			<div id="content">
+				<div id="profile" class="content-module">
+					<div class="primary-content">
+						<img class="avatar" src="static/img/medium.png" width="100" height="100" />
+						<div class="info">
+							<span class="name">Richard Francis</span>
+							<span class="headline">Designer/Developer</span>
+							<span class="location"><i class="icon-map-marker"></i> Paris, France</span>
+							<span class="department"><i class="icon-briefcase"></i> Department of work</span>
+						</div>
+					</div>
+					<div class="secondary-content">
+						<div class="presentation">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+						<ul class="hobbies-interests">
+							<li>Guitar</li>
+							<li>The internet</li>
+							<li>Swimming</li>
+							<li>Beer</li>
+						</ul>
+						<ul class="languages">
+							<li class="level1">French</li>
+							<li class="level5">English</li>
+							<li class="level3">Spanish</li>
+						</ul>
+						<ul class="sm-links">
+							<li><a href="http://twitter.com/rich186" class="twitter" target="_blank"></a></li>
+							<li><a href="http://twitter.com/rich186" class="facebook" target="_blank"></a></li>
+							<li><a href="http://twitter.com/rich186" class="linkedin" target="_blank"></a></li>
+							<li><a href="http://twitter.com/rich186" class="viadeo" target="_blank"></a></li>
+						</ul>
+					</div>
+				</div>
 			</div>
 		</script>
 		

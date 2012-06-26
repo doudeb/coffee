@@ -226,7 +226,7 @@
 			attributes.likes.isOne = (attributes.likes.total == 1) ? true : false;
 			attributes.likes.isTwo = (attributes.likes.total == 2) ? true : false;
 			attributes.likes.isMore = (attributes.likes.total > 2) ? true : false;
-			
+			console.log(attributes);
 			if (attributes.likes.users != false) {
 				attributes.likes.users[0].first = true;
 				
@@ -693,6 +693,23 @@
 		}
 	});
 	
+	/* !View: Profile */
+	var ProfileView = Backbone.View.extend({
+		initialize: function () {
+			_.bindAll(this);
+			this.render();
+		},
+		
+		render: function () {
+			var element = ich.profileTemplate();
+			this.setElement(element);
+			
+			this.$el.appendTo('#container');
+			
+			return this;
+		},
+	});
+	
 	
 	/* !Router: WorkspaceRouter */
 	var WorkspaceRouter = Backbone.Router.extend({
@@ -725,7 +742,7 @@
 		myProfile: function () {
 			App.removeAllViews();
 			if (App.models.session.authenticated()) {
-				
+				App.views.profileView = new ProfileView();
 				App.views.menuView = new MenuView();
 			} else {
 				Backbone.history.navigate('login', true);
@@ -735,7 +752,7 @@
 		profile: function (userId) {
 			App.removeAllViews();
 			if (App.models.session.authenticated()) {
-				
+				App.views.profileView = new ProfileView();
 				App.views.menuView = new MenuView();
 			} else {
 				Backbone.history.navigate('login', true);

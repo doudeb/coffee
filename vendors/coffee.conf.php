@@ -118,6 +118,20 @@ $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
 
+$exposed[++$i]['method']            = "coffee.removeRelationship";
+$exposed[$i]['function']            = "ElggCoffee::remove_relationship";
+$exposed[$i]['params']          	= array(
+                                            "guid_parent" => array('type' => 'int'
+                                                            , 'required' => true)
+                                            , "guid_children" => array('type' => 'int'
+                                                            , 'required' => true)
+                                            , "type" => array('type' => 'string'
+                                                            , 'required' => true ));
+$exposed[$i]['comment']          	= 'Remove a relationship between two objects';
+$exposed[$i]['call_method']      	= 'GET';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
+
 $exposed[++$i]['method']            = "coffee.disableObject";
 $exposed[$i]['function']            = "ElggCoffee::disable_object";
 $exposed[$i]['params']          	= array(

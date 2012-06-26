@@ -142,6 +142,7 @@ class ElggCoffee {
                 if ($user instanceof ElggUser && $comment instanceof ElggAnnotation) {
                     $return['comments'][] = array('owner_guid' => $user->guid
                                                             , 'name' => $user->name
+                                                            , 'icon_url' => ElggCoffee::_get_user_icon_url($user,'small')
                                                             , 'time_created' => $comment->time_created
                                                             , 'friendly_time' => elgg_get_friendly_time($comment->time_created)
                                                             , 'text' => $comment->value);
@@ -156,7 +157,7 @@ class ElggCoffee {
 
     public static function get_likes ($guid, $offset = 0, $limit = 3) {
         $likes = ElggCoffee::_get_likes ($guid, $offset = 0, $limit = 3);
-        if (is_array($likes['details']) > 0) {
+        if (is_array($likes['details'])) {
             $return['total'] = $likes['count'];
             foreach ($likes['details'] as $like) {
                 $user = get_user($like->guid_one);
@@ -208,6 +209,25 @@ class ElggCoffee {
                 $return = check_entity_relationship($guid_parent, $type, $guid_child);
                 if ($return) {
                     return true;
+                }
+            }
+        }
+        return $return;
+    }
+
+     public function remove_relationship ($guid_parent, $guid_child, $type) {
+        $guid_parent = (int)$guid_parent;
+        $guid_child = (int)$guid_child;
+        $type = sanitise_string($type);
+        if (!empty($type)) {
+            $return = remove_entity_relationship($guid_parent, $type, $guid_child);
+            if ($return) {
+                add_to_river('coffee/river/' . $type, 'remove', $guid_parent, $guid_child);
+                return true;
+            } elseif (!$return) {
+                $return = check_entity_relationship($guid_parent, $type, $guid_child);
+                if ($return) {
+                    return false;
                 }
             }
         }

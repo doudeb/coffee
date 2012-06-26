@@ -55,6 +55,15 @@ $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
 
+$exposed[++$i]['method']            = "coffee.getPost";
+$exposed[$i]['function']            = "ElggCoffee::get_post";
+$exposed[$i]['params']          	= array("guid" => array('type' => 'int'
+                                                            , 'required' => true ));
+$exposed[$i]['comment']          	= 'get one single post with guid';
+$exposed[$i]['call_method']      	= 'GET';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
+
 $exposed[++$i]['method']            = "coffee.getPosts";
 $exposed[$i]['function']            = "ElggCoffee::get_posts";
 $exposed[$i]['params']          	= array(

@@ -24,8 +24,8 @@ class ElggCoffee {
                 return false;
             }
             add_to_river('coffee/river/new_post', 'create', elgg_get_logged_in_user_guid(), $new_post->guid);
-            ElggCoffee::_add_attachment($attachment);
-            return true;
+            ElggCoffee::_add_attachment($new_post->guid,$attachment);
+            return array('guid' => $new_post->guid);
         }
         return false;
     }
@@ -46,17 +46,7 @@ class ElggCoffee {
         if (!$guid) {
             return false;
         }
-        $post = get_entity($guid);
-        $comments = $post->getAnnotations(COFFEE_COMMENT);
-        $comments_count = $post->getAnnotationsSum(COFFEE_COMMENT);
-
-        return array(
-                'id' => $post->guid
-                , 'title' => $post->title
-                , 'owner_guid' => $post->owner_guid
-                , 'created' => $post->time_created
-                , 'comments_count' => $comments_count
-        );
+        return static::get_posts(0,10,false,COFFEE_SUBTYPE, $guid);
     }
 
     public function get_site_data () {
@@ -82,14 +72,18 @@ class ElggCoffee {
 
     }
 
-    public static function get_posts($offset = 0, $limit = 10, $owner_guids = false, $type = COFFEE_SUBTYPE) {
+    public static function get_posts($offset = 0, $limit = 10, $owner_guids = false, $type = COFFEE_SUBTYPE, $guid = false) {
         $return = false;
         $options  = array('types'=>'object'
                             , 'subtypes'=> $type
                             , 'limit'=> $limit
                             , 'offset'=> $offset
                             , 'owner_guids' => $owner_guids);
-        $posts = elgg_get_entities($options);
+        if (isset($guid)) {
+            $posts = array(get_entity($guid));
+        } else {
+            $posts = elgg_get_entities($options);
+        }
         if(is_array($posts)) {
             foreach ($posts as $key => $post) {
                 if ($post instanceof ElggObject) {
@@ -108,7 +102,14 @@ class ElggCoffee {
 
                     $return[$key]['likes'] = ElggCoffee::get_likes ($post->guid, 0, 3);
                     $return[$key]['comment'] = ElggCoffee::get_comments ($post->guid, 0, 2);
-                    $return[$key]['attachment'] = coffee_get_relationships($post->guid, COFFEE_COMMENT_ATTACHMENT_RELATIONSHIP);
+                    $attachment = coffee_get_relationships($post->guid, COFFEE_POST_ATTACHMENT_RELATIONSHIP);
+                    foreach ($attachment as $key => $attached) {
+                        $return[$key]['attachment'] = array(
+                                                            'guid' => $attached->guid_two
+                                                            , 'time_created' => $attached->time_created
+                                                            , 'friendly_time' => elgg_get_friendly_time($attached->time_created)
+                            );
+                    }
                 }
 
             }
@@ -473,7 +474,7 @@ class ElggCoffee {
         if (!is_array($attachment)) return false;
         $type = COFFEE_POST_ATTACHMENT_RELATIONSHIP;
         foreach ($attachment as $key => $guid_child) {
-            set_relationship ($guid_parent, $guid_child, $type);
+            add_entity_relationship ($guid_parent, $type, $guid_child);
         }
     }
 

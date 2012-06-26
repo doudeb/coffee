@@ -1,0 +1,25 @@
+// CONTENT MODULES
+// --------------
+
+.niceBox () {
+	background-color: @white;
+	.border-radius(@borderRadiusS);
+	@shadowColor: rgba(0,0,0,.4);
+	.box-shadow(0 1px 3px @shadowColor);
+}
+
+.content-module {
+	width: @contentModuleWidth;
+	.niceBox();
+	position: relative;
+	
+	.primary-content, .secondary-content {
+		padding: @spacingM;
+	}
+	
+	.secondary-content {
+		background-color: @grayLighter;
+		border-top: 1px solid @grayLight;
+		.border-radius(0 0 @borderRadiusS @borderRadiusS);
+	}
+}

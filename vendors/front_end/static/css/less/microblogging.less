@@ -1,0 +1,93 @@
+// MICROBLOGGING BOX
+// --------------
+
+#microblogging {
+	@avatarSize: 60px;
+	
+	.border-radius(0 0 @borderRadiusS @borderRadiusS);
+	
+	.update-content,
+	.update-actions {
+		.clearfix();
+	}
+	
+	.update-content {
+		
+		.avatar {
+			float: left;
+			width: @avatarSize;
+			height: @avatarSize;
+			.border-radius(@borderRadiusS);
+			overflow: hidden;
+		}
+		.update-text {
+			float: left;
+			width: 410px;
+			height: 50px;
+			margin-left: @spacingS;
+		}
+	}
+	
+	.attachment {
+		margin: 0 0 @spacingS (@avatarSize + @spacingS);
+		background-color: @grayLighter;
+		padding: @spacingXs;
+		.clearfix();
+		position: relative;
+		
+		.thumbnail {
+			float: left;
+			padding: 3px;
+			background-color: @white;
+		}
+		.info {
+			float: left;
+			margin-left: @spacingXs;
+			width: 280px;
+			font-size: @smallFontSize;
+			line-height: 17px;
+			
+			.title {
+				display: block;
+				font-weight: bold;
+				margin-bottom: @spacingXs;
+			}
+			.description {
+				color: @gray;
+			}
+		}
+		.remove {
+			position: absolute;
+			top: @spacingXs;
+			right: @spacingXs;
+			
+			i {
+				.opacity(45);
+			}
+			&:hover i {
+				.opacity(100);
+			}
+		}
+	}
+	
+	.update-actions {
+		margin: 0 0 0 (@avatarSize + @spacingS);
+		.clearfix();
+		
+		.add-media {
+			font-size: @smallFontSize;
+		}
+		.btn, .loader {
+			float: right;
+		}
+		.loader {
+			margin: 6px 10px 0 0;
+			display: none;
+		}
+	}
+}
+.microblogging-loading {
+	.update-actions .loader {
+		display: block !important;
+	}
+}

@@ -1,0 +1,61 @@
+//
+// Layouts
+// --------------------------------------------
+
+#container {
+	
+	#menu {
+		position: fixed;
+		height: 100%;
+		width: 50px;
+		background-color: @whiteTransparent;
+		@shadowColor: rgba(0, 0, 0, .2);
+		.box-shadow(3px 0 0 0 @shadowColor);
+		.clearfix();
+		
+		ul#navigation {
+			list-style-type: none;
+			padding: 0;
+			float: left;
+			margin-left: 12px;
+			
+			li {
+				display: block;
+				margin-bottom: 3px;
+				
+				a {
+					display: block;
+					padding: @spacingXs @spacingXs (@spacingXs + 1) (@spacingXs + 1);
+					background-color: rgba(0,0,0,.2);
+					
+					i {
+						.opacity(45);
+					}
+				}
+				
+				a:hover,
+				&.active a {
+					background-color: rgba(0,0,0,.4);
+					
+					 i {
+						.opacity(100);
+					}
+				}
+			}
+		}
+	}
+	
+	#content {
+		min-height: 100%;
+		margin-left: 73px;
+		padding-bottom: @spacingL;
+	}
+	
+	#watermark {
+		background: url(../img/enlightn_watermark.png) no-repeat 0 0;
+		top: @spacingM;
+		right: @spacingM;
+		z-index: 1;
+		position: fixed;
+	}
+}

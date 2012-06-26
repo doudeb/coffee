@@ -188,6 +188,7 @@ class ElggCoffee {
                                                 , 'html' => $attached_ent->html
                                                 , 'type' => $attached_ent->simpletype
                                                 , 'mime' => $attached_ent->mimetype
+                                                , 'url' => $attached_ent->url
                                                 , 'thumbnail' => $attached_ent->subtype===COFFEE_LINK_SUBTYPE?$attached_ent->thumbnail:ElggCoffee::_get_dwl_url($attached_ent->guid)
                 );
         }
@@ -312,6 +313,7 @@ class ElggCoffee {
             $link->description = $return['description'];
             $link->thumbnail = $return['thumbnail'];
             $link->html = $return['html'];
+            $link->url = $url;
             $link->save();
             $return['guid'] = $link->guid;
         }

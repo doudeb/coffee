@@ -5,8 +5,8 @@
 		collections: {},
 		views: {},
 		
-		baseUrl: "http://coffee.enlightn.local:8888/",
-		resourceUrl: 'http://coffee.enlightn.local:8888/services/api/rest/json',
+		baseUrl: "/",
+		resourceUrl: '/services/api/rest/json',
 		removeAllViews: function (callback) {
 			_.each(App.views, function(view){
 				view.remove();

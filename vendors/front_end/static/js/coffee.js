@@ -227,7 +227,7 @@
 			attributes.likes.isTwo = (attributes.likes.total == 2) ? true : false;
 			attributes.likes.isMore = (attributes.likes.total > 2) ? true : false;
 			
-			if (attributes.likes.users.length > 0) {
+			if (attributes.likes.users != false) {
 				attributes.likes.users[0].first = true;
 				
 				_.each(attributes.likes.users, function(like){
@@ -239,8 +239,6 @@
 				attributes.comment.comments.reverse();
 				attributes.comment.comments[0].showAllLink = (attributes.comment.total > attributes.comment.comments.length) ? true : false;
 			}
-			
-			console.log(attributes);
 			
 			Backbone.Model.prototype.set.call(this, attributes, options);
 		}
@@ -513,7 +511,7 @@
 		},
 		
 		render: function () {
-			var element = ich.microbloggingTemplate();
+			var element = ich.microbloggingTemplate({icon_url: App.models.session.get('iconUrl')});
 			this.setElement(element);
 			
 			this.$el.prependTo('#container');
@@ -685,6 +683,10 @@
 			
 			if (action == 'logout') {
 				App.models.session.end();
+			} else if (action == 'feed') {
+				Backbone.history.navigate('feed', true);
+			} else if (action == 'profile') {
+				Backbone.history.navigate('profile', true);
 			}
 			
 			return false;
@@ -721,7 +723,13 @@
 		},
 		
 		myProfile: function () {
-			console.log('my profile');
+			App.removeAllViews();
+			if (App.models.session.authenticated()) {
+				
+				App.views.menuView = new MenuView();
+			} else {
+				Backbone.history.navigate('login', true);
+			}
 		},
 		
 		profile: function (userId) {

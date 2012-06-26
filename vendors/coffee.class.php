@@ -102,14 +102,7 @@ class ElggCoffee {
 
                     $return[$key]['likes'] = ElggCoffee::get_likes ($post->guid, 0, 3);
                     $return[$key]['comment'] = ElggCoffee::get_comments ($post->guid, 0, 2);
-                    $attachment = coffee_get_relationships($post->guid, COFFEE_POST_ATTACHMENT_RELATIONSHIP);
-                    foreach ($attachment as $key => $attached) {
-                        $return[$key]['attachment'] = array(
-                                                            'guid' => $attached->guid_two
-                                                            , 'time_created' => $attached->time_created
-                                                            , 'friendly_time' => elgg_get_friendly_time($attached->time_created)
-                            );
-                    }
+                    $return[$key]['attachment'] = ElggCoffee::get_attachment ($post->guid);
                 }
 
             }
@@ -177,6 +170,26 @@ class ElggCoffee {
         } else {
             $return['total'] = 0;
             $return['users'] = false;
+        }
+        return $return;
+    }
+
+    public static function get_attachment ($guid) {
+        $return = false;
+        $attachment = coffee_get_relationships($guid, COFFEE_POST_ATTACHMENT_RELATIONSHIP);
+        foreach ($attachment as $key => $attached) {
+            $attached_ent = get_entity($attached->guid_two);
+            $return[] = array(
+                                                'guid' => $attached->guid_two
+                                                , 'time_created' => $attached_ent->time_created
+                                                , 'friendly_time' => elgg_get_friendly_time($attached_ent->time_created)
+                                                , 'title' => $attached_ent->title
+                                                , 'description' => $attached_ent->description
+                                                , 'html' => $attached_ent->html
+                                                , 'type' => $attached_ent->simpletype
+                                                , 'mime' => $attached_ent->mimetype
+                                                , 'thumbnail' => $attached_ent->subtype===COFFEE_LINK_SUBTYPE?$attached_ent->thumbnail:ElggCoffee::_get_dwl_url($attached_ent->guid)
+                );
         }
         return $return;
     }

@@ -178,6 +178,9 @@ class ElggCoffee {
     public static function get_attachment ($guid) {
         $return = false;
         $attachment = coffee_get_relationships($guid, COFFEE_POST_ATTACHMENT_RELATIONSHIP);
+        if (!is_array($attachment)) {
+            return $return;
+        }
         foreach ($attachment as $key => $attached) {
             $attached_ent = get_entity($attached->guid_two);
             $return[] = array(
@@ -190,7 +193,7 @@ class ElggCoffee {
                                                 , 'type' => $attached_ent->simpletype
                                                 , 'mime' => $attached_ent->mimetype
                                                 , 'url' => $attached_ent->url
-                                                , 'thumbnail' => $attached_ent->subtype===COFFEE_LINK_SUBTYPE?$attached_ent->thumbnail:ElggCoffee::_get_dwl_url($attached_ent->guid)
+                                                , 'thumbnail' => $attached_ent->url?$attached_ent->thumbnail:ElggCoffee::_get_dwl_url($attached_ent->guid)
                 );
         }
         return $return;
@@ -332,6 +335,7 @@ class ElggCoffee {
             $link->title = $return['title'];
             $link->description = $return['description'];
             $link->thumbnail = $return['thumbnail'];
+            $link->simpletype = 'url';
             $link->html = $return['html'];
             $link->url = $url;
             $link->save();

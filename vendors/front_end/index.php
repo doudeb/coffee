@@ -85,7 +85,7 @@
 							<p class="time"><i class="icon-time"></i> {{content.friendly_time}}</p>
 							{{#attachment}}
 							<div class="attachment">
-								<a class="thumbnail" href="{{url}}" target="_blank"><img width="100" src="{{thumbnail}}" /></a>
+								<a class="thumbnail" href="{{url}}" target="_blank"><img width="100" height="100" src="{{thumbnail}}" /></a>
 								<div class="info">
 									<a href="{{url}}" class="title" target="_blank">{{title}}</a>
 									<span class="description">{{description}}</span>
@@ -102,6 +102,9 @@
 								{{#isMore}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>{{#first}}, {{/first}}{{^first}} and <a href="#">{{likes.total}} others</a> {{/first}} {{/likes.users}} like this</p>{{/isMore}}
 							{{/likes}}
 							<ul class="comments">
+								{{#comment.showAllLink}}
+									<li class="show-all"><a class="show-all-link" href="javascript:void(0)">Show all {{comment.total}} comments</a></li>
+								{{/comment.showAllLink}}
 								{{#comment.comments}}
 									<li class="comment">
 										<a class="avatar" href="#profile/{{owner_guid}}"><img src="{{icon_url}}" title="{{name}}" width="35" height="35" /></a>
@@ -111,9 +114,6 @@
 											<p class="time">{{friendly_time}}</p>
 										</div>
 									</li>
-									{{#showAllLink}}
-										<li class="show-all"><a class="show-all-link" href="javascript:void(0)">Show all comments</a></li>
-									{{/showAllLink}}
 								{{/comment.comments}}
 								<li class="new-comment">
 									<textarea class="new-comment-textarea" placeholder="Write a comment..."></textarea>
@@ -122,11 +122,10 @@
 						</div>
 					</div>
 					<ul class="update-actions">
-						{{^hasLiked}}<li class="update-action update-action-like"><a href="{{id}}" rel="tooltip" title="Like" data-action="like"><i class="icon-thumbs-up"></i></a></li>{{/hasLiked}}
-						{{#hasLiked}}<li class="update-action update-action-unlike"><a href="#" rel="tooltip" title="Unlike" data-action="unlike"><i class="icon-thumbs-up"></i></a></li>{{/hasLiked}}
-						<li class="update-action update-action-comment"><a href="#" rel="tooltip" title="Add a comment" data-action="like"><i class="icon-reply"></i></a></li>
-						
-						{{#isOwner}}<li class="update-action update-action-remove"><a href="#" rel="tooltip" title="Remove update" data-action="remove"><i class="icon-trash"></i></a></li>{{/isOwner}}
+						{{^hasLiked}}<li class="update-action update-action-like"><a href="{{id}}" rel="tooltip" title="Like" data-action="like" data-placement="right"><i class="icon-thumbs-up"></i></a></li>{{/hasLiked}}
+						{{#hasLiked}}<li class="update-action update-action-unlike"><a href="#" rel="tooltip" title="Unlike" data-action="unlike" data-placement="right"><i class="icon-thumbs-up"></i></a></li>{{/hasLiked}}
+						<li class="update-action update-action-comment"><a href="#" rel="tooltip" title="Add a comment" data-action="like" data-placement="right"><i class="icon-reply"></i></a></li>
+						{{#isOwner}}<li class="update-action update-action-remove"><a href="#" rel="tooltip" title="Remove update" data-action="remove" data-placement="right"><i class="icon-trash"></i></a></li>{{/isOwner}}
 					</ul>
 				</div>
 			</div><!-- /.feed-item -->
@@ -135,9 +134,9 @@
 		<script type="text/html" id="menuTemplate">
 			<div id="menu">
 				<ul id="navigation">
-					<li><a href="" rel="tooltip" title="News Feed" data-action="feed"><i class="icon-home icon-white"></i></a></li>
-					<li><a href="" rel="tooltip" title="Profile" data-action="profile"><i class="icon-user icon-white"></i></a></li>
-					<li><a href="" rel="tooltip" title="Log out" data-action="logout"><i class="icon-off icon-white"></i></a></li>
+					<li><a href="" rel="tooltip" title="News Feed" data-action="feed" data-placement="right"><i class="icon-home icon-white"></i></a></li>
+					<li><a href="" rel="tooltip" title="Profile" data-action="profile" data-placement="right"><i class="icon-user icon-white"></i></a></li>
+					<li><a href="" rel="tooltip" title="Log out" data-action="logout" data-placement="right"><i class="icon-off icon-white"></i></a></li>
 				</ul>
 			</div>
 		</script>
@@ -179,5 +178,20 @@
 		</script>
 		
 		<script src="static/js/coffee.js"></script>
+		<script src="static/js/bootstrap-tooltip.js"></script>
+		<script>
+		$('body').delegate('a[rel=tooltip]', 'mouseenter mouseleave mousedown', function(e) {
+			var element = $(this);
+			
+			switch (e.handleObj.origType) {
+				case 'mouseenter':
+					element.tooltip('show');
+					break;
+				case 'mouseleave': case 'mousedown':
+					element.tooltip('hide');
+					break;
+			}
+		});
+		</script>
 	</body>
 </html>

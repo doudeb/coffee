@@ -7,7 +7,7 @@
 		
 		baseUrl: "/",
 		resourceUrl: '/services/api/rest/json',
-		removeAllViews: function (callback) {
+		removeAllViews: function () {
 			_.each(App.views, function(view){
 				view.remove();
 			});
@@ -220,13 +220,14 @@
 		},
 		
 		set: function (attributes, options) {
+			console.log(attributes);
 			attributes.isOwner = (attributes.user.guid == App.models.session.get('userId')) ? true : false;
 			attributes.hasLiked = false;
 			
 			attributes.likes.isOne = (attributes.likes.total == 1) ? true : false;
 			attributes.likes.isTwo = (attributes.likes.total == 2) ? true : false;
 			attributes.likes.isMore = (attributes.likes.total > 2) ? true : false;
-			console.log(attributes);
+			
 			if (attributes.likes.users != false) {
 				attributes.likes.users[0].first = true;
 				
@@ -237,7 +238,7 @@
 			
 			if (attributes.comment.comments.length > 0) {
 				attributes.comment.comments.reverse();
-				attributes.comment.comments[0].showAllLink = (attributes.comment.total > attributes.comment.comments.length) ? true : false;
+				attributes.comment.showAllLink = (attributes.comment.total > attributes.comment.comments.length) ? true : false;
 			}
 			
 			Backbone.Model.prototype.set.call(this, attributes, options);
@@ -300,6 +301,8 @@
 	var FeedItemView = Backbone.View.extend({
 		initialize: function () {
 			_.bindAll(this);
+			
+			this.model.bind('change', this.render);
 		},
 		
 		events: {
@@ -323,18 +326,26 @@
 			
 			$.ajax({
 				type: 'GET',
-				headers: {
-					'Accept': 'application/json'
+				url: App.resourceUrl,
+				dataType: 'json',
+				data: {
+					method: 'coffee.getComments',
+					auth_token: App.models.session.get('authToken'),
+					guid: self.model.get('guid'),
+					offset: 0,
+					limit: self.model.get('comment').total
 				},
-				url: 'api/feed/comments.json',
-				complete: function (xhr, statusText) {
-					var response = $.parseJSON(xhr.responseText);
-					
-					var comments = self.model.get('comments');
-					comments.items = response.comments;
-					
-					self.model.set({'comments': comments});
-					self.render();
+				success: function (response) {
+					if (response.status != -1) {
+						var update = self.model.toJSON();
+						var newCommentObj = response.result;
+						newCommentObj.comments.reverse();
+						
+						update.comment = newCommentObj;
+						self.model.set(update);
+					} else {
+						/* Error */
+					}
 				}
 			});
 		},
@@ -410,9 +421,19 @@
 					comment: theComment
 				},
 				success: function (response) {
-					console.log(response);
 					if (response.status != -1) {
-						self.refresh();
+						// Append the new comment
+						var commentObj = self.model.get('comment');
+						commentObj.comments.push({
+							friendly_time: "Just now",
+							icon_url: App.models.session.get('iconUrl'),
+							name: App.models.session.get('name'),
+							owner_guid: App.models.session.get('userId'),
+							text: theComment,
+							time_created: new Date().getTime()
+						});
+						
+						self.render();
 					} else {
 						// Error
 					}

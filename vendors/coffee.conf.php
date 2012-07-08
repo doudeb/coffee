@@ -196,7 +196,9 @@ $exposed[$i]['require_user_auth']   = false;
 $exposed[++$i]['method']            = "coffee.getUserExtraInfo";
 $exposed[$i]['function']            = "ElggCoffee::get_user_extra_info";
 $exposed[$i]['params']          	= array("names" => array('type' => 'array'
-                                                            , 'required' => true));
+                                                            , 'required' => true)
+                                                        , "guid" => array('type' => 'int'
+                                                            , 'required' => false));
 $exposed[$i]['comment']          	= 'Get user extra information.
                                         @names array|string that will contain profile names.';
 $exposed[$i]['call_method']      	= 'GET';

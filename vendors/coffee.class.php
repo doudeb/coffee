@@ -74,13 +74,14 @@ class ElggCoffee {
 
     }
 
-    public static function get_posts($offset = 0, $limit = 10, $owner_guids = false, $type = COFFEE_SUBTYPE, $guid = false) {
+    public static function get_posts($newer_than = 0, $offset = 0, $limit = 10, $owner_guids = false, $type = COFFEE_SUBTYPE, $guid = false) {
         $return = false;
         $options  = array('types'=>'object'
                             , 'subtypes'=> $type
                             , 'limit'=> $limit
                             , 'offset'=> $offset
-                            , 'owner_guids' => $owner_guids);
+                            , 'owner_guids' => $owner_guids
+                            , 'wheres' => 'e.time_created > ' . $newer_than);
         if ($guid) {
             $posts = array(get_entity($guid));
         } else {

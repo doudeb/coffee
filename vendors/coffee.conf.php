@@ -66,11 +66,15 @@ $exposed[$i]['require_user_auth']   = true;
 
 $exposed[++$i]['method']            = "coffee.getPosts";
 $exposed[$i]['function']            = "ElggCoffee::get_posts";
-$exposed[$i]['params']          	= array(
-                                             "offset" => array('type' => 'int'
-                                                            , 'required' => false )
+$exposed[$i]['params']          	= array( "newer_than" => array('type' => 'int'
+                                                            , 'required' => false
+                                                            , 'default' => 0)
+                                            , "offset" => array('type' => 'int'
+                                                            , 'required' => false
+                                                            , 'default' => 0)
                                             , "limit" => array('type' => 'int'
-                                                        , 'required' => false )
+                                                        , 'required' => false
+                                                        , 'default' => 10)
                                             , "owner_guids" => array('type' => 'array'
                                                             , 'required' => false ));
 $exposed[$i]['comment']          	= 'Get news feed items, ordered from newest to oldest';

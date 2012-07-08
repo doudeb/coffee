@@ -1,0 +1,192 @@
+#profile {
+	padding-top: @spacingM;
+	width: 520px;
+	
+	.primary-content {
+		.clearfix();
+		
+		.avatar,
+		.info,
+		.sm-links {
+			float: left;
+		}
+		
+		.avatar {
+			position: relative;
+			
+			img {
+				display: block;
+			}
+			.edit {
+				position: absolute;
+				top: @spacingXs;
+				right: @spacingXs;
+			}
+		}
+		.info {
+			margin-left: @spacingM;
+			width: 359px - @spacingM;
+			
+			.name,
+			.headline,
+			.department,
+			.location {
+				display: block;
+				line-height: 1.3;
+				position: relative;
+			}
+			
+			.name {
+				font-weight: bold;
+				font-size: 24px;
+			}
+			
+			.headline {
+				font-size: 16px;
+				color: @mutedColor;
+			}
+			.department {
+				margin: @spacingS 0 @spacingXs 0;
+			}
+		}
+		.sm-links {
+			margin: 0 0 0 @spacingM;
+			list-style-type: none;
+			padding: 0;
+			width: 16px;
+			
+			li {
+				margin-bottom: 5px;
+				
+				.sm {
+					display: block;
+					width: 16px;
+					height: 16px;
+					background: url(../img/sm_icons.png) no-repeat 0 0;
+					border: 0;
+					cursor: pointer;
+					
+					&.sm-twitter {
+						background-position: 0 0;
+					}
+					&.sm-linkedin {
+						background-position: 0 -16px;
+					}
+					&.sm-skype {
+						background-position: 0 -32px;
+					}
+					&.sm-facebook {
+						background-position: 0 -48px;
+					}
+					&.sm-addnew {
+						background-position: 0 -64px;
+					}
+				}
+			}
+		}
+		.add-socialmedia {
+			margin-left: 525px;
+			margin-top: -43px;
+			
+			select, input {
+				width: 250px;
+			}
+		}
+	}
+	
+	.secondary-content {
+		.introduction {
+			position: relative;
+		}
+		.other {
+			.clearfix();
+			
+			.hobbies-interests,
+			.languages {
+				width: 237px;
+				float:left;
+			}
+			h3 {
+				color: @mutedColor;
+				font-size: 13px;
+				text-transform: uppercase;
+				margin: 1.5em 0 @spacingXs 0;
+			}
+			ul {
+				list-style-type: none;
+				padding: 0;
+				margin-top: 0;
+			}
+			.languages {
+				margin-left: @spacingM;
+				
+				ul {
+					li {
+						.level {
+							float: right;
+							margin: 3px 0 0 0;
+							background: url(../img/language_sprite.png) no-repeat right 0;
+							height: 12px;
+							width: 114px;
+						}
+						.level5 {
+							background-position: right -24px;
+						}
+						.level4 {
+							background-position: right -36px;
+						}
+						.level3 {
+							background-position: right -48px;
+						}
+						.level2 {
+							background-position: right -60px;
+						}
+						.level1 {
+							background-position: right -72px;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	.editable {
+		border: 1px solid transparent;
+	}
+	.editable-hover {
+		background-color: @editBackground;
+		border: 1px dashed darken(@editBackground, 20%);
+		.border-radius(@borderRadiusS);
+		cursor: pointer;
+	}
+	.editing {
+		height: 18px;
+		.resizable(none);
+		font-size: @smallFontSize;
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 10;
+		overflow: hidden;
+	}
+	.editing-headline {
+		width: 330px;
+		top: -2px;
+	}
+	.editing-department,
+	.editing-location {
+		width: 250px;
+		top: -6px;
+		left: 16px;
+	}
+	.editing-introduction {
+		position: relative;
+		margin-top: -18px;
+		width: 480px;
+		min-height: 100px;
+	}
+	
+	.popover h3, .popover p {
+		margin: 0;
+	}
+}

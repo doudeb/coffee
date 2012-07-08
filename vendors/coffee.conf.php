@@ -76,7 +76,14 @@ $exposed[$i]['params']          	= array( "newer_than" => array('type' => 'int'
                                                         , 'required' => false
                                                         , 'default' => 10)
                                             , "owner_guids" => array('type' => 'array'
-                                                            , 'required' => false ));
+                                                            , 'required' => false
+                                                            , 'default' => array())
+                                            , "type" => array('type' => 'string'
+                                                            , 'required' => false
+                                                            , 'default' => COFFEE_SUBTYPE)
+                                            , "guid" => array('type' => 'int'
+                                                            , 'required' => false
+                                                            , 'default' => false));
 $exposed[$i]['comment']          	= 'Get news feed items, ordered from newest to oldest';
 $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;

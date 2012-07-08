@@ -74,7 +74,7 @@ class ElggCoffee {
 
     }
 
-    public static function get_posts($newer_than = 0, $offset = 0, $limit = 10, $owner_guids = false, $type = COFFEE_SUBTYPE, $guid = false) {
+    public static function get_posts($newer_than = 0, $offset = 0, $limit = 10, $owner_guids = array(), $type = COFFEE_SUBTYPE, $guid = false) {
         $return = false;
         $options  = array('types'=>'object'
                             , 'subtypes'=> $type

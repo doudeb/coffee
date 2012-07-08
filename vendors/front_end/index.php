@@ -10,7 +10,6 @@
 		<script src="static/js/vendor/ICanHaz.min.js"></script>
 		<script src="static/js/vendor/backbone.js"></script>
 		<script src="static/js/vendor/jquery.cookie.js"></script>
-		<script src="static/js/session.js"></script>
 	</head>
 	<body style="background: url(userpics/client_bg.jpeg) fixed repeat 0 0;">
 		<div id="container">
@@ -143,35 +142,79 @@
 		
 		<script type="text/html" id="profileTemplate">
 			<div id="content">
-				<div id="profile" class="content-module">
-					<div class="primary-content">
-						<img class="avatar" src="static/img/medium.png" width="100" height="100" />
-						<div class="info">
-							<span class="name">Richard Francis</span>
-							<span class="headline">Designer/Developer</span>
-							<span class="location"><i class="icon-map-marker"></i> Paris, France</span>
-							<span class="department"><i class="icon-briefcase"></i> Department of work</span>
+				<div id="profile"{{#isOwnProfile}} class="own-profile{{^isProfileComplete}} profile-editing{{/isProfileComplete}}"{{/isOwnProfile}}>
+					{{^isProfileComplete}}
+					<div class="alert"><strong>This is your profile.</strong><br />It is visible to your coworkers so be sure to complete it and keep it up to date!</div>
+					{{/isProfileComplete}}
+					<div class="content-module">
+						<div class="primary-content">
+							<div class="avatar">
+								<img src="{{icon_url}}" width="100" height="100" />
+								{{#isOwnProfile}}<button class="btn btn-mini edit" rel="profile-edit tooltip" title="Change avatar" data-edit="avatar"><i class="icon-edit"></i></button>{{/isOwnProfile}}
+							</div>
+							<div class="info">
+								<span class="name">{{name}}</span>
+								{{#hasHeadline}}<span class="headline"><span {{#isOwnProfile}}class="editable" data-name="headline"{{/isOwnProfile}}>{{headline}}</span></span>{{/hasHeadline}}
+								{{^hasHeadline}}{{#isOwnProfile}}<span class="headline"><span class="editable editable-hover" data-name="headline">[Add a headline]</span></span>{{/isOwnProfile}}{{/hasHeadline}}
+								{{#hasDepartment}}<span class="department"><i class="icon-briefcase"></i> <span {{#isOwnProfile}}class="editable" data-name="department"{{/isOwnProfile}}>{{department}}</span></span>{{/hasDepartment}}
+								{{^hasDepartment}}{{#isOwnProfile}}<span class="department"><i class="icon-briefcase"></i> <span class="editable editable-hover" data-name="department">[Specify your department]</span></span>{{/isOwnProfile}}{{/hasDepartment}}
+								{{#hasLocation}}<span class="location"><i class="icon-map-marker"></i> <span {{#isOwnProfile}}class="editable" data-name="location"{{/isOwnProfile}}>{{location}}</span></span>{{/hasLocation}}
+								{{^hasLocation}}{{#isOwnProfile}}<span class="location"><i class="icon-map-marker"></i> <span class="editable editable-hover" data-name="location">[Choose your location]</span></span>{{/isOwnProfile}}{{/hasLocation}}
+							</div>
+							<ul class="sm-links">
+								{{#socialmedia}}
+								<li><a href="{{link}}" class="sm sm-{{service}}" target="_blank" rel="tooltip" title="{{#isTwitter}}Twitter{{/isTwitter}}{{#isFacebook}}Facebook{{/isFacebook}}{{#isLinkedIn}}LinkedIn{{/isLinkedIn}}{{#isSkype}}Call on Skype{{/isSkype}}" data-placement="right"></a></li>
+								{{/socialmedia}}
+								{{#isOwnProfile}}
+								<li><button class="sm sm-addnew" rel="tooltip" title="Add a social network" data-placement="right"></button></li>
+								{{/isOwnProfile}}
+							</ul>
+							<div class="popover right add-socialmedia">
+								<div class="arrow"></div>
+								<div class="popover-inner">
+									<h3 class="popover-title">Add a social network</h3>
+									<div class="popover-content">
+										<form>
+											<div class="control-group">
+												<label class="control-label" for="serviceName">Service</label>
+												<div class="controls">
+													<select id="serviceName">
+														<option value="twitter">Twitter</option>
+														<option value="facebook">Facebook</option>
+														<option value="linkedin">LinkedIn</option>
+														<option value="skype">Skype</option>
+													</select>
+												</div>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
 						</div>
-					</div>
-					<div class="secondary-content">
-						<div class="presentation">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
-						<ul class="hobbies-interests">
-							<li>Guitar</li>
-							<li>The internet</li>
-							<li>Swimming</li>
-							<li>Beer</li>
-						</ul>
-						<ul class="languages">
-							<li class="level1">French</li>
-							<li class="level5">English</li>
-							<li class="level3">Spanish</li>
-						</ul>
-						<ul class="sm-links">
-							<li><a href="http://twitter.com/rich186" class="twitter" target="_blank"></a></li>
-							<li><a href="http://twitter.com/rich186" class="facebook" target="_blank"></a></li>
-							<li><a href="http://twitter.com/rich186" class="linkedin" target="_blank"></a></li>
-							<li><a href="http://twitter.com/rich186" class="viadeo" target="_blank"></a></li>
-						</ul>
+						<div class="secondary-content">
+							{{#hasIntroduction}}<div class="introduction"><span class="editable" data-name="introduction">{{introduction}}</span></div>{{/hasIntroduction}}
+							{{^hasIntroduction}}{{#isOwnProfile}}<div class="introduction"><span class="editable editable-hover" data-name="introduction">[Write a short introduction]</span></div>{{/isOwnProfile}}{{/hasIntroduction}}
+							<div class="other">
+								<div class="hobbies-interests">
+									<h3>Hobbies &amp; Interests</h3>
+									<ul>
+										{{#hobbies}}
+										<li><span {{#isOwnProfile}}class="editable"{{/isOwnProfile}}>{{name}}</span></li>
+										{{/hobbies}}
+									</ul>
+									{{#isOwnProfile}}<button class="btn btn-small add-hobby"><i class="icon-plus"></i> Add a hobby or interest</button>{{/isOwnProfile}}
+								</div>
+								<div class="languages">
+									<h3>Languages</h3>
+									<ul>
+										{{#languages}}
+										<li rel="tooltip" title="{{#isNative}}Native language{{/isNative}}{{#isBilingual}}Bilingual{{/isBilingual}}{{#isFluent}}Fluent{{/isFluent}}{{#isIntermediate}}Intermediate{{/isIntermediate}}{{#isBeginner}}Beginner{{/isBeginner}}" data-placement="skillbar">{{name}} <span class="level level{{level}}"></span></li>
+										{{/languages}}
+									</ul>
+									{{#isOwnProfile}}<button class="btn btn-small add-language"><i class="icon-plus"></i> Add a language</button>{{/isOwnProfile}}
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -180,7 +223,7 @@
 		<script src="static/js/coffee.js"></script>
 		<script src="static/js/bootstrap-tooltip.js"></script>
 		<script>
-		$('body').delegate('a[rel=tooltip]', 'mouseenter mouseleave mousedown', function(e) {
+		$('body').delegate('[rel*=tooltip]', 'mouseenter mouseleave mousedown', function(e) {
 			var element = $(this);
 			
 			switch (e.handleObj.origType) {

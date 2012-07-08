@@ -1,5 +1,18 @@
 (function($){
 	
+	/* Tools */
+	var stripslashes = function (str) {
+		str=str.replace(/\\'/g,'\'');
+		str=str.replace(/\\"/g,'"');
+		str=str.replace(/\\0/g,'\0');
+		str=str.replace(/\\\\/g,'\\');
+		return str;
+	};
+	
+	var capitaliseFirstLetter = function (str)	{
+		return str.charAt(0).toUpperCase() + str.slice(1);
+	};
+	
 	var App = {
 		models: {},
 		collections: {},
@@ -220,7 +233,6 @@
 		},
 		
 		set: function (attributes, options) {
-			console.log(attributes);
 			attributes.isOwner = (attributes.user.guid == App.models.session.get('userId')) ? true : false;
 			attributes.hasLiked = false;
 			
@@ -266,6 +278,7 @@
 						var result = response.result;
 						self.add(result);
 						
+						self.startCheckingForNewPosts();
 					} else {
 						/* Error */
 					}
@@ -289,8 +302,40 @@
 					if (response.status != -1) {
 						var result = response.result;
 						self.unshift(result[0]);
-					} else {
-						/* Error */
+					}
+				}
+			});
+		},
+		
+		startCheckingForNewPosts: function () {
+			setTimeout(this.checkForNewPosts, 5000);
+		},
+		
+		checkForNewPosts: function () {
+			var self = this;
+			
+			var latestTimestamp = _.first(self.models).attributes.content.time_created;
+			
+			$.ajax({
+				type: 'GET',
+				url: App.resourceUrl,
+				dataType: 'json',
+				data: {
+					method: 'coffee.getPosts',
+					auth_token: self.get('authToken'),
+					newer_than: latestTimestamp
+				},
+				success: function (response) {
+					console.log('response');
+					console.log(response);
+					if (response.status != -1) {
+						var result = response.result;
+						
+						if (result.length > 0) {
+							self.add(result);
+						}
+						
+						self.startCheckingForNewPosts();
 					}
 				}
 			});
@@ -338,10 +383,8 @@
 				success: function (response) {
 					if (response.status != -1) {
 						var update = self.model.toJSON();
-						var newCommentObj = response.result;
-						newCommentObj.comments.reverse();
 						
-						update.comment = newCommentObj;
+						update.comment = response.result;
 						self.model.set(update);
 					} else {
 						/* Error */
@@ -422,9 +465,12 @@
 				},
 				success: function (response) {
 					if (response.status != -1) {
-						// Append the new comment
-						var commentObj = self.model.get('comment');
-						commentObj.comments.push({
+						var update = self.model.toJSON();
+						
+						if (!update.comment.comments) update.comment.comments = [];
+						update.comment.comments.reverse();
+						
+						update.comment.comments.unshift({
 							friendly_time: "Just now",
 							icon_url: App.models.session.get('iconUrl'),
 							name: App.models.session.get('name'),
@@ -433,6 +479,7 @@
 							time_created: new Date().getTime()
 						});
 						
+						self.model.set(update);
 						self.render();
 					} else {
 						// Error
@@ -507,6 +554,7 @@
 				self.$el.append(feedItemView.render().el);
 			}
 		},
+		
 		addNew: function (postGuid) {
 			this.collection.loadNew(postGuid);
 		}
@@ -714,23 +762,208 @@
 		}
 	});
 	
-	/* !View: Profile */
+	/* !Model: Profile */
+	var Profile = Backbone.Model.extend({
+		initialize: function () {
+			_.bindAll(this);
+			var self = this;
+			
+			$.ajax({
+				type: 'GET',
+				url: App.resourceUrl,
+				dataType: 'json',
+				data: {
+					method: 'coffee.getUserData',
+					auth_token: App.models.session.get('authToken'),
+					guid: self.get('guid')
+				},
+				success: function (response) {
+					if (response.status != -1) {
+						var result = response.result;
+						self.set(result);
+						
+						if (result.id == App.models.session.get('userId')) self.set('isOwnProfile', true);
+						
+						$.ajax({
+							type: 'GET',
+							url: App.resourceUrl,
+							dataType: 'json',
+							data: {
+								method: 'coffee.getUserExtraInfo',
+								auth_token: App.models.session.get('authToken'),
+								guid: self.get('guid'),
+								names: ['languages', 'hobbies', 'socialmedia', 'introduction', 'headline', 'department', 'location']
+							},
+							success: function (response) {
+								if (response.status != -1) {
+									var result = response.result;
+									var attributes = self.processExtraInfo(result);
+									
+									self.set(attributes);
+									self.trigger('ready');
+								}
+							}
+						});
+					}
+				}
+			});
+		},
+		
+		processExtraInfo: function (object) {
+			var extraInfo = object;
+			var optionalInfo = ['hobbies', 'languages', 'socialmedia', 'headline', 'department', 'location', 'introduction'];
+			
+			extraInfo.isProfileComplete = true; // Is all optional info present?
+			
+			for (i in optionalInfo) {
+				var varName = optionalInfo[i];
+				var dynamicHasKey = 'has'+capitaliseFirstLetter(varName);
+				
+				if (object.hasOwnProperty(varName)) {
+					extraInfo[dynamicHasKey] = true;
+				} else {
+					extraInfo[dynamicHasKey] = false;
+					extraInfo.isProfileComplete = false;
+				}
+			}
+			
+			extraInfo.hobbies = (extraInfo.hasHobbies) ? JSON.parse(stripslashes(object.hobbies)) : [];
+			extraInfo.languages = (extraInfo.hasLanguages) ? JSON.parse(stripslashes(object.languages)): [];
+			extraInfo.socialmedia = (extraInfo.hasSocialmedia) ? JSON.parse(stripslashes(object.socialmedia)) : [];
+			
+			_.each(extraInfo.socialmedia, function(item){
+				var type = item.service;
+				
+				item.isTwitter = (type == 'twitter') ? true : false;
+				item.isFacebook = (type == 'facebook') ? true : false;
+				item.isSkype = (type == 'skype') ? true : false;
+				item.isLinkedIn = (type == 'linkedin') ? true : false;
+			});
+			
+			_.each(extraInfo.languages, function(language){
+				var level = language.level;
+				
+				language.isNative = (level == 5) ? true : false;
+				language.isBilingual = (level == 4) ? true : false;
+				language.isFluent = (level == 3) ? true : false;
+				language.isIntermediate = (level == 2) ? true : false;
+				language.isBeginner = (level == 1) ? true : false;
+			});
+			
+			return extraInfo;
+		}
+	});
+	
+	/* !View: ProfileView */
 	var ProfileView = Backbone.View.extend({
 		initialize: function () {
 			_.bindAll(this);
-			this.render();
+			
+			this.model = new Profile({guid: this.options.guid});
+			this.model.bind('ready', this.firstRender);
+		},
+		
+		events: {
+			'mouseenter .editable': 'toggleEditable',
+			'mouseleave .editable': 'toggleEditable',
+			'click .editable': 'startInlineEdit',
+			'keyup .editing': 'textareaKeyup',
+			'keypress .editing': 'textareaKeypress',
+			'click .sm-addnew': 'newSocialmedia'
+		},
+		
+		firstRender: function () {
+			this.render().$el.appendTo('#container');
 		},
 		
 		render: function () {
-			var element = ich.profileTemplate();
-			this.setElement(element);
+			var element = ich.profileTemplate(this.model.toJSON());
 			
-			this.$el.appendTo('#container');
+			$(this.el).replaceWith(element);
+			this.setElement(element);
 			
 			return this;
 		},
+		
+		toggleEditable: function (e) {
+			var element = $(e.currentTarget);
+			var hoverClassName = 'editable-hover';
+			
+			if (! element.data('keepsHoverState')) {
+				if (e.handleObj.origType == 'mouseenter') {
+					if (element.hasClass(hoverClassName)) {
+						element.data('keepsHoverState', true);
+					} else {
+						element.addClass(hoverClassName);
+					}
+				} else {
+					element.removeClass(hoverClassName);
+				}
+			}
+		},
+		
+		startInlineEdit: function (e) {
+			var element = $(e.currentTarget);
+			var name = element.attr('data-name');
+			
+			element.css('visibility', 'hidden');
+			var editingTextarea = $('<textarea class="editing editing-'+name+'"></textarea>')
+				.insertAfter(element)
+				.focus()
+				.bind('blur', function(){
+					editingTextarea.remove();
+					element.removeAttr('style');
+				})
+				.data('name', name);
+		},
+		
+		textareaKeyup: function (e) {
+			if (e.keyCode == 13) { // Enter key
+				var element = $(e.currentTarget);
+				
+				if (element.data('name') != 'introduction') {
+					var value = element.val();
+					var name = element.data('name');
+					this.finishedEditing(value, name);
+				}
+			}
+		},
+		
+		textareaKeypress: function (e) {
+			if (e.keyCode == 13) { // Enter key
+				if ($(e.currentTarget).data('name') != 'introduction') {
+					return false;
+				}
+			}
+		},
+		
+		finishedEditing: function (value, name) {
+			var self = this;
+			
+			$.ajax({
+				type: 'GET',
+				url: App.resourceUrl,
+				dataType: 'json',
+				data: {
+					method: 'coffee.setUserExtraInfo',
+					auth_token: App.models.session.get('authToken'),
+					name: name,
+					value: value
+				},
+				success: function (response) {
+					if (response.status != -1) {
+						self.model.set(name, value);
+						self.model.set('has' + capitaliseFirstLetter(name), true);
+						self.render();
+					}
+				}
+			});
+		},
+		
+		newSocialmedia: function () {
+			console.log('hi');
+		}
 	});
-	
 	
 	/* !Router: WorkspaceRouter */
 	var WorkspaceRouter = Backbone.Router.extend({
@@ -763,7 +996,7 @@
 		myProfile: function () {
 			App.removeAllViews();
 			if (App.models.session.authenticated()) {
-				App.views.profileView = new ProfileView();
+				App.views.profileView = new ProfileView({guid: App.models.session.get('userId')});
 				App.views.menuView = new MenuView();
 			} else {
 				Backbone.history.navigate('login', true);
@@ -773,7 +1006,7 @@
 		profile: function (userId) {
 			App.removeAllViews();
 			if (App.models.session.authenticated()) {
-				App.views.profileView = new ProfileView();
+				App.views.profileView = new ProfileView({guid: userId});
 				App.views.menuView = new MenuView();
 			} else {
 				Backbone.history.navigate('login', true);
@@ -791,9 +1024,6 @@
 		if (window.location.hash == "") {
 			Backbone.history.navigate('feed', true);
 		}
-		
-		//var feedItemsView = new FeedItemsView();
-		//var menuView = new App.Views.Menu();
 	});
 
 })(jQuery);

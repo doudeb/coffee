@@ -139,6 +139,9 @@
           case 'right':
             tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width}
             break
+          case 'skillbar':
+            tp = {top: pos.top - actualHeight, left: (pos.left + 119)}
+            break;
         }
 
         $tip

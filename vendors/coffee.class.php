@@ -51,6 +51,7 @@ class ElggCoffee {
 
     public function get_site_data () {
         $site           = elgg_get_site_entity();
+        $user_ent       = elgg_get_logged_in_user_entity();
         if ($site instanceof ElggSite) {
             $options  = array('types'=>'object','subtypes'=>'file','limit'=>1);
             $options['joins']   = array("Inner join {$GLOBALS['CONFIG']->dbprefix}objects_entity obj_ent On e.guid = obj_ent.guid");
@@ -59,13 +60,14 @@ class ElggCoffee {
             $options['wheres']   = array("obj_ent.title = 'background'");
             $site_background = elgg_get_entities($options);
             $custom_css = $site_background[0]->description;
+            $viewtype = elgg_get_viewtype();
             return array(
                     'user_guid' => elgg_get_logged_in_user_guid()
                     , 'name' => $site->name
                     , 'logo_url' => ElggCoffee::_get_dwl_url($site_logo[0]->guid)
                     , 'background_url' => ElggCoffee::_get_dwl_url($site_background[0]->guid)
-                    , 'background_pos' => $site_background[0]->description
-                    //, 'custom_css' => $custom_css
+                    , 'custom_css' => $custom_css
+                    , 'translations' => json_encode($GLOBALS['CONFIG']->translations[$user_ent->language])
             );
 
         }
@@ -468,8 +470,8 @@ class ElggCoffee {
         return false;
     }
 
-    public static function get_user_extra_info ($names) {
-        $guid = elgg_get_logged_in_user_guid();
+    public static function get_user_extra_info ($names, $guid = false) {
+        $guid = $guid ? $guid:elgg_get_logged_in_user_guid();
         $user_ent = get_user($guid);
         $names = is_array($names)?$names:array($names);
         if ($user_ent instanceof ElggUser) {
@@ -481,7 +483,7 @@ class ElggCoffee {
             }
             return $return;
         }
-        return false;
+        return array();
     }
 
     public static function edit_user_detail($language = false, $name = false, $email = false, $curent_password = false, $password = false) {

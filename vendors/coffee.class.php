@@ -33,8 +33,10 @@ class ElggCoffee {
     public function new_comment($guid, $comment) {
         $post = get_entity($guid);
         if ($post instanceof ElggObject && strlen($comment) > 0) {
-            $comment_id = $post->annotate(COFFEE_COMMENT_TYPE, $comment);
+            $comment_id = $post->annotate(COFFEE_COMMENT_TYPE, $comment, COFFEE_DEFAULT_ACCESS_ID);
             if ($comment_id) {
+                $post->time_updated = time();
+                $post->save();
                 add_to_river('coffee/river/new_comment', 'create', elgg_get_logged_in_user_guid(), $post->guid,$comment_id);
                 return true;
             }
@@ -46,7 +48,7 @@ class ElggCoffee {
         if (!$guid) {
             return false;
         }
-        return static::get_posts(0,10,false,COFFEE_SUBTYPE, $guid);
+        return static::get_posts(0,0,10,false,COFFEE_SUBTYPE, $guid);
     }
 
     public function get_site_data () {
@@ -81,7 +83,7 @@ class ElggCoffee {
                             , 'limit'=> $limit
                             , 'offset'=> $offset
                             , 'owner_guids' => count($owner_guids) > 0 ? $owner_guids : false
-                            , 'wheres' => 'e.time_created > ' . $newer_than);
+                            , 'wheres' => 'e.time_updated > ' . $newer_than);
         if ($guid && $guid > 0) {
             $posts = array(get_entity($guid));
         } else {
@@ -95,6 +97,7 @@ class ElggCoffee {
                     $return[$key]['content']['text'] = $post->title;
                     $return[$key]['content']['time_created'] = $post->time_created;
                     $return[$key]['content']['friendly_time'] = elgg_get_friendly_time($post->time_created);
+                    $return[$key]['content']['time_updated'] = $post->time_updated;
                     $user = get_user($post->owner_guid);
                     if ($user instanceof ElggUser) {
                         $return[$key]['user']['guid'] = $user->guid;
@@ -196,7 +199,7 @@ class ElggCoffee {
                                                 , 'type' => $attached_ent->simpletype
                                                 , 'mime' => $attached_ent->mimetype
                                                 , 'url' => $attached_ent->url
-                                                , 'thumbnail' => $attached_ent->url?$attached_ent->thumbnail:ElggCoffee::_get_dwl_url($attached_ent->guid)
+                                                , 'thumbnail' => $attached_ent->simpletype === 'url'?$attached_ent->thumbnail:$attached_ent->getIconURL('large')
                 );
         }
         return $return;
@@ -208,8 +211,13 @@ class ElggCoffee {
         $type = sanitise_string($type);
         if (!empty($type)) {
             $return = add_entity_relationship($guid_parent, $type, $guid_child);
-            if ($return instanceof ElggRelationship) {
+            if ($return) {
                 add_to_river('coffee/river/' . $type, 'create', $guid_parent, $guid_child);
+                $post = get_entity($guid_child);
+                if ($post instanceof ElggEntity) {
+                    $post->time_updated = time();
+                    $post->save();
+                }
                 return true;
             } elseif (!$return) {
                 $return = check_entity_relationship($guid_parent, $type, $guid_child);
@@ -266,6 +274,8 @@ class ElggCoffee {
         $file->close();
         move_uploaded_file($_FILES['upload']['tmp_name'], $file->getFilenameOnFilestore());
         $guid = $file->save();
+        $file->url = ElggCoffee::_get_dwl_url($file->guid);
+        $guid = $file->save();
         add_to_river('river/object/file/create', 'create', elgg_get_logged_in_user_guid(), $file->guid);
         if ($guid && $file->simpletype == "image") {
             $file->icontime = time();
@@ -305,7 +315,10 @@ class ElggCoffee {
         }
 
         return array('guid' => $file->guid
-                        , 'file_url' => ElggCoffee::_get_dwl_url($file->guid));
+                        , 'url' => ElggCoffee::_get_dwl_url($file->guid)
+                        , 'title' => $file->title
+                        , 'thumbnail' => $file->getIconURL()
+                        , 'mime_type' => $mime_type);
     }
 
     public static function get_url_data ($url) {
@@ -479,7 +492,7 @@ class ElggCoffee {
             $return = array();
             foreach ($names as $name) {
                 if (isset( $user_ent->$name)) {
-                    $return[$name] = $user_ent->$name;
+                    $return[$name] = nl2br($user_ent->$name);
                 }
             }
             return $return;
@@ -520,8 +533,10 @@ class ElggCoffee {
         }
     }
 
-    private static function _get_user_icon_url ($entity,$size) {
-        return $GLOBALS['CONFIG']->url . 'userIcon/' . $GLOBALS['CONFIG']->auth_token . '/' . $entity->guid . '/' . $size;
+    private static function _get_user_icon_url ($entity,$size = 'medium') {
+        if ($entity instanceof ElggUser) {
+            return $GLOBALS['CONFIG']->url . 'userIcon/' . $GLOBALS['CONFIG']->auth_token . '/' . $entity->guid . '/' . $size . '?icontime=' . $entity->icontime;
+        }
     }
 
     private static function _get_user_cover_url ($entity) {

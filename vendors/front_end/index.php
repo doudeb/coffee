@@ -10,16 +10,17 @@
 		<script src="static/js/vendor/ICanHaz.min.js"></script>
 		<script src="static/js/vendor/backbone.js"></script>
 		<script src="static/js/vendor/jquery.cookie.js"></script>
+		<script src="static/js/vendor/jquery.form.js"></script>
 	</head>
-	<body style="background: url(userpics/client_bg.jpeg) fixed repeat 0 0;">
+	<body>
 		<div id="container">
-			<img src="static/img/0_dot.gif" id="watermark" width="90" height="40" />
+			<img src="" id="watermark" />
 		</div>
-		
-		
-		
-		
-		
+
+
+
+
+
 		<script type="text/html" id="loginTemplate">
 			<div id="login">
 				<form class="form-horizontal">
@@ -42,7 +43,7 @@
 				</form>
 			</div>
 		</script>
-		
+
 		<script type="text/html" id="microbloggingTemplate">
 			<div id="content">
 				<div id="microblogging" class="content-module">
@@ -52,7 +53,10 @@
 							<textarea class="update-text input-xlarge" placeholder="Share something with your colleagues…"></textarea>
 						</div>
 						<div class="update-actions">
-							<span class="add-media"><a href="#">Upload picture</a></span>
+							<span class="add-media"><a href="#">Upload something...</a></span>
+                             <form action="" method="post" enctype="multipart/form-data" class="out" id="uploadForm">
+                                <input type="file" name="upload" id="upload">
+                            </form>
 							<button id="postUpdate" class="btn btn-primary">Send</button>
 							<img class="loader" src="static/img/loader.gif" width="16" height="16" />
 						</div>
@@ -72,7 +76,7 @@
 				<a class="remove" rel="tooltip" title="Remove" href=""><i class="icon-remove"></i></a>
 			</div>
 		</script>
-		
+
 		<script type="text/html" id="feedItemTemplate">
 			<div class="feed-item" data-guid="{{guid}}">
 				<div class="content-module">
@@ -129,7 +133,7 @@
 				</div>
 			</div><!-- /.feed-item -->
 		</script>
-		
+
 		<script type="text/html" id="menuTemplate">
 			<div id="menu">
 				<ul id="navigation">
@@ -139,7 +143,7 @@
 				</ul>
 			</div>
 		</script>
-		
+
 		<script type="text/html" id="profileTemplate">
 			<div id="content">
 				<div id="profile"{{#isOwnProfile}} class="own-profile{{^isProfileComplete}} profile-editing{{/isProfileComplete}}"{{/isOwnProfile}}>
@@ -150,6 +154,9 @@
 						<div class="primary-content">
 							<div class="avatar">
 								<img src="{{icon_url}}" width="100" height="100" />
+                                <form action="" method="post" enctype="multipart/form-data" class="out" id="avatarUpload">
+                                    <input type="file" name="avatar" id="avatar">
+                                </form>
 								{{#isOwnProfile}}<button class="btn btn-mini edit" rel="profile-edit tooltip" title="Change avatar" data-edit="avatar"><i class="icon-edit"></i></button>{{/isOwnProfile}}
 							</div>
 							<div class="info">
@@ -204,7 +211,7 @@
 									</ul>
 									{{#isOwnProfile}}<button class="btn btn-small add-hobby"><i class="icon-plus"></i> Add a hobby or interest</button>{{/isOwnProfile}}
 								</div>
-								<div class="languages">
+								<!--<div class="languages">
 									<h3>Languages</h3>
 									<ul>
 										{{#languages}}
@@ -212,20 +219,20 @@
 										{{/languages}}
 									</ul>
 									{{#isOwnProfile}}<button class="btn btn-small add-language"><i class="icon-plus"></i> Add a language</button>{{/isOwnProfile}}
-								</div>
+								</div>-->
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</script>
-		
+
 		<script src="static/js/coffee.js"></script>
 		<script src="static/js/bootstrap-tooltip.js"></script>
 		<script>
 		$('body').delegate('[rel*=tooltip]', 'mouseenter mouseleave mousedown', function(e) {
 			var element = $(this);
-			
+
 			switch (e.handleObj.origType) {
 				case 'mouseenter':
 					element.tooltip('show');

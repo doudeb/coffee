@@ -160,6 +160,22 @@ function _convert($content) {
      //return iconv(mb_detect_encoding($content), "UTF-8", $content);
  }
 
+ /**
+ * Extend permissions checking to extend can-update for write users.
+ *
+ * @param unknown_type $hook
+ * @param unknown_type $entity_type
+ * @param unknown_type $returnvalue
+ * @param unknown_type $params
+ */
+function coffee_write_permission_check($hook, $entity_type, $returnvalue, $params)
+{
+        if ($params['entity']->getSubtype() == COFFEE_SUBTYPE && $params['entity']->access_id == ACCESS_LOGGED_IN) {
+            return true;
+        }
+}
+
+
 /**
 
  * Exposed function for ws api

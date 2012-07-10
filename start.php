@@ -13,7 +13,7 @@ function coffee_init() {
     elgg_register_entity_type('object', COFFEE_SUBTYPE);
 	elgg_register_plugin_hook_handler('rest', 'init', 'coffee_api_set_site_id');
 	elgg_register_plugin_hook_handler('public_pages', 'walled_garden', 'coffee_api_public_pages');
-
+    elgg_register_plugin_hook_handler('permissions_check', 'object', 'coffee_write_permission_check');
     elgg_register_class('ElggCoffee', elgg_get_plugins_path() . 'coffee/vendors/coffee.class.php');
 
     // Register a page handler, so we can have nice URLs

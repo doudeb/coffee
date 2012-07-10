@@ -28,7 +28,7 @@ a:hover{color:#005580;text-decoration:underline;}
 #container #menu ul#navigation{list-style-type:none;padding:0;float:left;margin-left:12px;}#container #menu ul#navigation li{display:block;margin-bottom:3px;}#container #menu ul#navigation li a{display:block;padding:5px 5px 6px 6px;background-color:rgba(0, 0, 0, 0.2);}#container #menu ul#navigation li a i{opacity:0.45;filter:alpha(opacity=45);}
 #container #menu ul#navigation li a:hover,#container #menu ul#navigation li.active a{background-color:rgba(0, 0, 0, 0.4);}#container #menu ul#navigation li a:hover i,#container #menu ul#navigation li.active a i{opacity:1;filter:alpha(opacity=100);}
 #container #content{min-height:100%;margin-left:73px;padding-bottom:50px;}
-#container #watermark{background:url(../img/enlightn_watermark.png) no-repeat 0 0;top:15px;right:15px;z-index:1;position:fixed;}
+#container #watermark{top:15px;right:15px;z-index:1;position:fixed;}
 form{margin:0 0 18px;}
 fieldset{padding:0;margin:0;border:0;}
 legend{display:block;width:100%;padding:0;margin-bottom:27px;font-size:19.5px;line-height:36px;color:#333333;border:0;border-bottom:1px solid #e5e5e5;}legend small{font-size:13.5px;color:#d8d8d8;}
@@ -425,3 +425,4 @@ button.btn.btn-mini,input[type="submit"].btn.btn-mini{*padding-top:1px;*padding-
 .hide{display:none;}
 .show{display:block;}
 .invisible{visibility:hidden;}
+.out{position:absolute;left:-10000px;}

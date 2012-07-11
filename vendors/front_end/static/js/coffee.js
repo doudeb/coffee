@@ -1120,7 +1120,6 @@
 
 	$(document).ready(function(){
 		App.models.session = new Session();
-
 		new WorkspaceRouter();
 		Backbone.history.start();
 
@@ -1128,14 +1127,21 @@
 			Backbone.history.navigate('feed', true);
 		}
 
-        if (typeof $.cookie('backgroundUrl') != undefined) {
-            $('body').css('background','url(' + $.cookie('backgroundUrl') + ')');
+        if (typeof App.models.session.get('backgroundUrl') != undefined) {
+            $('body').css('background','url(' + App.models.session.get('backgroundUrl') + ')');
         } else {
             $('body').css('background','url(userpics/client_bg.jpeg)');
         }
-         if (typeof $.cookie('logoUrl') != undefined) {
-            $('#watermark').attr('src',$.cookie('logoUrl'));
+         if (typeof App.models.session.get('logoUrl') != undefined) {
+            $('#watermark').attr('src',App.models.session.get('logoUrl'));
         }
-	});
+
+        $(window).scroll(function() {
+            if($(window).scrollTop() == $(document).height() - $(window).height()) {
+                App.views.microbloggingView.offset = App.views.microbloggingView.offset + 10;
+                App.views.microbloggingView.feedItemsView.collection.loadFeed(App.views.microbloggingView.offset);
+            }
+        });
+    });
 
 })(jQuery);

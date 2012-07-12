@@ -13,6 +13,29 @@
 		return str.charAt(0).toUpperCase() + str.slice(1);
 	};
 
+    var nl2br = function (str) {
+        return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br />$2');
+    }
+
+    var setBackground = function (backgroundUrl) {
+        if (backgroundUrl && backgroundUrl.length > 0) {
+            $('body')
+                .css('background','url(' + backgroundUrl + ')')
+                .css('background-repeat','no-repeat')
+                .css('background-attachment','fixed');
+        } else {
+            $('body').css('background','url(userpics/client_bg.jpeg)');
+        }
+    }
+
+    var setLogo = function (logoUrl) {
+        if (logoUrl && logoUrl.length > 0) {
+            $('#watermark').attr('src',logoUrl);
+        } else {
+            $('#watermark').attr('src','url(userpics/logo.png)');
+        }
+    }
+
 	var App = {
 		models: {},
 		collections: {},
@@ -20,6 +43,9 @@
 
 		baseUrl: "/",
 		resourceUrl: '/services/api/rest/json',
+
+		isComposing: false,
+
 		removeAllViews: function () {
 			_.each(App.views, function(view){
 				view.remove();
@@ -230,6 +256,7 @@
 	var FeedItem = Backbone.Model.extend({
 		initialize: function () {
 			_.bindAll(this);
+            isComposing = false;
 		},
 
 		set: function (attributes, options) {
@@ -264,6 +291,7 @@
 		initialize: function () {
 			_.bindAll(this);
             this.loadFeed();
+
 		},
 
         loadFeed: function (offset,limit) {
@@ -319,7 +347,6 @@
 
 		checkForNewPosts: function () {
 			var self = this;
-
 			var latestTimestamp = _.first(self.models).attributes.content.time_updated;
 			$.ajax({
 				type: 'GET',
@@ -337,7 +364,9 @@
                             for (i = 0; i < result.length; i++ ) {
                                 exist = self.where({guid: result[i].guid});
                                 if (exist.length > 0) {
-                                    exist[0].set(result[i]);
+                                    if (!exist[0].get('isComposing')) {
+                                        exist[0].set(result[i]);
+                                    }
                                 } else {
                                     self.loadNew(result[i].guid);
                                 }
@@ -354,15 +383,16 @@
 	var FeedItemView = Backbone.View.extend({
 		initialize: function () {
 			_.bindAll(this);
-
 			this.model.bind('change', this.render);
 		},
 
 		events: {
-			'click .show-all-link': 'showAllComments',
-			'keyup .new-comment-textarea': 'textareaKeyup',
-			'keypress .new-comment-textarea': 'textareaKeypress',
-			'click .update-action a': 'updateAction'
+			'click .show-all-link': 'showAllComments'
+			, 'keyup .new-comment-textarea': 'textareaKeyup'
+			, 'keypress .new-comment-textarea': 'textareaKeypress'
+			, 'click .update-action a': 'updateAction'
+			, 'focus .new-comment-textarea': 'changeComposingFlag'
+			, 'blur .new-comment-textarea': 'changeComposingFlag'
 		},
 
 		render: function () {
@@ -418,11 +448,20 @@
 			var self = this;
 			var action = $(e.currentTarget).attr('data-action');
 
-			if (action == 'like') {
-				self.like();
-			} else if(action == 'unlike') {
-				self.unlike();
-			}
+            switch (action) {
+                case 'like' :
+                    self.like();
+                    break;
+                case 'unlike' :
+                    self.unlike();
+                    break;
+                case 'remove' :
+                    self.removeFeed();
+                    break;
+                default:
+                    return false;
+                    break;
+            }
 
 			return false;
 		},
@@ -454,7 +493,53 @@
 		},
 
 		unlike: function () {
-			alert('unlike!')
+			var self = this;
+			var postGuid = self.model.get('guid');
+
+			$.ajax({
+				type: 'GET',
+				url: App.resourceUrl,
+				dataType: 'json',
+				data: {
+					method: 'coffee.removeRelationship',
+					auth_token: App.models.session.get('authToken'),
+					guid_parent: App.models.session.get('userId'),
+					guid_children: postGuid,
+					type: 'coffee_like'
+				},
+				success: function (response) {
+					if (response.status != -1) {
+						self.refresh();
+					} else {
+						/* Error */
+					}
+
+				}
+			});
+		},
+
+		removeFeed: function () {
+			var self = this;
+			var postGuid = self.model.get('guid');
+
+			$.ajax({
+				type: 'GET',
+				url: App.resourceUrl,
+				dataType: 'json',
+				data: {
+					method: 'coffee.disableObject',
+					auth_token: App.models.session.get('authToken'),
+					guid: postGuid
+				},
+				success: function (response) {
+					if (response.status != -1) {
+						self.remove();
+					} else {
+						/* Error */
+					}
+
+				}
+			});
 		},
 
 		comment: function (theComment) {
@@ -462,7 +547,7 @@
 			var postGuid = this.model.get('guid')
 
 			$.ajax({
-				type: 'GET',
+				type: 'POST',
 				url: App.resourceUrl,
 				dataType: 'json',
 				data: {
@@ -488,6 +573,7 @@
 						});
 
 						self.model.set(update);
+                        self.model.attributes.isComposing = false;
 						self.render();
 					} else {
 						// Error
@@ -511,14 +597,22 @@
 				success: function (response) {
 					if (response.status != -1) {
 						var result = response.result;
-						self.model.set(result[0]);
-						self.render();
+                        if (result.length > 0) {
+                            self.model.set(result[0]);
+                            self.render();
+                        } else {
+                            self.destroy();
+                        }
 					} else {
-						/* Error */
 					}
 				}
 			});
-		}
+		},
+
+        changeComposingFlag: function (e) {
+            var self = this;
+            self.model.attributes.isComposing = e.type==='focusin'?true:false;
+        }
 	});
 
 	/* !View: FeedItemsView */
@@ -635,7 +729,7 @@
 					if (self.attachmentGuid != false) data.attachment = [self.attachmentGuid];
 
 					$.ajax({
-						type: 'GET',
+						type: 'POST',
 						url: App.resourceUrl,
 						dataType: 'json',
 						data: data,
@@ -819,6 +913,7 @@
 		initialize: function () {
 			_.bindAll(this);
 			var self = this;
+                self.optionalInfo = ['hobbies', 'languages', 'socialmedia', 'headline', 'department', 'location', 'introduction', 'phone', 'cellphone'];
 
 			$.ajax({
 				type: 'GET',
@@ -844,7 +939,7 @@
 								method: 'coffee.getUserExtraInfo',
 								auth_token: App.models.session.get('authToken'),
 								guid: self.get('guid'),
-								names: ['languages', 'hobbies', 'socialmedia', 'introduction', 'headline', 'department', 'location']
+								names: self.optionalInfo
 							},
 							success: function (response) {
 								if (response.status != -1) {
@@ -862,13 +957,13 @@
 		},
 
 		processExtraInfo: function (object) {
+            var self = this;
 			var extraInfo = object;
-			var optionalInfo = ['hobbies', 'languages', 'socialmedia', 'headline', 'department', 'location', 'introduction'];
 
 			extraInfo.isProfileComplete = true; // Is all optional info present?
 
-			for (i in optionalInfo) {
-				var varName = optionalInfo[i];
+			for (i in self.optionalInfo) {
+				var varName = self.optionalInfo[i];
 				var dynamicHasKey = 'has'+capitaliseFirstLetter(varName);
 
 				if (object.hasOwnProperty(varName)) {
@@ -924,7 +1019,9 @@
 			'keyup .editing': 'textareaKeyup',
 			'keypress .editing': 'textareaKeypress',
 			'click .avatar .btn': 'avatarEdit',
-			'click .sm-addnew': 'newSocialmedia'
+			'click #cover-edit': 'coverEdit',
+			'click .sm-addnew': 'newSocialmedia',
+			'click .add-hobby': 'addHobby'
 		},
 
 		firstRender: function () {
@@ -933,9 +1030,9 @@
 
 		render: function () {
 			var element = ich.profileTemplate(this.model.toJSON());
-
 			$(this.el).replaceWith(element);
 			this.setElement(element);
+            setBackground (this.model.get('cover_url'));
 
 			return this;
 		},
@@ -996,9 +1093,17 @@
 
 		finishedEditing: function (value, name) {
 			var self = this;
-
+            if (name === 'hobbies') {
+                prevValue = self.model.get(name);
+                if (prevValue.length === 0) {
+                    prevValue = [];
+                }
+                prevValue.push(value);
+                value = prevValue;
+                value = JSON.stringify(value);
+            }
 			$.ajax({
-				type: 'GET',
+				type: 'POST',
 				url: App.resourceUrl,
 				dataType: 'json',
 				data: {
@@ -1009,7 +1114,11 @@
 				},
 				success: function (response) {
 					if (response.status != -1) {
-						self.model.set(name, value);
+                        if (name === 'hobbies') {
+       						self.model.set(name, JSON.parse(stripslashes(value)));
+                        } else {
+    						self.model.set(name, value);
+                        }
 						self.model.set('has' + capitaliseFirstLetter(name), true);
 						self.render();
 					}
@@ -1039,7 +1148,7 @@
                     elm = $(this);
                     if (self.isPicture(elm.val())) {
                         var options = {
-                                success:       self.updateAvatar
+                                success: self.updateAvatar
                                 , url: App.resourceUrl
                                 , dataType: 'json'
                                 , data: {
@@ -1048,6 +1157,31 @@
                                 }
                             };
                         avatarForm.ajaxSubmit(options);
+                    }
+                });
+
+        },
+
+        coverEdit: function () {
+            var self = this
+                , cover = $('#cover')
+                , coverForm = $('#coverUpload')
+                , coverCrop = $('#coverCrop');
+            cover
+                .trigger('click')
+                .change(function (){
+                    elm = $(this);
+                    if (self.isPicture(elm.val())) {
+                        var options = {
+                                success: self.updateCover
+                                , url: App.resourceUrl
+                                , dataType: 'json'
+                                , data: {
+                                    method: 'coffee.uploadUserCover',
+                                    auth_token: App.models.session.get('authToken')
+                                }
+                            };
+                        coverForm.ajaxSubmit(options);
                     }
                 });
 
@@ -1064,6 +1198,28 @@
                 self.model.set('icon_url', response.result);
                 self.render();
             }
+        },
+
+        updateCover: function (response) {
+            var self = this;
+            if (response.status != -1) {
+                self.model.set('cover_url', response.result);
+                self.render();
+            }
+        },
+
+        addHobby : function (e) {
+            var self = this;
+            element = $(e.currentTarget);
+            var editingTextarea = $('<textarea class="editing editing-hobbies"></textarea>')
+				.insertAfter(element)
+				.focus()
+				.bind('blur', function(){
+					editingTextarea.remove();
+					element.removeAttr('style');
+				})
+				.data('name', 'hobbies');
+
         }
 
 	});
@@ -1076,6 +1232,7 @@
 			"profile":				"myProfile",
 			"profile/:user_id":		"profile"
 		},
+
 
 		login: function () {
 			App.removeAllViews();
@@ -1091,6 +1248,8 @@
 			if (App.models.session.authenticated()) {
 				App.views.microbloggingView = new MicrobloggingView();
 				App.views.menuView = new MenuView();
+                setBackground (App.models.session.get('backgroundUrl'));
+                setLogo (App.models.session.get('logoUrl'));
 			} else {
 				Backbone.history.navigate('login', true);
 			}
@@ -1101,6 +1260,7 @@
 			if (App.models.session.authenticated()) {
 				App.views.profileView = new ProfileView({guid: App.models.session.get('userId')});
 				App.views.menuView = new MenuView();
+                setLogo (App.models.session.get('logoUrl'));
 			} else {
 				Backbone.history.navigate('login', true);
 			}
@@ -1111,6 +1271,7 @@
 			if (App.models.session.authenticated()) {
 				App.views.profileView = new ProfileView({guid: userId});
 				App.views.menuView = new MenuView();
+                setLogo (App.models.session.get('logoUrl'));
 			} else {
 				Backbone.history.navigate('login', true);
 			}
@@ -1126,15 +1287,6 @@
 		if (window.location.hash == "") {
 			Backbone.history.navigate('feed', true);
 		}
-
-        if (typeof App.models.session.get('backgroundUrl') != undefined) {
-            $('body').css('background','url(' + App.models.session.get('backgroundUrl') + ')');
-        } else {
-            $('body').css('background','url(userpics/client_bg.jpeg)');
-        }
-         if (typeof App.models.session.get('logoUrl') != undefined) {
-            $('#watermark').attr('src',App.models.session.get('logoUrl'));
-        }
 
         $(window).scroll(function() {
             if($(window).scrollTop() == $(document).height() - $(window).height()) {

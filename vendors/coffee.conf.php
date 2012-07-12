@@ -51,7 +51,7 @@ $exposed[$i]['params']          	= array(
 $exposed[$i]['comment']          	= 'Allow user to create a new post.
                                         @param attachment array : contain guid
                                         @param type string : could be a comment, a headline';
-$exposed[$i]['call_method']      	= 'GET';
+$exposed[$i]['call_method']      	= 'POST';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
 
@@ -111,7 +111,7 @@ $exposed[$i]['params']          	= array(
                                             , "comment" => array('type' => 'string'
                                                             , 'required' => true ));
 $exposed[$i]['comment']          	= 'Post a comment';
-$exposed[$i]['call_method']      	= 'GET';
+$exposed[$i]['call_method']      	= 'POST';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
 
@@ -225,7 +225,7 @@ $exposed[$i]['params']          	= array("name" => array('type' => 'string'
 $exposed[$i]['comment']          	= 'Set user extra information.
                                         @name string profile name
                                         @value string profile value';
-$exposed[$i]['call_method']      	= 'GET';
+$exposed[$i]['call_method']      	= 'POST';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
 
@@ -242,7 +242,7 @@ $exposed[$i]['params']          	= array("language" => array('type' => 'string'
                                                         , "password" => array('type' => 'string'
                                                             , 'required' => true));
 $exposed[$i]['comment']          	= '';
-$exposed[$i]['call_method']      	= 'GET';
+$exposed[$i]['call_method']      	= 'POST';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
 

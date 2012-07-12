@@ -48,7 +48,7 @@ function coffee_api_set_site_id () {
  *
  */
 function coffee_api_public_pages($hook, $handler, $return, $params){
-	$pages = array('userIcon/.*','dwl/*','upl/*', 'testApi');
+	$pages = array('userIcon/.*','dwl/*','upl/*', 'testApi','userCover/*');
 	return array_merge($pages, $return);
 }
 

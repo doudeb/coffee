@@ -94,7 +94,7 @@ class ElggCoffee {
                 if ($post instanceof ElggObject) {
                     $return[$key]['guid'] = $post->guid;
                     $return[$key]['content']['type'] = $post->subtype;
-                    $return[$key]['content']['text'] = $post->title;
+                    $return[$key]['content']['text'] = nl2br($post->title);
                     $return[$key]['content']['time_created'] = $post->time_created;
                     $return[$key]['content']['friendly_time'] = elgg_get_friendly_time($post->time_created);
                     $return[$key]['content']['time_updated'] = $post->time_updated;
@@ -131,6 +131,7 @@ class ElggCoffee {
             return array('id'         => $user_ent->guid
                             , 'username'       => $user_ent->username
                             , 'name'           => $user_ent->name
+                            , 'email'          => $user_ent->email
                             , 'icon_url'       => ElggCoffee::_get_user_icon_url($user_ent)
                             , 'cover_url'      => ElggCoffee::_get_user_cover_url($user_ent)
                             , 'extended'       => $extended
@@ -190,7 +191,7 @@ class ElggCoffee {
         foreach ($attachment as $key => $attached) {
             $attached_ent = get_entity($attached->guid_two);
             $return[] = array(
-                                                'guid' => $attached->guid_two
+                                                'guid' => $attached_ent->guid
                                                 , 'time_created' => $attached_ent->time_created
                                                 , 'friendly_time' => elgg_get_friendly_time($attached_ent->time_created)
                                                 , 'title' => $attached_ent->title
@@ -198,8 +199,8 @@ class ElggCoffee {
                                                 , 'html' => $attached_ent->html
                                                 , 'type' => $attached_ent->simpletype
                                                 , 'mime' => $attached_ent->mimetype
-                                                , 'url' => $attached_ent->url
-                                                , 'thumbnail' => $attached_ent->simpletype === 'url'?$attached_ent->thumbnail:$attached_ent->getIconURL('large')
+                                                , 'url' => $attached_ent->simpletype === 'url'?$attached_ent->url:static::_get_dwl_url($attached_ent->guid)
+                                                , 'thumbnail' => $attached_ent->simpletype === 'url'?$attached_ent->thumbnail:$attached_ent->getIconURL('medium')
                 );
         }
         return $return;
@@ -273,8 +274,6 @@ class ElggCoffee {
         $file->open("write");
         $file->close();
         move_uploaded_file($_FILES['upload']['tmp_name'], $file->getFilenameOnFilestore());
-        $guid = $file->save();
-        $file->url = ElggCoffee::_get_dwl_url($file->guid);
         $guid = $file->save();
         add_to_river('river/object/file/create', 'create', elgg_get_logged_in_user_guid(), $file->guid);
         if ($guid && $file->simpletype == "image") {
@@ -467,6 +466,8 @@ class ElggCoffee {
         $file->open('write');
         $file->close();
         $file->save();
+        $owner->covertime = time();
+        $owner->save();
         move_uploaded_file($_FILES['cover']['tmp_name'], $file->getFilenameOnFilestore());
         return static::_get_user_cover_url($owner);
     }
@@ -475,7 +476,6 @@ class ElggCoffee {
         $guid = elgg_get_logged_in_user_guid();
         $user_ent = get_user($guid);
         if ($user_ent instanceof ElggUser) {
-            $value = sanitise_string($value);
             $user_ent->$name = $value;
             if ($user_ent->save()) {
                 return true;
@@ -540,7 +540,7 @@ class ElggCoffee {
     }
 
     private static function _get_user_cover_url ($entity) {
-        return $GLOBALS['CONFIG']->url . 'userCover/' . $GLOBALS['CONFIG']->auth_token . '/' . $entity->guid;
+        return $GLOBALS['CONFIG']->url . 'userCover/' . $GLOBALS['CONFIG']->auth_token . '/' . $entity->guid. '?icontime=' . $entity->covertime;
     }
 
     private static function _get_dwl_url ($guid) {

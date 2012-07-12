@@ -84,11 +84,11 @@
 						<a class="avatar" href="#profile/{{user.guid}}"><img src="{{user.icon_url}}" title="{{user.name}}" width="40" height="40" /></a>
 						<div class="update">
 							<a class="name" href="#profile/{{user.guid}}">{{user.name}}</a>
-							<p class="text">{{content.text}}</p>
+							<p class="text">{{{content.text}}}</p>
 							<p class="time"><i class="icon-time"></i> {{content.friendly_time}}</p>
 							{{#attachment}}
 							<div class="attachment">
-								<a class="thumbnail" href="{{url}}" target="_blank"><img width="100" height="100" src="{{thumbnail}}" /></a>
+								<a class="thumbnail" href="{{url}}" target="_blank"><img width="100" src="{{thumbnail}}" /></a>
 								<div class="info">
 									<a href="{{url}}" class="title" target="_blank">{{title}}</a>
 									<span class="description">{{description}}</span>
@@ -161,14 +161,28 @@
 							</div>
 							<div class="info">
 								<span class="name">{{name}}</span>
-								{{#hasHeadline}}<span class="headline"><span {{#isOwnProfile}}class="editable" data-name="headline"{{/isOwnProfile}}>{{headline}}</span></span>{{/hasHeadline}}
+                                {{#isOwnProfile}}
+                                Change cover picture
+                                <button class="btn btn-mini edit" rel="profile-edit tooltip" title="Change your cover pic" data-edit="userCover" id="cover-edit"><i class="icon-edit"></i></button>
+                                <form action="" method="post" enctype="multipart/form-data" class="out" id="coverUpload">
+                                    <input type="file" name="cover" id="cover">
+                                </form>
+                                {{/isOwnProfile}}
+								{{#hasHeadline}}<span class="headline"><span {{#isOwnProfile}}class="editable" data-name="headline"{{/isOwnProfile}}>{{{headline}}}</span></span>{{/hasHeadline}}
 								{{^hasHeadline}}{{#isOwnProfile}}<span class="headline"><span class="editable editable-hover" data-name="headline">[Add a headline]</span></span>{{/isOwnProfile}}{{/hasHeadline}}
 								{{#hasDepartment}}<span class="department"><i class="icon-briefcase"></i> <span {{#isOwnProfile}}class="editable" data-name="department"{{/isOwnProfile}}>{{department}}</span></span>{{/hasDepartment}}
 								{{^hasDepartment}}{{#isOwnProfile}}<span class="department"><i class="icon-briefcase"></i> <span class="editable editable-hover" data-name="department">[Specify your department]</span></span>{{/isOwnProfile}}{{/hasDepartment}}
 								{{#hasLocation}}<span class="location"><i class="icon-map-marker"></i> <span {{#isOwnProfile}}class="editable" data-name="location"{{/isOwnProfile}}>{{location}}</span></span>{{/hasLocation}}
 								{{^hasLocation}}{{#isOwnProfile}}<span class="location"><i class="icon-map-marker"></i> <span class="editable editable-hover" data-name="location">[Choose your location]</span></span>{{/isOwnProfile}}{{/hasLocation}}
+                                <span><i class="icon-envelope"></i> {{email}}</span>
+                                {{#hasPhone}}<span class="location"><i class="icon-phone"></i> <span {{#isOwnProfile}}class="editable" data-name="phone"{{/isOwnProfile}}>{{phone}}</span></span>{{/hasPhone}}
+								{{^hasPhone}}{{#isOwnProfile}}<span class="location"><i class="icon-phone"></i> <span class="editable editable-hover" data-name="phone">[Choose your phone]</span></span>{{/isOwnProfile}}{{/hasPhone}}
+                                {{#hasCellphone}}<span class="location"><i class="icon-cellphone"></i> <span {{#isOwnProfile}}class="editable" data-name="cellphone"{{/isOwnProfile}}>{{cellphone}}</span></span>{{/hasCellphone}}
+								{{^hasCellphone}}{{#isOwnProfile}}<span class="location"><i class="icon-cellphone"></i> <span class="editable editable-hover" data-name="cellphone">[Choose your cellphone]</span></span>{{/isOwnProfile}}{{/hasCellphone}}
+
+
 							</div>
-							<ul class="sm-links">
+    						<ul class="sm-links">
 								{{#socialmedia}}
 								<li><a href="{{link}}" class="sm sm-{{service}}" target="_blank" rel="tooltip" title="{{#isTwitter}}Twitter{{/isTwitter}}{{#isFacebook}}Facebook{{/isFacebook}}{{#isLinkedIn}}LinkedIn{{/isLinkedIn}}{{#isSkype}}Call on Skype{{/isSkype}}" data-placement="right"></a></li>
 								{{/socialmedia}}
@@ -199,14 +213,14 @@
 							</div>
 						</div>
 						<div class="secondary-content">
-							{{#hasIntroduction}}<div class="introduction"><span class="editable" data-name="introduction">{{introduction}}</span></div>{{/hasIntroduction}}
+							{{#hasIntroduction}}<div class="introduction"><span class="editable" data-name="introduction">{{{introduction}}}</span></div>{{/hasIntroduction}}
 							{{^hasIntroduction}}{{#isOwnProfile}}<div class="introduction"><span class="editable editable-hover" data-name="introduction">[Write a short introduction]</span></div>{{/isOwnProfile}}{{/hasIntroduction}}
 							<div class="other">
 								<div class="hobbies-interests">
 									<h3>Hobbies &amp; Interests</h3>
 									<ul>
 										{{#hobbies}}
-										<li><span {{#isOwnProfile}}class="editable"{{/isOwnProfile}}>{{name}}</span></li>
+										<li><span {{#isOwnProfile}}class="editable" data-name="hobby" data-index="{{index}}"{{/isOwnProfile}}>{{.}}</span></li>
 										{{/hobbies}}
 									</ul>
 									{{#isOwnProfile}}<button class="btn btn-small add-hobby"><i class="icon-plus"></i> Add a hobby or interest</button>{{/isOwnProfile}}

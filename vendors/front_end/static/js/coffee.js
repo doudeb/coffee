@@ -261,24 +261,41 @@
 
 		set: function (attributes, options) {
 			attributes.isOwner = (attributes.user.guid == App.models.session.get('userId')) ? true : false;
-			attributes.hasLiked = false;
+
+			attributes.isLong =  (attributes.content.text.length > 500) ? true : false;
+			if (attributes.isLong) {
+                attributes.content.textOrig = attributes.content.text;
+                attributes.content.text = attributes.content.text.substr(0, 500);
+            }
+
+            attributes.hasLiked = false;
 
 			attributes.likes.isOne = (attributes.likes.total == 1) ? true : false;
 			attributes.likes.isTwo = (attributes.likes.total == 2) ? true : false;
-			attributes.likes.isMore = (attributes.likes.total > 2) ? true : false;
+            if (attributes.likes.total > 2) {
+                attributes.likes.isMore = true;
+                attributes.likes.total = attributes.likes.total - 1;
+            }
 
 			if (attributes.likes.users != false) {
 				attributes.likes.users[0].first = true;
 
-				_.each(attributes.likes.users, function(like){
+				_.each(attributes.likes.users, function(like) {
 					if (like.owner_guid == App.models.session.get('userId')) attributes.hasLiked = true;
 				});
 			}
-
-			if (attributes.comment.comments.length > 0) {
+			if (attributes.comment.total > 0) {
 				attributes.comment.comments.reverse();
 				attributes.comment.showAllLink = (attributes.comment.total > attributes.comment.comments.length) ? true : false;
+                for (i=0; i < attributes.comment.total; i++) {
+                    try {
+                        if (attributes.comment.comments[i].owner_guid == App.models.session.get('userId')) attributes.comment.comments[i].isCommentOwner = true;
+                    } catch (Err) {
+                        console.log(attributes.comment);
+                    }
+                }
 			}
+                        console.log(attributes.comment);
 
 			Backbone.Model.prototype.set.call(this, attributes, options);
 		}
@@ -393,6 +410,8 @@
 			, 'click .update-action a': 'updateAction'
 			, 'focus .new-comment-textarea': 'changeComposingFlag'
 			, 'blur .new-comment-textarea': 'changeComposingFlag'
+			, 'click .remove-comment': 'removeComment'
+			, 'click .show-all-text': 'toggleAllText'
 		},
 
 		render: function () {
@@ -457,6 +476,10 @@
                     break;
                 case 'remove' :
                     self.removeFeed();
+                    break;
+                case 'comment':
+                    elm = $(e.currentTarget).parent().parent().parent().find('.new-comment-textarea');
+                    elm.focus();
                     break;
                 default:
                     return false;
@@ -542,6 +565,30 @@
 			});
 		},
 
+		removeComment: function (e) {
+			var self = this
+                , elm = $(e.currentTarget);
+            id = elm.data('id');
+			$.ajax({
+				type: 'POST',
+				url: App.resourceUrl,
+				dataType: 'json',
+				data: {
+					method: 'coffee.disableAnnotation',
+					auth_token: App.models.session.get('authToken'),
+					id: id
+				},
+				success: function (response) {
+					if (response.status != -1) {
+						self.refresh();
+					} else {
+						/* Error */
+					}
+
+				}
+			});
+		},
+
 		comment: function (theComment) {
 			var self = this;
 			var postGuid = this.model.get('guid')
@@ -612,6 +659,13 @@
         changeComposingFlag: function (e) {
             var self = this;
             self.model.attributes.isComposing = e.type==='focusin'?true:false;
+        },
+
+        toggleAllText: function (e) {
+            var elm = $(e.currentTarget);
+            elm.parent().find('.text').toggle();
+            elm.parent().find('.text-orig').fadeToggle();
+            return false;
         }
 	});
 
@@ -914,6 +968,7 @@
 			_.bindAll(this);
 			var self = this;
                 self.optionalInfo = ['hobbies', 'languages', 'socialmedia', 'headline', 'department', 'location', 'introduction', 'phone', 'cellphone'];
+                self.optionalInfo = ['hobbies', 'headline', 'department', 'location', 'introduction', 'phone', 'cellphone'];
 
 			$.ajax({
 				type: 'GET',
@@ -1021,7 +1076,8 @@
 			'click .avatar .btn': 'avatarEdit',
 			'click #cover-edit': 'coverEdit',
 			'click .sm-addnew': 'newSocialmedia',
-			'click .add-hobby': 'addHobby'
+			'click .add-hobby': 'addHobby'/*,
+			'click .update-actions a': 'updateAction'*/
 		},
 
 		firstRender: function () {
@@ -1057,18 +1113,17 @@
 		startInlineEdit: function (e) {
 			var element = $(e.currentTarget)
                 , name = element.attr('data-name')
-                , prevValue = element.html();
+                , key = element.attr('data-key')
+                , prevValue = element.html().replace('<br/>', '');
 
-			element.css('visibility', 'hidden');
-			var editingTextarea = $('<textarea class="editing editing-'+name+'"></textarea>')
-				.insertAfter(element)
-				.focus()
-				.bind('blur', function(){
-					editingTextarea.remove();
-					element.removeAttr('style');
-				})
-				.val(prevValue)
-				.data('name', name);
+                var editingTextarea = $('<textarea class="editing editing-'+name+'" data-name="'+name+'" data-key="'+key+'">' + prevValue + '</textarea>')
+                    .bind('blur', function(){
+                        editingTextarea.replaceWith(element);
+                    });
+                element
+                    .removeClass('editable-hover')
+                    .replaceWith(editingTextarea);
+                editingTextarea.focus();
 		},
 
 		textareaKeyup: function (e) {
@@ -1078,7 +1133,8 @@
 				if (element.data('name') != 'introduction') {
 					var value = element.val();
 					var name = element.data('name');
-					this.finishedEditing(value, name);
+					var key = element.data('key');
+					this.finishedEditing(value, name, key);
 				}
 			}
 		},
@@ -1091,16 +1147,18 @@
 			}
 		},
 
-		finishedEditing: function (value, name) {
-			var self = this;
-            if (name === 'hobbies') {
+		finishedEditing: function (value, name, key) {
+			var self = this,
+                processedValue = value;
+            if (key >= 0) {
                 prevValue = self.model.get(name);
-                if (prevValue.length === 0) {
-                    prevValue = [];
+                if (value === '') {
+                    prevValue.splice(key,1);
+                } else {
+                    prevValue[key] = {key:key, value:value};
                 }
-                prevValue.push(value);
-                value = prevValue;
-                value = JSON.stringify(value);
+                processedValue = prevValue;
+                value = JSON.stringify(prevValue);
             }
 			$.ajax({
 				type: 'POST',
@@ -1114,11 +1172,7 @@
 				},
 				success: function (response) {
 					if (response.status != -1) {
-                        if (name === 'hobbies') {
-       						self.model.set(name, JSON.parse(stripslashes(value)));
-                        } else {
-    						self.model.set(name, value);
-                        }
+    					self.model.set(name, processedValue);
 						self.model.set('has' + capitaliseFirstLetter(name), true);
 						self.render();
 					}
@@ -1127,7 +1181,9 @@
 		},
 
 		newSocialmedia: function () {
-			console.log('hi');
+			var self = this,
+                elm = $('.add-socialmedia');
+                elm.toggle();
 		},
 
         updateIntroduction: function (e) {
@@ -1218,8 +1274,17 @@
 					editingTextarea.remove();
 					element.removeAttr('style');
 				})
-				.data('name', 'hobbies');
+				.data('name', 'hobbies')
+				.data('key', self.model.get('hobbies').length);
 
+        },
+
+        updateAction: function (e) {
+			var self = this;
+			var action = $(e.currentTarget).attr('data-action');
+            if (action == "coffeePoke") {
+
+            }
         }
 
 	});

@@ -110,7 +110,6 @@ class ElggCoffee {
                     $return[$key]['comment'] = ElggCoffee::get_comments ($post->guid, 0, 2);
                     $return[$key]['attachment'] = ElggCoffee::get_attachment ($post->guid);
                 }
-
             }
         }
         return $return;
@@ -147,7 +146,8 @@ class ElggCoffee {
             foreach ($comments['details'] as $comment) {
                 $user = get_user($comment->owner_guid);
                 if ($user instanceof ElggUser && $comment instanceof ElggAnnotation) {
-                    $return['comments'][] = array('owner_guid' => $user->guid
+                    $return['comments'][] = array('id' => $comment->id
+                                                            , 'owner_guid' => $user->guid
                                                             , 'name' => $user->name
                                                             , 'icon_url' => ElggCoffee::_get_user_icon_url($user,'small')
                                                             , 'time_created' => $comment->time_created
@@ -238,6 +238,7 @@ class ElggCoffee {
             $return = remove_entity_relationship($guid_parent, $type, $guid_child);
             if ($return) {
                 add_to_river('coffee/river/' . $type, 'remove', $guid_parent, $guid_child);
+
                 return true;
             } elseif (!$return) {
                 $return = check_entity_relationship($guid_parent, $type, $guid_child);
@@ -252,7 +253,20 @@ class ElggCoffee {
     public function disable_object ($guid) {
         $ent = get_entity($guid);
         if ($ent instanceof ElggObject) {
-            return $ent->disable();
+            if ($ent->disable()) {
+                //find a solution to trigger a refresh for other opened session
+            }
+        }
+        return false;
+    }
+
+    public static function disable_annotation ($id) {
+        $annotation = get_annotation($id);
+        if ($annotation instanceof ElggAnnotation) {
+            if ($annotation->disable()) {
+                static::update_entity_time($annotation->entity_guid);
+                return true;
+            }
         }
         return false;
     }
@@ -525,6 +539,7 @@ class ElggCoffee {
         return false;
     }
 
+
     private static function _add_attachment ($guid_parent, $attachment) {
         if (!is_array($attachment)) return false;
         $type = COFFEE_POST_ATTACHMENT_RELATIONSHIP;
@@ -575,5 +590,15 @@ class ElggCoffee {
             $annotations['details'] = false;
         }
         return $annotations;
+    }
+
+    private static function update_entity_time ($guid) {
+        $entity = get_entity($guid);
+        if ($entity instanceof ElggEntity) {
+            $entity->time_updated = time();
+            $entity->save();
+            return true;
+        }
+        return false;
     }
 }

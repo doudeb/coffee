@@ -206,13 +206,13 @@ class Embedly_API {
         }
         return $this->_services;
     }
-    
+
     public function services_regex() {
     	$services = $this->services();
     	$regexes = array_map('reg_imploder', $services);
     	return '#'.implode('|', $regexes).'#i';
 	}
-        
+
     private function q($params) {
         $pairs = array_map('_url_encoder_', array_keys($params), array_values($params));
         return implode('&', $pairs);
@@ -229,7 +229,7 @@ class Embedly_API {
     }
 
     private function curlExec(&$ch)
-    {	
+    {
         $res = curl_exec($ch);
         if (false === $res) {
             throw new Exception(curl_error($ch), curl_errno($ch));

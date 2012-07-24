@@ -22,18 +22,31 @@
             $('body')
                 .css('background','url(' + backgroundUrl + ')')
                 .css('background-repeat','no-repeat')
-                .css('background-attachment','fixed');
+                .css('background-attachment','fixed')
+                .css('-moz-background-size','100%')
+                .css('background-size','100%');
         } else {
             $('body').css('background','url(userpics/client_bg.jpeg)');
         }
     }
 
     var setLogo = function (logoUrl) {
+        $('.watermark').hide();
         if (logoUrl && logoUrl.length > 0) {
             $('#watermark').attr('src',logoUrl);
         } else {
             $('#watermark').attr('src','url(userpics/logo.png)');
         }
+        $('.watermark').show();
+    }
+
+    var t = function (key) {
+        console.log(key);
+        var translation = App.models.session.get('translations');
+        if (translation.length > 0) {
+            return translation[key];
+        }
+        return key;
     }
 
 	var App = {
@@ -62,7 +75,8 @@
 			siteName: null,
 			logoUrl: null,
 			backgroundUrl: null,
-			customCss: null
+			customCss: null,
+			translations: null
 		},
 
 		initialize: function () {
@@ -90,6 +104,7 @@
 			$.cookie('name', this.get('name'));
 			$.cookie('iconUrl', this.get('iconUrl'));
 			$.cookie('coverUrl', this.get('coverUrl'));
+			$.cookie('translations', this.get('translations'));
 
 			this.trigger('started');
 		},
@@ -105,7 +120,8 @@
 				username: $.cookie('username'),
 				name: $.cookie('name'),
 				iconUrl: $.cookie('iconUrl'),
-				coverUrl: $.cookie('coverUrl')
+				coverUrl: $.cookie('coverUrl'),
+				translations: $.cookie('translations')
 			});
 		},
 
@@ -129,7 +145,8 @@
 							siteName: result.name,
 							logoUrl: result.logo_url,
 							backgroundUrl: result.background_url,
-							customCss: result.custom_css
+							customCss: result.custom_css,
+							translations: result.translations
 						});
 
 						$.ajax({
@@ -279,9 +296,12 @@
 
 			if (attributes.likes.users != false) {
 				attributes.likes.users[0].first = true;
-
-				_.each(attributes.likes.users, function(like) {
+                attributes.likes.others = [];
+				_.each(attributes.likes.users, function(like,key) {
 					if (like.owner_guid == App.models.session.get('userId')) attributes.hasLiked = true;
+                    if (key >= 1 && attributes.likes.isMore) {
+                        attributes.likes.others[key] = like;
+                    }
 				});
 			}
 			if (attributes.comment.total > 0) {
@@ -290,13 +310,9 @@
                 for (i=0; i < attributes.comment.total; i++) {
                     try {
                         if (attributes.comment.comments[i].owner_guid == App.models.session.get('userId')) attributes.comment.comments[i].isCommentOwner = true;
-                    } catch (Err) {
-                        console.log(attributes.comment);
-                    }
+                    } catch (Err) {}
                 }
 			}
-                        console.log(attributes.comment);
-
 			Backbone.Model.prototype.set.call(this, attributes, options);
 		}
 	});
@@ -663,8 +679,10 @@
 
         toggleAllText: function (e) {
             var elm = $(e.currentTarget);
-            elm.parent().find('.text').toggle();
-            elm.parent().find('.text-orig').fadeToggle();
+            elm.parent().find('p.text').toggle()
+                .parent().find('p.text-orig').fadeToggle()
+                .parent().find('a.hide').toggle();
+            elm.addClass('hide');
             return false;
         }
 	});
@@ -956,6 +974,8 @@
 				Backbone.history.navigate('feed', true);
 			} else if (action == 'profile') {
 				Backbone.history.navigate('profile', true);
+			} else if (action == 'tv') {
+				Backbone.history.navigate('tv', true);
 			}
 
 			return false;
@@ -1289,13 +1309,35 @@
 
 	});
 
+	/* !View: TvAppView */
+	var TvAppView = Backbone.View.extend({
+		initialize: function () {
+			_.bindAll(this);
+			this.render();
+		},
+
+		events: {},
+
+		render: function () {
+            data =  {scripts : '<script src="static/js/jquery.color.js"></script><script src="static/js/animation.js"></script>'};
+			var element = ich.tvAppTemplate(data);
+			this.setElement(element);
+
+			this.$el.prependTo('#container');
+
+			return this;
+		}
+
+	});
+
 	/* !Router: WorkspaceRouter */
 	var WorkspaceRouter = Backbone.Router.extend({
 		routes: {
 			"login":				"login",
 			"feed":					"feed",
 			"profile":				"myProfile",
-			"profile/:user_id":		"profile"
+			"profile/:user_id":		"profile",
+			"tv":           		"tv"
 		},
 
 
@@ -1337,6 +1379,17 @@
 				App.views.profileView = new ProfileView({guid: userId});
 				App.views.menuView = new MenuView();
                 setLogo (App.models.session.get('logoUrl'));
+			} else {
+				Backbone.history.navigate('login', true);
+			}
+		},
+
+		tv: function () {
+			App.removeAllViews();
+			if (App.models.session.authenticated()) {
+				App.views.tvAppView = new TvAppView();
+				App.views.menuView = new MenuView();
+                $('.watermark').hide();
 			} else {
 				Backbone.history.navigate('login', true);
 			}

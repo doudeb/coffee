@@ -2,8 +2,20 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport" id="viewport">
+    	<meta content="yes" name="apple-mobile-web-app-capable" />
+        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+        <meta name=”viewport” content=”width=320,user-scalable=false” />
+
 		<title>Enlightn Coffee Machine</title>
 		<link href="static/css/coffee-machine.css" rel="stylesheet" />
+
+        <link href="static/img/favicon.ico" rel="shortcut icon"/>
+        <link rel="apple-touch-icon" href="static/img/iphone-icon.png" />
+        <link rel="apple-touch-icon" sizes="72x72" href="static/img/ipad-icon.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="/static/img/iphone4-icon.png" />
+        <link rel="apple-touch-startup-image" href="static/img/iphone-startup.png">
+
 		<script src="static/js/vendor/json2.js"></script>
 		<script src="static/js/vendor/jquery-1.7.2.min.js"></script>
 		<script src="static/js/vendor/underscore-min.js"></script>
@@ -88,6 +100,7 @@
                             {{#isLong}}
                                 <p class="text-orig">{{{content.textOrig}}}</p>
                                 <a class="show-all-text" href="javascript:void(0)">Show all text</a>
+                                <a class="show-all-text hide" href="javascript:void(0)">Hide text</a>
                             {{/isLong}}
 							<p class="time"><i class="icon-time"></i> {{content.friendly_time}}</p>
 							{{#attachment}}
@@ -110,7 +123,7 @@
                                     {{#likes.users}}
                                         {{#first}}<a href="#profile/{{owner_guid}}">{{name}}</a>{{/first}}
                                     {{/likes.users}}
-                                    and <a href="#">{{likes.total}} others</a> like this</p>
+                                    and <a href="#" rel="tooltip" title="{{#likes.others}}{{name}}<br /> {{/likes.others}}" data-placement="bottom">{{likes.total}} others</a> like this</p>
                                 {{/isMore}}
 							{{/likes}}
 							<ul class="comments">
@@ -149,6 +162,7 @@
 				<ul id="navigation">
 					<li><a href="" rel="tooltip" title="News Feed" data-action="feed" data-placement="right"><i class="icon-home icon-white"></i></a></li>
 					<li><a href="" rel="tooltip" title="Profile" data-action="profile" data-placement="right"><i class="icon-user icon-white"></i></a></li>
+					<li><a href="" rel="tooltip" title="Launch TV App" data-action="tv" data-placement="right"><i class="icon-tv icon-white"></i></a></li>
 					<li><a href="" rel="tooltip" title="Log out" data-action="logout" data-placement="right"><i class="icon-off icon-white"></i></a></li>
 				</ul>
 			</div>
@@ -163,7 +177,7 @@
 					<div class="content-module">
 						<div class="primary-content">
                             <ul class="update-actions">
-                                <li class="update-action update-action-poke"><a href="mailto:{{email}}&subject=Let's have a coffee !!!&body=In your hass ?" rel="tooltip" title="Coffee Poke!" data-action="coffeePoke" data-placement="right"><i class="icon-coffeepoke"></i></a></li>
+                                <li class="update-action update-action-poke"><a href="mailto:{{email}}?subject=Let's have a coffee !!!&body=In your hass ?" rel="tooltip" title="Coffee Poke!" data-action="coffeePoke" data-placement="right"><i class="icon-coffeepoke"></i></a></li>
                             </ul>
 							<div class="avatar">
 								<img src="{{icon_url}}" width="100" height="100" />
@@ -174,20 +188,19 @@
 							</div>
 							<div class="info">
 								<span class="name">{{name}}</span>
-                                {{#isOwnProfile}}
-                                Change cover picture
-                                <button class="btn btn-mini edit" rel="profile-edit tooltip" title="Change your cover pic" data-edit="userCover" id="cover-edit"><i class="icon-edit"></i></button>
-                                <form action="" method="post" enctype="multipart/form-data" class="out" id="coverUpload">
-                                    <input type="file" name="cover" id="cover">
-                                </form>
-                                {{/isOwnProfile}}
 								{{#hasHeadline}}<span class="headline"><span {{#isOwnProfile}}class="editable" data-name="headline"{{/isOwnProfile}}>{{{headline}}}</span></span>{{/hasHeadline}}
 								{{^hasHeadline}}{{#isOwnProfile}}<span class="headline"><span class="editable editable-hover" data-name="headline">[Add a headline]</span></span>{{/isOwnProfile}}{{/hasHeadline}}
 								{{#hasDepartment}}<span class="department"><span {{#isOwnProfile}}class="editable" data-name="department"{{/isOwnProfile}}>{{department}}</span></span>{{/hasDepartment}}
 								{{^hasDepartment}}{{#isOwnProfile}}<span class="department"> <span class="editable editable-hover" data-name="department">[Specify your department]</span></span>{{/isOwnProfile}}{{/hasDepartment}}
 								{{#hasLocation}}<span class="location"><span {{#isOwnProfile}}class="editable" data-name="location"{{/isOwnProfile}}>{{location}}</span></span>{{/hasLocation}}
 								{{^hasLocation}}{{#isOwnProfile}}<span class="location"><span class="editable editable-hover" data-name="location">[Choose your location]</span></span>{{/isOwnProfile}}{{/hasLocation}}
-							</div>
+                                {{#isOwnProfile}}
+                                <button class="btn edit" rel="profile-edit tooltip" title="Change your cover pic" data-edit="userCover" id="cover-edit"><i class="icon-picture"></i><strong>  Background</strong></button>
+                                <form action="" method="post" enctype="multipart/form-data" class="out" id="coverUpload">
+                                    <input type="file" name="cover" id="cover">
+                                </form>
+                                {{/isOwnProfile}}
+                            </div>
     						<!--<ul class="sm-links">
 								{{#socialmedia}}
 								<li><a href="{{link}}" class="sm sm-{{service}}" target="_blank" rel="tooltip" title="{{#isTwitter}}Twitter{{/isTwitter}}{{#isFacebook}}Facebook{{/isFacebook}}{{#isLinkedIn}}LinkedIn{{/isLinkedIn}}{{#isSkype}}Call on Skype{{/isSkype}}" data-placement="right"></a></li>
@@ -221,7 +234,8 @@
 						<div class="secondary-content">
                             <div class="other">
                                 <div class="introduction">
-                                    <h3>Introduction</h3>
+                                    <h3>Presentation</h3>
+                                    {{#t}}admin:plugins:description{{/t}}
                                 {{#hasIntroduction}}
                                     <span {{#isOwnProfile}}class="editable"{{/isOwnProfile}} data-name="introduction">{{{introduction}}}</span>
                                 {{/hasIntroduction}}
@@ -232,7 +246,7 @@
                                 <div class="info">
                                     <h3>Contact Information</h3>
                                     <ul>
-                                        <li class="email">{{email}}</li>
+                                        <li class="email"><a href="mailto:{{email}}">{{email}}</a></li>
                                         {{#hasPhone}}<li><span {{#isOwnProfile}}class="editable" data-name="phone"{{/isOwnProfile}}>{{phone}}</span></li>{{/hasPhone}}
                                         {{^hasPhone}}{{#isOwnProfile}}<li><span class="editable editable-hover" data-name="phone">[Choose your phone]</span></li>{{/isOwnProfile}}{{/hasPhone}}
                                         {{#hasCellphone}}<li><span {{#isOwnProfile}}class="editable" data-name="cellphone"{{/isOwnProfile}}>{{cellphone}}</span></li>{{/hasCellphone}}
@@ -266,6 +280,53 @@
 			</div>
 		</script>
 
+        <script type="text/html" id="tvAppTemplate">
+            <link href="static/css/style.css" rel="stylesheet" type="text/css">
+            {{{scripts}}}
+            <div id="cadre">
+                <div id="logo"><img src="static/img/logo.png" alt="Logo" width="126" height="34" /></div>
+                <div id="fondImg"><img src="" id="fond_icon_url" alt="Fondu img username" /></div>
+                <div id="contenu">
+                    <div class="postRoue">
+                        <div id="img"><img src="" id="icon_url" width="100" height="100" /></div>
+                        <div id="usernameBlanc"></div>
+                        <p><span id="friendly_time"></span></p>
+                    <div class="roue">
+                            <span>1</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>4</span>
+                            <span>5</span>
+                            <span>6</span>
+                            <span>7</span>
+                            <span>8</span>
+                            <span>9</span>
+                            <span>10</span>
+                        </div>
+                    </div>
+
+                <div class="post">
+                        <p><span id="likes"></span></p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p><span id="text"></span></p>
+                        <br style="clear:both;" />
+                        <div id="attachment">
+                                <div class="attach">
+                                <div id="marges">
+                                    <div id="typeAtt" class="piece link"></div>
+                                    <p id="miniatureAtt">&nbsp;</p>
+                                    <p id="titreAtt">&nbsp;</p>
+                                    <p id="descAtt">&nbsp;</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="fullscreen"><a href="#" onclick="javascript:pleinEcran()"><img src="static/img/full-screen.png" width="64" height="64" /></a></div>
+        </script>
+
 		<script src="static/js/coffee.js"></script>
 		<script src="static/js/bootstrap-tooltip.js"></script>
 		<script>
@@ -281,6 +342,9 @@
 					break;
 			}
 		});
+        $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange',function () {
+            $('#menu').toggle();
+        });
 		</script>
 	</body>
 </html>

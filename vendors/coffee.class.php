@@ -104,6 +104,7 @@ class ElggCoffee {
                         $return[$key]['user']['username'] = $user->username;
                         $return[$key]['user']['name'] = $user->name;
                         $return[$key]['user']['icon_url'] = ElggCoffee::_get_user_icon_url($user,'medium');
+                        $return[$key]['user']['cover_url'] = ElggCoffee::_get_user_cover_url($user);
                     }
 
                     $return[$key]['likes'] = ElggCoffee::get_likes ($post->guid, 0, 3);

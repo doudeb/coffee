@@ -11,11 +11,11 @@ html, body { background:#262626; }
 
 .postRoue { width:200px; margin:0 auto; margin-top:324px; }
 #usernameBlanc { z-index:-1; -webkit-transition: all 1s ease-in-out;-moz-transition: all 1s ease-in-out;-o-transition: all 1s ease-in-out;transition: all 1s ease-in-out;  color:#fff; margin-left:100px; z-index:33; opacity:0 }
-#usernameBlanc.animate { font-size:100px; line-height:100px;}
+#usernameBlanc.animate { font-size:60px; line-height:100px;}
 #usernameBlanc.decalageTop { left:50px !important; }
 
 .roue {width: 120px; background:#fff; opacity:0;  margin-left:100px; margin-top:180px; z-index:40; }
-.roue span { color:#494949; }
+.roue span { color:#494949; white-space: nowrap }
 .roue span, #usernameBlanc { position:absolute;padding-left:20px; display:block; clear:both; -webkit-transform-origin:0 6px;-moz-transform-origin:0% 6px;-o-transform-origin:0 6px;transform-origin:0 6px;text-transform:uppercase; font-size:90%; }
 .roue span:nth-child(1) { padding-left:20px -webkit-transform-origin:0% 0%;-moz-transform-origin:0px 0px;-o-transform-origin:0% 0%;transform-origin:0% 0%; }
 .roue span:nth-child(2) { -webkit-transform: rotate(36deg);-moz-transform: rotate(36deg);-ms-transform: rotate(36deg);-o-transform: rotate(36deg);transform: rotate(36deg); }
@@ -36,20 +36,25 @@ html, body { background:#262626; }
 
 .post { top:130px; position:absolute; left:45px; width:890px; }
 
-#img { width:100px; height:100px; position:absolute; top:17px; left:-110px; -webkit-transition: all 1s ease-in-out;-moz-transition: all 1s ease-in-out;-o-transition: all 1s ease-in-out;transition: all 1s ease-in-out;-webkit-transform-origin:0% 0%;-moz-transform-origin:0 0;-o-transform-origin:0% 0%;transform-origin:0% 0%;}
-#img.decalageTop { left:45px; }
-#text { font-size:220%; color:#252525 ; line-height: 35px;}
-#friendly_time { font-size:26px; color:#fff; top:95px; left:175px; position:absolute}
-#titreAtt { color:#252525; font-size:24px; }
-#descAtt { color:#494949; font-size:12px; }
+#img { width:100px; height:100px; position:absolute; top:10px; left:-110px; -webkit-transition: all 1s ease-in-out;-moz-transition: all 1s ease-in-out;-o-transition: all 1s ease-in-out;transition: all 1s ease-in-out;-webkit-transform-origin:0% 0%;-moz-transform-origin:0 0;-o-transform-origin:0% 0%;transform-origin:0% 0%;}
+#img.decalageTop { left:45px; margin-top: 25px;}
+#text { font-size:45px; color:#FFFFFF ; line-height: 45px;}
+.text-container { height: 200px; vertical-align: middle;display : table-cell;}
+#friendly_time { font-size:26px; color:#fff; top:89px; left:173px; position:absolute}
+#miniatureAtt {float:left;margin:26px}
+#titreAtt { color:#FFFFFF; font-size:24px; margin: 26px 0px 0px 26px;line-height: 24px;padding-top: 26px;}
+#descAtt { color:#e0e0e0; font-size:12px; margin: 15px 0px 0px 133px;padding-bottom: 27px;}
 #attachment { display:none; position:relative; }
-.attach { background:url(../img/attch.png) no-repeat; width:409px; height:280px; display:block; -webkit-border-radius:15px;border-radius: 15px; position:relative; margin-left:-52px; }
-.attach .piece { background:url(../img/sprite.png); width:190px; height:90px; display:block; position:absolute; top:-19px; left:30px; }
-#typeAtt.link { background-position:0 -0px; }
-#typeAtt.image { background-position:0 -100px; }
-#typeAtt.video { background-position:0 -200px; }
-#miniatureAtt { text-align:center; }
-#marges { width:270px; margin:0 auto; padding-top:75px;}
-.gloss { -webkit-box-shadow: 0px 0px 10px 0px #fff;-moz-box-shadow: 0px 0px 10px 0px #fff;box-shadow: 0px 0px 10px 0px #fff;  }
+#typeAtt.piece { background:url(../img/sprite.png); width:22px; height:52px; display:block; position:absolute; top:-5px;left: 15px;}
+/*#typeAtt.link { background-position:0 -0px; }
+#titreAtt.image, #titreAtt.video, #descAtt.image, #descAtt.video { display : none }
+#miniatureAtt.image, #miniatureAtt.video { width: auto }*/
+#marges.image, #marges.video {background: transparent}
+#marges.image #titreAtt, #marges.image #descAtt, #marges.video #titreAtt, #marges.video #descAtt {display : none}
+#marges.link #miniatureAtt img {width: 80px;}
+#marges.video #miniatureAtt img {width: 277px;}
+#marges.video #miniatureAtt, #marges.image #miniatureAtt {margin : 0px}
+#marges { width:500px; margin:0 0 0 0; background-color: rgba(0, 0, 0, 0.35);}
+.gloss { -webkit-box-shadow: 0px 0px 10px 0px #000;-moz-box-shadow: 0px 0px 10px 0px #000;box-shadow: 0px 0px 10px 0px #000;  }
 
 #fullscreen { position:fixed; bottom:5px; right:5px; }

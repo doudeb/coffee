@@ -21,7 +21,7 @@ $(document).ready(function() {
             if (response.status != -1) {
                 nb = objJson.length;
                 $.each(objJson, function(i,item) {
-                    $('.roue span:eq('+i+')').html(item.user.username).attr('data-guid',item.guid).attr('data-user',item.user.username);
+                    $('.roue span:eq('+i+')').html(item.user.name).attr('data-guid',item.guid).attr('data-user',item.user.name);
                 });
                 startRoue();
             } else {
@@ -56,7 +56,7 @@ function animationTxt(id) {
 
 	$('#usernameBlanc').animate({ opacity:1 },1000, function() {});
 	$('.roue').animate({ opacity:0 },1000, function() {
-		$('#usernameBlanc').animate({ top:'10px', left:0 },1000, function() {$('#usernameBlanc').addClass('animate');});
+		$('#usernameBlanc').animate({ top:'8px', left:0 },1000, function() {$('#usernameBlanc').addClass('animate');});
 	});
 	setTimeout('animerPost('+id+')',2000);
 }
@@ -79,37 +79,31 @@ function animerPost(id) {
 				$('#text').html(post.content.text.replace(/<br \/>/g," ")).show('blind');
 			$('#fond_icon_url').show('blind');
 			$('#friendly_time').html(post.content.friendly_time).show('blind');
-			if(post.attachment != false)
-			{
-				$('#typeAtt').removeClass('link image video');
-				if(post.attachment[0].type == "image")
-				{
-					$('#typeAtt').addClass('image');
+			if(post.attachment != false) {
+				$('#marges').removeClass('link image video');
+				if(post.attachment[0].type == "image") {
+					$('#marges').addClass('image');
 					$('#miniatureAtt').html('<img src="' + post.attachment[0].thumbnail + '" class="gloss" />');
 					setTimeout("arreterRoue()",seconds);
-				}
-				else
-				{
+				} else {
+                    $('#miniatureAtt').html('<a href="' + post.attachment[0].url + '" target="_blank"><img src="' + post.attachment[0].thumbnail + '" class="gloss" /></a>');
 					// Video ?
 					var idVideo = post.attachment[0].url.replace(/http:\/\/www.youtube.com\/watch\?v=/gi,"");
-					if(idVideo != post.attachment[0].url)
-					{
+					if(idVideo != post.attachment[0].url) {
 						// Video
-						$('#typeAtt').addClass('video');
-						$('#miniatureAtt').html('<a href="' + post.attachment[0].url + '" target="_blank"><img src="' + post.attachment[0].thumbnail + '" class="gloss" width="240" height="177" /></a>');
+						$('#marges').addClass('video');
+					} else {
+						$('#marges').addClass('link');
+						$('#titreAtt').html(post.attachment[0].title);
+                        if(post.attachment[0].description.length > 140)
+                            $('#descAtt').html(post.attachment[0].description.substr(0,140) + ' ...').show('blind');
+                        else
+                            $('#descAtt').html(post.attachment[0].description.replace(/<br \/>/g," ")).show('blind');
 					}
-					else
-					{
-						$('#typeAtt').addClass('link');
-						$('#titreAtt').html('<a href="' + post.attachment[0].url + '" target="_blank"><img src="' + post.attachment[0].thumbnail + '" class="gloss" width="80" height="60" style="float:left; margin-right:12px;" /></a>' + post.attachment[0].title);
-						$('#descAtt').html(post.attachment[0].description);
-					}
-					setTimeout("arreterRoue()",seconds);
+                    setTimeout("arreterRoue()",seconds);
 				}
 				$('#attachment').show('blind');
-			}
-			else
-			{
+			} else {
 				$('#attachment').hide('blind');
 				setTimeout("arreterRoue()",seconds);
 			}

@@ -24,12 +24,12 @@ function coffee_api_set_site_id () {
         }
         login($user_ent);
         $CONFIG->auth_token = $token;
-        $time_refresh = $time + (60*60);
+        $time_refresh = $time + (60*60*24);
         update_data("Update {$CONFIG->dbprefix}users_apisessions Set expires = $time_refresh Where id = " . $user_session->id);
 	} elseif (elgg_is_logged_in()) {
         $time = time();
         $user_ent = elgg_get_logged_in_user_entity();
-        $time_refresh = $time + (60*60);
+        $time_refresh = $time + (60*60*24);
         $user_token = get_data_row("SELECT * from {$CONFIG->dbprefix}users_apisessions where user_guid='$user_ent->guid'");
         update_data("Update {$CONFIG->dbprefix}users_apisessions Set expires = $time_refresh Where id = " . $user_token->id);
         $CONFIG->auth_token = $user_token->token;

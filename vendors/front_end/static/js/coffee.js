@@ -1134,7 +1134,7 @@
 			var element = $(e.currentTarget)
                 , name = element.attr('data-name')
                 , key = element.attr('data-key')
-                , prevValue = element.html().replace('<br/>', '');
+                , prevValue = element.html().replace('<br>', '');
 
                 var editingTextarea = $('<textarea class="editing editing-'+name+'" data-name="'+name+'" data-key="'+key+'">' + prevValue + '</textarea>')
                     .bind('blur', function(){
@@ -1313,10 +1313,11 @@
 	var TvAppView = Backbone.View.extend({
 		initialize: function () {
 			_.bindAll(this);
+			/*this.collection = new FeedItemList();
+			this.collection.bind('add', this.addItem);
+            console.log(this.collection);*/
 			this.render();
 		},
-
-		events: {},
 
 		render: function () {
             data =  {scripts : '<script src="static/js/jquery.color.js"></script><script src="static/js/animation.js"></script>'};

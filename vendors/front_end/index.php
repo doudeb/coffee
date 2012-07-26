@@ -174,6 +174,7 @@
 					{{^isProfileComplete}}
 					{{#isOwnProfile}}<div class="alert"><strong>This is your profile.</strong><br />It is visible to your coworkers so be sure to complete it and keep it up to date!</div>{{/isOwnProfile}}
 					{{/isProfileComplete}}
+                    {{#t}}admin{{/t}}
 					<div class="content-module">
 						<div class="primary-content">
                             <ul class="update-actions">
@@ -190,12 +191,12 @@
 								<span class="name">{{name}}</span>
 								{{#hasHeadline}}<span class="headline"><span {{#isOwnProfile}}class="editable" data-name="headline"{{/isOwnProfile}}>{{{headline}}}</span></span>{{/hasHeadline}}
 								{{^hasHeadline}}{{#isOwnProfile}}<span class="headline"><span class="editable editable-hover" data-name="headline">[Add a headline]</span></span>{{/isOwnProfile}}{{/hasHeadline}}
-								{{#hasDepartment}}<span class="department"><span {{#isOwnProfile}}class="editable" data-name="department"{{/isOwnProfile}}>{{department}}</span></span>{{/hasDepartment}}
-								{{^hasDepartment}}{{#isOwnProfile}}<span class="department"> <span class="editable editable-hover" data-name="department">[Specify your department]</span></span>{{/isOwnProfile}}{{/hasDepartment}}
+								<!--{{#hasDepartment}}<span class="department"><span {{#isOwnProfile}}class="editable" data-name="department"{{/isOwnProfile}}>{{department}}</span></span>{{/hasDepartment}}
+								{{^hasDepartment}}{{#isOwnProfile}}<span class="department"> <span class="editable editable-hover" data-name="department">[Specify your department]</span></span>{{/isOwnProfile}}{{/hasDepartment}}-->
 								{{#hasLocation}}<span class="location"><span {{#isOwnProfile}}class="editable" data-name="location"{{/isOwnProfile}}>{{location}}</span></span>{{/hasLocation}}
 								{{^hasLocation}}{{#isOwnProfile}}<span class="location"><span class="editable editable-hover" data-name="location">[Choose your location]</span></span>{{/isOwnProfile}}{{/hasLocation}}
                                 {{#isOwnProfile}}
-                                <button class="btn edit" rel="profile-edit tooltip" title="Change your cover pic" data-edit="userCover" id="cover-edit"><i class="icon-picture"></i><strong>  Background</strong></button>
+                                <span class="pull-right"><button class="btn btn-small" rel="profile-edit tooltip" title="Change your cover pic" data-edit="userCover" id="cover-edit"><i class="icon-picture"></i> Background</button></span>
                                 <form action="" method="post" enctype="multipart/form-data" class="out" id="coverUpload">
                                     <input type="file" name="cover" id="cover">
                                 </form>
@@ -247,10 +248,10 @@
                                     <h3>Contact Information</h3>
                                     <ul>
                                         <li class="email"><a href="mailto:{{email}}">{{email}}</a></li>
-                                        {{#hasPhone}}<li><span {{#isOwnProfile}}class="editable" data-name="phone"{{/isOwnProfile}}>{{phone}}</span></li>{{/hasPhone}}
-                                        {{^hasPhone}}{{#isOwnProfile}}<li><span class="editable editable-hover" data-name="phone">[Choose your phone]</span></li>{{/isOwnProfile}}{{/hasPhone}}
-                                        {{#hasCellphone}}<li><span {{#isOwnProfile}}class="editable" data-name="cellphone"{{/isOwnProfile}}>{{cellphone}}</span></li>{{/hasCellphone}}
-                                        {{^hasCellphone}}{{#isOwnProfile}}<li><span class="editable editable-hover" data-name="cellphone">[Choose your cellphone]</span></li>{{/isOwnProfile}}{{/hasCellphone}}
+                                        {{#hasPhone}}<li><span {{#isOwnProfile}}class="editable" data-name="phone"{{/isOwnProfile}}>{{phone}}</span> - work</li>{{/hasPhone}}
+                                        {{^hasPhone}}{{#isOwnProfile}}<li><span class="editable editable-hover" data-name="phone">[Choose your phone]</span> - work</li>{{/isOwnProfile}}{{/hasPhone}}
+                                        {{#hasCellphone}}<li><span {{#isOwnProfile}}class="editable" data-name="cellphone"{{/isOwnProfile}}>{{cellphone}}</span> - mobile</li>{{/hasCellphone}}
+                                        {{^hasCellphone}}{{#isOwnProfile}}<li><span class="editable editable-hover" data-name="cellphone">[Choose your cellphone]</span> - mobile</li>{{/isOwnProfile}}{{/hasCellphone}}
                                     </ul>
                                 </div>
                             </div>
@@ -285,7 +286,7 @@
             {{{scripts}}}
             <div id="cadre">
                 <div id="logo"><img src="static/img/logo.png" alt="Logo" width="126" height="34" /></div>
-                <div id="fondImg"><img src="" id="fond_icon_url" alt="Fondu img username" /></div>
+                <div id="fondImg"><img src="" id="fond_icon_url" alt="" /></div>
                 <div id="contenu">
                     <div class="postRoue">
                         <div id="img"><img src="" id="icon_url" width="100" height="100" /></div>
@@ -306,19 +307,13 @@
                     </div>
 
                 <div class="post">
-                        <p><span id="likes"></span></p>
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                        <p><span id="text"></span></p>
-                        <br style="clear:both;" />
+                        <div class="text-container"><p id="text"></p></div>
                         <div id="attachment">
-                                <div class="attach">
-                                <div id="marges">
-                                    <div id="typeAtt" class="piece link"></div>
-                                    <p id="miniatureAtt">&nbsp;</p>
-                                    <p id="titreAtt">&nbsp;</p>
-                                    <p id="descAtt">&nbsp;</p>
-                                </div>
+                            <div id="marges">
+                                <div id="typeAtt" class="piece"></div>
+                                <p id="miniatureAtt">&nbsp;</p>
+                                <p id="titreAtt">&nbsp;</p>
+                                <p id="descAtt">&nbsp;</p>
                             </div>
                         </div>
                     </div>

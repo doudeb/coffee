@@ -957,6 +957,7 @@
                 elm = $(e.currentTarget);
             elm.toggleClass('on');
             this.isBroadCastMessage = elm.hasClass('on');
+            return false;
         }
 
 	});

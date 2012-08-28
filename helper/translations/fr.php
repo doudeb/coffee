@@ -1,0 +1,41 @@
+<?php
+	$translations = array(
+        /*profile */
+        'coffee:profile:add:hobbiesandinterest' => 'Ajouter un centre d\intérêt'
+        , 'coffee:profile:hobbiesandinterest' => 'Centres d\intérêts'
+        , 'coffee:profile:information:mobilephone' => 'portable'
+        , 'coffee:profile:information:workphone' => 'travail'
+        , 'coffee:profile:information' => 'Coordonnées'
+        , 'coffee:profile:presentation' => 'Presentation'
+        , 'coffee:profile:button:background' => 'Fond d\écran'
+        , 'coffee:profile:title:changecoverpic' => 'Personnaliser le fond d\écran de mon profil'
+        , 'coffee:profile:button:changeavatar' => 'Modifier ma photo'
+        , 'coffee:poke:action' => 'Coffee Poke'
+        , 'coffee:poke:body' => 'Allons prendre un café'
+        , 'coffee:poke:subject' => 'Pause café?'
+        , 'coffee:profile:incomplete' => '<strong>Ceci est votre profil.</strong><br />Tous vos collègues y ont accès. Faites donc bien attention à bien le personnaliser et le mettre à jour!'
+        /*feed*/
+        , 'coffee:feed:share' => 'Partagez quelque chose avec vos collègues‚Ä¶'
+        , 'coffee:feed:upload' => 'Ajouter une pièce jointe...'
+        , 'coffee:feed:send' => 'Envoyer'
+        , 'coffee:feeditem:showalltext' => 'Voir plus'
+        , 'coffee:feeditem:hidetext' => 'Cacher'
+        , 'coffee:feeditem:likesthis' => 'aiment ça'
+        , 'coffee:feeditem:and' => 'et'
+        , 'coffee:feeditem:others' => 'autres'
+        , 'coffee:feeditem:showall' => 'Voir tout'
+        , 'coffee:feeditem:comments' => 'commentaires'
+        , 'coffee:feeditem:action:removecomment' => 'Supprimer le commentaire'
+        , 'coffee:feeditem:action:addcomment' => 'Ajouter un commentaire...'
+        , 'coffee:feeditem:action:like' => 'J\aime'
+        , 'coffee:feeditem:action:unlike' => 'Je n\aime plus'
+        , 'coffee:feeditem:action:removecomment' => 'Supprimer le commentaire'
+        , 'coffee:feeditem:action:addcomment' => 'Ajouter un commentaire...'
+        , 'coffee:feeditem:action:addcomment' => 'Ajouter un commentaire...'
+        /*menu*/
+        , 'coffee:menu:feedlist' => 'Mur principal'
+        , 'coffee:menu:profile' => 'Mon profil'
+        , 'coffee:menu:tvapp' => 'Voir l\application TV'
+        , 'coffee:menu:logout' => 'Me déconnecter'
+
+    );

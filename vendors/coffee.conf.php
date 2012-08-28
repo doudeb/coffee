@@ -1,6 +1,7 @@
 <?php
 
 define('COFFEE_SUBTYPE', 'coffee_subtype');
+define('COFFEE_SUBTYPE_BROADCAST_MESSAGE', 'coffee_broadcast_message');
 define('COFFEE_LINK_SUBTYPE', 'coffee_link');
 define('COFFEE_COMMENT', 'coffee_comment');
 define('COFFEE_DEFAULT_ACCESS_ID', ACCESS_LOGGED_IN);
@@ -44,9 +45,11 @@ $exposed[$i]['params']          	= array(
                                              "post" => array('type' => 'string'
                                                             , 'required' => true )
                                                 , "attachment" => array('type' => 'array'
-                                                            , 'required' => false )
+                                                            , 'required' => false
+                                                            , 'default' => array())
                                                 , "type" => array('type' => 'string'
-                                                            , 'required' => false )
+                                                            , 'required' => false
+                                                            , 'default' => '')
                                                 );
 $exposed[$i]['comment']          	= 'Allow user to create a new post.
                                         @param attachment array : contain guid
@@ -78,9 +81,9 @@ $exposed[$i]['params']          	= array( "newer_than" => array('type' => 'int'
                                             , "owner_guids" => array('type' => 'array'
                                                             , 'required' => false
                                                             , 'default' => array())
-                                            , "type" => array('type' => 'string'
+                                            , "type" => array('type' => 'array'
                                                             , 'required' => false
-                                                            , 'default' => COFFEE_SUBTYPE)
+                                                            , 'default' => array(COFFEE_SUBTYPE,COFFEE_SUBTYPE_BROADCAST_MESSAGE))
                                             , "guid" => array('type' => 'int'
                                                             , 'required' => false
                                                             , 'default' => false));

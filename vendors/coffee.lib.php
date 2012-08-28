@@ -22,6 +22,7 @@ function coffee_api_set_site_id () {
         if (!$user_ent instanceof ElggUser) {
             return false;
         }
+        elgg_unregister_event_handler('login', 'user','user_login');
         login($user_ent);
         $CONFIG->auth_token = $token;
         $time_refresh = $time + (60*60*24);
@@ -48,7 +49,7 @@ function coffee_api_set_site_id () {
  *
  */
 function coffee_api_public_pages($hook, $handler, $return, $params){
-	$pages = array('userIcon/.*','dwl/*','upl/*', 'testApi','userCover/*');
+	$pages = array('userIcon/.*','dwl/.*','upl/.*', 'testApi','userCover/.*');
 	return array_merge($pages, $return);
 }
 
@@ -168,13 +169,39 @@ function _convert($content) {
  * @param unknown_type $returnvalue
  * @param unknown_type $params
  */
-function coffee_write_permission_check($hook, $entity_type, $returnvalue, $params)
-{
-        if ($params['entity']->getSubtype() == COFFEE_SUBTYPE && $params['entity']->access_id == ACCESS_LOGGED_IN) {
-            return true;
-        }
+function coffee_write_permission_check($hook, $entity_type, $returnvalue, $params) {
+    if ($params['entity']->getSubtype() == COFFEE_SUBTYPE && $params['entity']->access_id == ACCESS_LOGGED_IN) {
+        return true;
+    }
 }
 
+function _get_translation_table ($country_code = 'en') {
+    include_once elgg_get_plugins_path() . 'coffee/helper/translations/' . $country_code . '.php';
+    return $translations;
+}
+
+function lock_index($hook, $type, $return, $params) {
+	if (elgg_is_admin_logged_in()) {
+        forward('admin/users/online');
+		return true;
+    } elseif (elgg_is_logged_in()) {
+		forward('settings/user/');
+		return true;
+	}
+}
+
+function user_login ($action,$type,$user) {
+    if (function_exists('get_site_id') && $user instanceof ElggUser) {
+        $site = get_site_id();
+        if ($site === null || $site === false) {
+            $site = (int) datalist_get('default_site');
+        }
+        if ($user->site_guid == $site) {
+            return true;
+        }
+    }
+    return false;
+}
 
 /**
 
@@ -192,3 +219,16 @@ if (is_array($exposed)) {
                         ,$expose['require_user_auth']);
     }
 }
+
+add_translation("fr",array());
+add_translation("es",array());
+
+global $CONFIG;
+
+unset($CONFIG->menus['page'][0]);
+unset($CONFIG->menus['page'][1]);
+unset($CONFIG->menus['page'][2]);
+unset($CONFIG->menus['page'][3]);
+unset($CONFIG->menus['page'][8]);
+unset($CONFIG->menus['page'][9]);
+unset($CONFIG->menus['page'][16]);

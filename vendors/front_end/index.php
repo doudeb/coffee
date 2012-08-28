@@ -30,9 +30,6 @@
 		</div>
 
 
-
-
-
 		<script type="text/html" id="loginTemplate">
 			<div id="login">
 				<form class="form-horizontal">
@@ -62,16 +59,21 @@
 					<div class="primary-content">
 						<div class="update-content">
 							<div class="avatar"><img src="{{icon_url}}" width="60" height="60" /></div>
-							<textarea class="update-text input-xlarge" placeholder="Share something with your colleagues…"></textarea>
+							<textarea class="update-text input-xlarge" placeholder="{{#translate}}coffee:feed:share{{/translate}}"></textarea>
 						</div>
 						<div class="update-actions">
-							<span class="add-media"><a href="#">Upload something...</a></span>
+							<span class="add-media"><a href="#">{{#translate}}coffee:feed:upload{{/translate}}</a></span>
                              <form action="" method="post" enctype="multipart/form-data" class="out" id="uploadForm">
                                 <input type="file" name="upload" id="upload">
                             </form>
-							<button id="postUpdate" class="btn btn-primary">Send</button>
+							<button id="postUpdate" class="btn btn-primary">{{#translate}}coffee:feed:send{{/translate}}</button>
 							<img class="loader" src="static/img/loader.gif" width="16" height="16" />
-						</div>
+                            {{#isAdmin}}
+                            <span class="broadcastMessage">
+                                    <a class="" rel="tooltip" title="Broadcast message" href="" data-placement="left"><i class="icon-bullhorn"></i></a>
+                            </span>
+                            {{/isAdmin}}
+                        </div>
 					</div>
 				</div>
 				<div id="feed-items">
@@ -92,6 +94,9 @@
 		<script type="text/html" id="feedItemTemplate">
 			<div class="feed-item" data-guid="{{guid}}">
 				<div class="content-module">
+                    {{#isBroadCastMessage}}
+                    <span class="broadcastMessage"></span>
+                    {{/isBroadCastMessage}}
 					<div class="primary-content">
 						<a class="avatar" href="#profile/{{user.guid}}"><img src="{{user.icon_url}}" title="{{user.name}}" width="40" height="40" /></a>
 						<div class="update">
@@ -99,8 +104,8 @@
 							<p class="text">{{{content.text}}}</p>
                             {{#isLong}}
                                 <p class="text-orig">{{{content.textOrig}}}</p>
-                                <a class="show-all-text" href="javascript:void(0)">Show all text</a>
-                                <a class="show-all-text hide" href="javascript:void(0)">Hide text</a>
+                                <a class="show-all-text" href="javascript:void(0)">{{#translate}}coffee:feeditem:showalltext{{/translate}}</a>
+                                <a class="show-all-text hide" href="javascript:void(0)">{{#translate}}coffee:feeditem:hidetext{{/translate}}</a>
                             {{/isLong}}
 							<p class="time"><i class="icon-time"></i> {{content.friendly_time}}</p>
 							{{#attachment}}
@@ -117,41 +122,41 @@
 					<div class="secondary-content">
 						<div class="interactions">
 							{{#likes}}
-								{{#isOne}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a> {{/likes.users}}likes this</p>{{/isOne}}
-								{{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a> {{#first}}and {{/first}}{{/likes.users}} like this</p>{{/isTwo}}
+								{{#isOne}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a> {{/likes.users}}{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isOne}}
+								{{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a> {{#first}}{{#translate}}coffee:feeditem:and{{/translate}} {{/first}}{{/likes.users}} {{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isTwo}}
 								{{#isMore}}<p class="likes">
                                     {{#likes.users}}
                                         {{#first}}<a href="#profile/{{owner_guid}}">{{name}}</a>{{/first}}
                                     {{/likes.users}}
-                                    and <a href="#" rel="tooltip" title="{{#likes.others}}{{name}}<br /> {{/likes.others}}" data-placement="bottom">{{likes.total}} others</a> like this</p>
+                                    {{#translate}}coffee:feeditem:and{{/translate}} <a href="#" rel="tooltip" title="{{#likes.others}}{{name}}<br /> {{/likes.others}}" data-placement="bottom">{{likes.total}} {{#translate}}coffee:feeditem:others{{/translate}}</a> {{#translate}}coffee:feeditem:likesthis{{/translate}}</p>
                                 {{/isMore}}
 							{{/likes}}
 							<ul class="comments">
 								{{#comment.showAllLink}}
-									<li class="show-all"><a class="show-all-link" href="javascript:void(0)">Show all {{comment.total}} comments</a></li>
+									<li class="show-all"><a class="show-all-link" href="javascript:void(0)">{{#translate}}coffee:feeditem:showall{{/translate}} {{comment.total}} {{#translate}}coffee:feeditem:comments{{/translate}}</a></li>
 								{{/comment.showAllLink}}
 								{{#comment.comments}}
 									<li class="comment">
 										<a class="avatar" href="#profile/{{owner_guid}}"><img src="{{icon_url}}" title="{{name}}" width="35" height="35" /></a>
 										<div class="comment-content">
 											<a href="#profile/{{owner_guid}}" class="name">{{name}}</a>
-                                            {{#isCommentOwner}}<span class="pull-right remove-comment" data-id="{{id}}"><a href="javascript:void(0)" rel="tooltip" title="Remove comment" data-placement="right"><i class="icon-trash"></i></a></span>{{/isCommentOwner}}
+                                            {{#isCommentOwner}}<span class="pull-right remove-comment" data-id="{{id}}"><a href="javascript:void(0)" rel="tooltip" title="{{#translate}}coffee:feeditem:action:removecomment{{/translate}}" data-placement="right"><i class="icon-trash"></i></a></span>{{/isCommentOwner}}
 											<p class="text">{{text}}</p>
 											<p class="time">{{friendly_time}}</p>
 										</div>
 									</li>
 								{{/comment.comments}}
 								<li class="new-comment">
-									<textarea class="new-comment-textarea" placeholder="Write a comment..."></textarea>
+									<textarea class="new-comment-textarea" placeholder="{{#translate}}coffee:feeditem:action:addcomment{{/translate}}"></textarea>
 								</li>
 							</ul>
 						</div>
 					</div>
 					<ul class="update-actions">
-						{{^hasLiked}}<li class="update-action update-action-like"><a href="{{id}}" rel="tooltip" title="Like" data-action="like" data-placement="right"><i class="icon-thumbs-up"></i></a></li>{{/hasLiked}}
-						{{#hasLiked}}<li class="update-action update-action-unlike"><a href="#" rel="tooltip" title="Unlike" data-action="unlike" data-placement="right"><i class="icon-thumbs-up"></i></a></li>{{/hasLiked}}
-						<li class="update-action update-action-comment"><a href="#" rel="tooltip" title="Add a comment" data-action="comment" data-placement="right"><i class="icon-reply"></i></a></li>
-						{{#isOwner}}<li class="update-action update-action-remove"><a href="#" rel="tooltip" title="Remove update" data-action="remove" data-placement="right"><i class="icon-trash"></i></a></li>{{/isOwner}}
+						{{^hasLiked}}<li class="update-action update-action-like"><a href="{{id}}" rel="tooltip" title="{{#translate}}coffee:feeditem:action:like{{/translate}}" data-action="like" data-placement="right"><i class="icon-thumbs-up"></i></a></li>{{/hasLiked}}
+						{{#hasLiked}}<li class="update-action update-action-unlike"><a href="#" rel="tooltip" title="{{#translate}}coffee:feeditem:action:unlike{{/translate}}" data-action="unlike" data-placement="right"><i class="icon-thumbs-up"></i></a></li>{{/hasLiked}}
+						<li class="update-action update-action-comment"><a href="#" rel="tooltip" title="{{#translate}}coffee:feeditem:action:addcomment{{/translate}}" data-action="comment" data-placement="right"><i class="icon-reply"></i></a></li>
+						{{#isOwner}}<li class="update-action update-action-remove"><a href="#" rel="tooltip" title="{{#translate}}coffee:feeditem:action:removecomment{{/translate}}" data-action="remove" data-placement="right"><i class="icon-trash"></i></a></li>{{/isOwner}}
 					</ul>
 				</div>
 			</div><!-- /.feed-item -->
@@ -160,10 +165,10 @@
 		<script type="text/html" id="menuTemplate">
 			<div id="menu">
 				<ul id="navigation">
-					<li><a href="" rel="tooltip" title="News Feed" data-action="feed" data-placement="right"><i class="icon-home icon-white"></i></a></li>
-					<li><a href="" rel="tooltip" title="Profile" data-action="profile" data-placement="right"><i class="icon-user icon-white"></i></a></li>
-					<li><a href="" rel="tooltip" title="Launch TV App" data-action="tv" data-placement="right"><i class="icon-tv icon-white"></i></a></li>
-					<li><a href="" rel="tooltip" title="Log out" data-action="logout" data-placement="right"><i class="icon-off icon-white"></i></a></li>
+					<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:feedlist{{/translate}}" data-action="feed" data-placement="right"><i class="icon-home icon-white"></i></a></li>
+					<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:profile{{/translate}}" data-action="profile" data-placement="right"><i class="icon-user icon-white"></i></a></li>
+					<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:tvapp{{/translate}}" data-action="tv" data-placement="right"><i class="icon-tv icon-white"></i></a></li>
+					<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:logout{{/translate}}" data-action="logout" data-placement="right"><i class="icon-off icon-white"></i></a></li>
 				</ul>
 			</div>
 		</script>
@@ -172,31 +177,30 @@
 			<div id="content">
 				<div id="profile"{{#isOwnProfile}} class="own-profile{{^isProfileComplete}} profile-editing{{/isProfileComplete}}"{{/isOwnProfile}}>
 					{{^isProfileComplete}}
-					{{#isOwnProfile}}<div class="alert"><strong>This is your profile.</strong><br />It is visible to your coworkers so be sure to complete it and keep it up to date!</div>{{/isOwnProfile}}
+					{{#isOwnProfile}}<div class="alert">{{#translate}}coffee:profile:incomplete{{/translate}}</div>{{/isOwnProfile}}
 					{{/isProfileComplete}}
-                    {{#t}}admin{{/t}}
 					<div class="content-module">
 						<div class="primary-content">
                             <ul class="update-actions">
-                                <li class="update-action update-action-poke"><a href="mailto:{{email}}?subject=Let's have a coffee !!!&body=In your hass ?" rel="tooltip" title="Coffee Poke!" data-action="coffeePoke" data-placement="right"><i class="icon-coffeepoke"></i></a></li>
+                                <li class="update-action update-action-poke"><a href="mailto:{{email}}?subject={{#translate}}coffee:poke:subject{{/translate}}&body={{#translate}}coffee:poke:body{{/translate}}" rel="tooltip" title="{{#translate}}coffee:poke:action{{/translate}}" data-action="coffeePoke" data-placement="right"><i class="icon-coffeepoke"></i></a></li>
                             </ul>
 							<div class="avatar">
 								<img src="{{icon_url}}" width="100" height="100" />
                                 <form action="" method="post" enctype="multipart/form-data" class="out" id="avatarUpload">
                                     <input type="file" name="avatar" id="avatar">
                                 </form>
-								{{#isOwnProfile}}<button class="btn btn-mini edit" rel="profile-edit tooltip" title="Change avatar" data-edit="avatar"><i class="icon-edit"></i></button>{{/isOwnProfile}}
+								{{#isOwnProfile}}<button class="btn btn-mini edit" rel="profile-edit tooltip" title="{{#translate}}coffee:profile:button:changeavatar{{/translate}}" data-edit="avatar"><i class="icon-edit"></i></button>{{/isOwnProfile}}
 							</div>
 							<div class="info">
 								<span class="name">{{name}}</span>
 								{{#hasHeadline}}<span class="headline"><span {{#isOwnProfile}}class="editable" data-name="headline"{{/isOwnProfile}}>{{{headline}}}</span></span>{{/hasHeadline}}
-								{{^hasHeadline}}{{#isOwnProfile}}<span class="headline"><span class="editable editable-hover" data-name="headline">[Add a headline]</span></span>{{/isOwnProfile}}{{/hasHeadline}}
+								{{^hasHeadline}}{{#isOwnProfile}}<span class="headline"><span class="editable editable-hover" data-name="headline">{{#translate}}coffee:profile:addheadline{{/translate}}</span></span>{{/isOwnProfile}}{{/hasHeadline}}
 								<!--{{#hasDepartment}}<span class="department"><span {{#isOwnProfile}}class="editable" data-name="department"{{/isOwnProfile}}>{{department}}</span></span>{{/hasDepartment}}
 								{{^hasDepartment}}{{#isOwnProfile}}<span class="department"> <span class="editable editable-hover" data-name="department">[Specify your department]</span></span>{{/isOwnProfile}}{{/hasDepartment}}-->
 								{{#hasLocation}}<span class="location"><span {{#isOwnProfile}}class="editable" data-name="location"{{/isOwnProfile}}>{{location}}</span></span>{{/hasLocation}}
-								{{^hasLocation}}{{#isOwnProfile}}<span class="location"><span class="editable editable-hover" data-name="location">[Choose your location]</span></span>{{/isOwnProfile}}{{/hasLocation}}
+								{{^hasLocation}}{{#isOwnProfile}}<span class="location"><span class="editable editable-hover" data-name="location">coffee:profile:addlocation</span></span>{{/isOwnProfile}}{{/hasLocation}}
                                 {{#isOwnProfile}}
-                                <span class="pull-right"><button class="btn btn-small" rel="profile-edit tooltip" title="Change your cover pic" data-edit="userCover" id="cover-edit"><i class="icon-picture"></i> Background</button></span>
+                                <span class="pull-right"><button class="btn btn-small" rel="profile-edit tooltip" title="{{#translate}}coffee:profile:title:changecoverpic{{/translate}}" data-edit="userCover" id="cover-edit"><i class="icon-picture"></i> {{#translate}}coffee:profile:button:background{{/translate}}</button></span>
                                 <form action="" method="post" enctype="multipart/form-data" class="out" id="coverUpload">
                                     <input type="file" name="cover" id="cover">
                                 </form>
@@ -235,35 +239,34 @@
 						<div class="secondary-content">
                             <div class="other">
                                 <div class="introduction">
-                                    <h3>Presentation</h3>
-                                    {{#t}}admin:plugins:description{{/t}}
+                                    <h3>{{#translate}}coffee:profile:presentation{{/translate}}</h3>
                                 {{#hasIntroduction}}
                                     <span {{#isOwnProfile}}class="editable"{{/isOwnProfile}} data-name="introduction">{{{introduction}}}</span>
                                 {{/hasIntroduction}}
                                 {{^hasIntroduction}}{{#isOwnProfile}}
-                                    <span class="editable editable-hover" data-name="introduction">[Write a short introduction]</span>
+                                    <span class="editable editable-hover" data-name="introduction">{{#translate}}coffee:profile:add:presentation{{/translate}}</span>
                                 {{/isOwnProfile}}{{/hasIntroduction}}
                                 </div>
                                 <div class="info">
-                                    <h3>Contact Information</h3>
+                                    <h3>{{#translate}}coffee:profile:information{{/translate}}</h3>
                                     <ul>
                                         <li class="email"><a href="mailto:{{email}}">{{email}}</a></li>
-                                        {{#hasPhone}}<li><span {{#isOwnProfile}}class="editable" data-name="phone"{{/isOwnProfile}}>{{phone}}</span> - work</li>{{/hasPhone}}
-                                        {{^hasPhone}}{{#isOwnProfile}}<li><span class="editable editable-hover" data-name="phone">[Choose your phone]</span> - work</li>{{/isOwnProfile}}{{/hasPhone}}
-                                        {{#hasCellphone}}<li><span {{#isOwnProfile}}class="editable" data-name="cellphone"{{/isOwnProfile}}>{{cellphone}}</span> - mobile</li>{{/hasCellphone}}
-                                        {{^hasCellphone}}{{#isOwnProfile}}<li><span class="editable editable-hover" data-name="cellphone">[Choose your cellphone]</span> - mobile</li>{{/isOwnProfile}}{{/hasCellphone}}
+                                        {{#hasPhone}}<li><span {{#isOwnProfile}}class="editable" data-name="phone"{{/isOwnProfile}}>{{phone}}</span> - {{#translate}}coffee:profile:information:workphone{{/translate}}</li>{{/hasPhone}}
+                                        {{^hasPhone}}{{#isOwnProfile}}<li><span class="editable editable-hover" data-name="phone">{{#translate}}coffee:profile:add:workphone{{/translate}}</span> - {{#translate}}coffee:profile:information:workphone{{/translate}}</li>{{/isOwnProfile}}{{/hasPhone}}
+                                        {{#hasCellphone}}<li><span {{#isOwnProfile}}class="editable" data-name="cellphone"{{/isOwnProfile}}>{{cellphone}}</span> - {{#translate}}coffee:profile:information:mobilephone{{/translate}}</li>{{/hasCellphone}}
+                                        {{^hasCellphone}}{{#isOwnProfile}}<li><span class="editable editable-hover" data-name="cellphone">{{#translate}}coffee:profile:add:mobilephone{{/translate}}</span> - {{#translate}}coffee:profile:information:workphone{{/translate}}</li>{{/isOwnProfile}}{{/hasCellphone}}
                                     </ul>
                                 </div>
                             </div>
 							<div class="other">
 								<div class="hobbies-interests">
-									<h3>Hobbies &amp; Interests</h3>
+									<h3>{{#translate}}coffee:profile:hobbiesandinterest{{/translate}}</h3>
 									<ul>
 										{{#hobbies}}
 										<li><span {{#isOwnProfile}}class="editable" data-name="hobbies" data-key="{{key}}"{{/isOwnProfile}}>{{value}}</span></li>
 										{{/hobbies}}
 									</ul>
-									{{#isOwnProfile}}<button class="btn btn-small add-hobby"><i class="icon-plus"></i> Add a hobby or interest</button>{{/isOwnProfile}}
+									{{#isOwnProfile}}<button class="btn btn-small add-hobby"><i class="icon-plus"></i> {{#translate}}coffee:profile:add:hobbiesandinterest{{/translate}}</button>{{/isOwnProfile}}
 								</div>
 								<!--<div class="languages">
 									<h3>Languages</h3>

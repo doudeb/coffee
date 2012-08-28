@@ -1,4 +1,6 @@
 (function($){
+    /* Vars */
+    var translations = null;
 
 	/* Tools */
 	var stripslashes = function (str) {
@@ -41,10 +43,9 @@
     }
 
     var t = function (key) {
-        console.log(key);
-        var translation = App.models.session.get('translations');
-        if (translation.length > 0) {
-            return translation[key];
+        if (translations === null) translations = $.parseJSON($.cookie('translations'));
+        if (translations[key]) {
+            return translations[key];
         }
         return key;
     }
@@ -76,7 +77,8 @@
 			logoUrl: null,
 			backgroundUrl: null,
 			customCss: null,
-			translations: null
+			translations: null,
+            isAdmin: null
 		},
 
 		initialize: function () {
@@ -105,6 +107,7 @@
 			$.cookie('iconUrl', this.get('iconUrl'));
 			$.cookie('coverUrl', this.get('coverUrl'));
 			$.cookie('translations', this.get('translations'));
+			$.cookie('isAdmin', this.get('isAdmin'));
 
 			this.trigger('started');
 		},
@@ -121,7 +124,8 @@
 				name: $.cookie('name'),
 				iconUrl: $.cookie('iconUrl'),
 				coverUrl: $.cookie('coverUrl'),
-				translations: $.cookie('translations')
+				translations: $.cookie('translations'),
+				isAdmin: $.cookie('isAdmin')
 			});
 		},
 
@@ -139,16 +143,15 @@
 				success: function (response) {
 					if (response.status != -1) {
 						var result = response.result;
-
 						self.set({
 							userId: result.user_guid,
 							siteName: result.name,
 							logoUrl: result.logo_url,
 							backgroundUrl: result.background_url,
 							customCss: result.custom_css,
-							translations: result.translations
+							translations: result.translations,
+							isAdmin: result.is_admin==='true'?true:''
 						});
-
 						$.ajax({
 							type: 'GET',
 							url: App.resourceUrl,
@@ -196,6 +199,7 @@
 			$.cookie('name', null);
 			$.cookie('iconUrl', null);
 			$.cookie('coverUrl', null);
+			$.cookie('isAdmin', null);
 
 			Backbone.history.navigate('login', true);
 		}
@@ -313,6 +317,8 @@
                     } catch (Err) {}
                 }
 			}
+
+            attributes.isBroadCastMessage = (attributes.content.type === 'coffee_broadcast_message') ? true : false;
 			Backbone.Model.prototype.set.call(this, attributes, options);
 		}
 	});
@@ -329,14 +335,13 @@
 
         loadFeed: function (offset,limit) {
             var self = this;
-
 			$.ajax({
 				type: 'GET',
 				url: App.resourceUrl,
 				dataType: 'json',
 				data: {
 					method: 'coffee.getPosts'
-					, auth_token: self.get('authToken')
+					, auth_token: App.models.session.get('authToken')
 					, offset: offset?offset:0
 					, limit: limit?limit:10
 				},
@@ -344,7 +349,6 @@
 					if (response.status != -1) {
 						var result = response.result;
 						self.add(result);
-
 						self.startCheckingForNewPosts();
 					} else {
 						/* Error */
@@ -362,7 +366,7 @@
 				dataType: 'json',
 				data: {
 					method: 'coffee.getPost',
-					auth_token: self.get('authToken'),
+					auth_token: App.models.session.get('authToken'),
 					guid: postGuid
 				},
 				success: function (response) {
@@ -387,7 +391,7 @@
 				dataType: 'json',
 				data: {
 					method: 'coffee.getPosts',
-					auth_token: self.get('authToken'),
+					auth_token: App.models.session.get('authToken'),
 					newer_than: latestTimestamp
 				},
 				success: function (response) {
@@ -431,7 +435,9 @@
 		},
 
 		render: function () {
-			var element = ich.feedItemTemplate(this.model.toJSON());
+            data = this.model.toJSON();
+            data.translate = function() {return function(text) {return t(text)}};
+			var element = ich.feedItemTemplate(data);
 
 			$(this.el).replaceWith(element);
 			this.setElement(element);
@@ -746,6 +752,7 @@
 			this.offset = 0;
 			this.attachmentGuid = false;
 			this.isAttaching = false;
+			this.isBroadCastMessage = false;
 
 			this.render();
 		},
@@ -754,11 +761,15 @@
 			'click #postUpdate': 'postUpdate',
 			'keyup .update-text': 'listenForLink',
 			'click .attachment .remove': 'removeAttachment',
-			'click .add-media': 'uploadMedia'
+			'click .add-media': 'uploadMedia',
+			'click .broadcastMessage': 'toggleBroadcastMessage'
 		},
 
 		render: function () {
-			var element = ich.microbloggingTemplate({icon_url: App.models.session.get('iconUrl')});
+            data = {icon_url: App.models.session.get('iconUrl')
+                    , isAdmin: App.models.session.get('isAdmin')};
+            data.translate = function() {return function(text) {return t(text)}};
+			var element = ich.microbloggingTemplate(data);
 			this.setElement(element);
 
 			this.$el.prependTo('#container');
@@ -795,9 +806,9 @@
 					var data = {
 						method: 'coffee.createNewPost',
 						auth_token: App.models.session.get('authToken'),
-						post: updateText
+						post: updateText,
+						type: this.isBroadCastMessage?'coffee_broadcast_message':''
 					};
-
 					if (self.attachmentGuid != false) data.attachment = [self.attachmentGuid];
 
 					$.ajax({
@@ -873,7 +884,6 @@
 						if (response.status != -1) {
 							var result = response.result;
 							self.attachmentGuid = result.guid;
-							console.log(self.attachmentGuid);
 							self.attachmentElement = ich.microbloggingAttachmentTemplate(result);
 							self.attachmentElement
 								.insertBefore(self.$el.find('.update-actions').eq(0));
@@ -940,6 +950,13 @@
             } else {
                 /* Error */
             }
+        },
+
+        toggleBroadcastMessage : function (e) {
+            var self = this,
+                elm = $(e.currentTarget);
+            elm.toggleClass('on');
+            this.isBroadCastMessage = elm.hasClass('on');
         }
 
 	});
@@ -956,7 +973,8 @@
 		},
 
 		render: function () {
-			var element = ich.menuTemplate();
+            data.translate = function() {return function(text) {return t(text)}};
+			var element = ich.menuTemplate(data);
 			this.setElement(element);
 
 			this.$el.prependTo('#container');
@@ -1105,7 +1123,9 @@
 		},
 
 		render: function () {
-			var element = ich.profileTemplate(this.model.toJSON());
+            data = this.model.toJSON();
+            data.translate = function() {return function(text) {return t(text)}};
+			var element = ich.profileTemplate(data);
 			$(this.el).replaceWith(element);
 			this.setElement(element);
             setBackground (this.model.get('cover_url'));

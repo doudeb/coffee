@@ -48,7 +48,7 @@ class ElggCoffee {
         if (!$guid) {
             return false;
         }
-        return static::get_posts(0,0,10,false,COFFEE_SUBTYPE, $guid);
+        return static::get_posts(0,0,10,false,array(COFFEE_SUBTYPE,COFFEE_SUBTYPE_BROADCAST_MESSAGE), $guid);
     }
 
     public function get_site_data () {
@@ -65,18 +65,19 @@ class ElggCoffee {
             $viewtype = elgg_get_viewtype();
             return array(
                     'user_guid' => elgg_get_logged_in_user_guid()
+                    , 'is_admin' => elgg_is_admin_logged_in()?'true':'false'
                     , 'name' => $site->name
                     , 'logo_url' => ElggCoffee::_get_dwl_url($site_logo[0]->guid)
                     , 'background_url' => ElggCoffee::_get_dwl_url($site_background[0]->guid)
                     , 'custom_css' => $custom_css
-                    , 'translations' => json_encode($GLOBALS['CONFIG']->translations[$user_ent->language])
+                    , 'translations' => json_encode(_get_translation_table($user_ent->language))
             );
 
         }
 
     }
 
-    public static function get_posts($newer_than = 0, $offset = 0, $limit = 10, $owner_guids = array(), $type = COFFEE_SUBTYPE, $guid = false) {
+    public static function get_posts($newer_than = 0, $offset = 0, $limit = 10, $owner_guids = array(), $type = array(COFFEE_SUBTYPE,COFFEE_SUBTYPE_BROADCAST_MESSAGE), $guid = false) {
         $return = array();
         $options  = array('types'=>'object'
                             , 'subtypes'=> $type
@@ -93,7 +94,7 @@ class ElggCoffee {
             foreach ($posts as $key => $post) {
                 if ($post instanceof ElggObject) {
                     $return[$key]['guid'] = $post->guid;
-                    $return[$key]['content']['type'] = $post->subtype;
+                    $return[$key]['content']['type'] = $post->getSubtype();
                     $return[$key]['content']['text'] = nl2br($post->title);
                     $return[$key]['content']['time_created'] = $post->time_created;
                     $return[$key]['content']['friendly_time'] = elgg_get_friendly_time($post->time_created);

@@ -1,0 +1,1 @@
+<img src="/mod/coffee/vendors/front_end/static/img/logo.png">

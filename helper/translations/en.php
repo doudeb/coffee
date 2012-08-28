@@ -1,0 +1,41 @@
+<?php
+	$translations = array(
+        /*profile */
+        'coffee:profile:add:hobbiesandinterest' => 'Add a hobby or interest'
+        , 'coffee:profile:hobbiesandinterest' => 'Hobbies & Interests'
+        , 'coffee:profile:information:mobilephone' => 'mobile'
+        , 'coffee:profile:information:workphone' => 'work'
+        , 'coffee:profile:information' => 'Contact Information'
+        , 'coffee:profile:presentation' => 'Presentation'
+        , 'coffee:profile:button:background' => 'Background'
+        , 'coffee:profile:title:changecoverpic' => 'Change your background picture'
+        , 'coffee:profile:button:changeavatar' => 'Change your avatar'
+        , 'coffee:poke:action' => 'Coffee Poke !!'
+        , 'coffee:poke:body' => 'Let\s have a coffee'
+        , 'coffee:poke:subject' => 'Coffee ??'
+        , 'coffee:profile:incomplete' => '<strong>This is your profile.</strong><br />It is visible to your coworkers so be sure to complete it and keep it up to date!'
+        /*feed*/
+        , 'coffee:feed:share' => 'Share something with your colleagues…'
+        , 'coffee:feed:upload' => 'Upload something...'
+        , 'coffee:feed:send' => 'Send'
+        , 'coffee:feeditem:showalltext' => 'Show all text'
+        , 'coffee:feeditem:hidetext' => 'Hide text'
+        , 'coffee:feeditem:likesthis' => 'likes this'
+        , 'coffee:feeditem:and' => 'and'
+        , 'coffee:feeditem:others' => 'others'
+        , 'coffee:feeditem:showall' => 'Show all'
+        , 'coffee:feeditem:comments' => 'comments'
+        , 'coffee:feeditem:action:removecomment' => 'Remove comment'
+        , 'coffee:feeditem:action:addcomment' => 'Write a comment...'
+        , 'coffee:feeditem:action:like' => 'Like'
+        , 'coffee:feeditem:action:unlike' => 'Unlike'
+        , 'coffee:feeditem:action:removecomment' => 'Remove comment'
+        , 'coffee:feeditem:action:addcomment' => 'Write a comment...'
+        , 'coffee:feeditem:action:addcomment' => 'Write a comment...'
+        /*menu*/
+        , 'coffee:menu:feedlist' => 'News Feed'
+        , 'coffee:menu:profile' => 'Profile'
+        , 'coffee:menu:tvapp' => 'Launch TV App'
+        , 'coffee:menu:logout' => 'Log out'
+
+    );

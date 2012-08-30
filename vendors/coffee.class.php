@@ -129,12 +129,14 @@ class ElggCoffee {
             if (is_array($extended)) {
                 $extended = static::get_user_extra_info($extended);
             }
-            return array('id'         => $user_ent->guid
+            return array('id'                  => $user_ent->guid
                             , 'username'       => $user_ent->username
                             , 'name'           => $user_ent->name
                             , 'email'          => $user_ent->email
                             , 'icon_url'       => ElggCoffee::_get_user_icon_url($user_ent)
                             , 'cover_url'      => ElggCoffee::_get_user_cover_url($user_ent)
+                            , 'login_count'    => (int)$user_ent->getPrivateSetting('login_count')
+                            , 'created'        => $user_ent->time_created
                             , 'extended'       => $extended
                     );
         }
@@ -256,6 +258,7 @@ class ElggCoffee {
         $ent = get_entity($guid);
         if ($ent instanceof ElggObject) {
             if ($ent->disable()) {
+                return true;
                 //find a solution to trigger a refresh for other opened session
             }
         }

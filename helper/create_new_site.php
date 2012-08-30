@@ -12,7 +12,7 @@ if(cli_prompt("This will create a new site... sure : [y/N]") !== 'y') exit("Than
 
 input:
 $sitename   =  cli_prompt("\nSite name : ");
-$url        =  cli_prompt("\nSite url : ");
+$url        =  cli_prompt("\nSite url (including trailling slash), must be http://something.api.coffepoke.com/ : ");
 $username   =  cli_prompt("\nSite admin username : ");
 $password   =  cli_prompt("\nSite admin password (min " . $CONFIG->min_password_length. " chars): ");
 $email      =  cli_prompt("\nSite admin email : ");

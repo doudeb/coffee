@@ -27,6 +27,8 @@ function coffee_init() {
     elgg_register_page_handler('upl','coffee_page_handler');
     elgg_register_page_handler('testApi','coffee_page_handler');
     elgg_register_page_handler('coffee','coffee_page_handler');
+    //register actions
+    elgg_register_action('coffee/settings/save', elgg_get_plugins_path() . 'coffee/actions/save_settings.php');
 
 }
 

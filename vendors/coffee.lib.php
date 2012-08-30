@@ -11,10 +11,12 @@ function coffee_api_set_site_id () {
 		$password = get_input('password');
 		if (elgg_authenticate($username, $password)) {
 			$user_ent = get_user_by_username($username);
+            $login_count = (int)$user_ent->getPrivateSetting('login_count') +1;
+            $user_ent->setPrivateSetting('login_count', $login_count);
 		} else {
 			return false;
 		}
-	} elseif (isset($token)) {
+	} elseif (!empty($token)) {
         $time = time();
 		$user_session = get_data_row("SELECT * from {$CONFIG->dbprefix}users_apisessions where token='$token' and $time < expires");
 		$user_guid = validate_user_token($token, $user_session->site_guid);
@@ -231,4 +233,5 @@ unset($CONFIG->menus['page'][2]);
 unset($CONFIG->menus['page'][3]);
 unset($CONFIG->menus['page'][8]);
 unset($CONFIG->menus['page'][9]);
+unset($CONFIG->menus['page'][15]);
 unset($CONFIG->menus['page'][16]);

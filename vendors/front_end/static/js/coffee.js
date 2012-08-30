@@ -78,7 +78,9 @@
 			backgroundUrl: null,
 			customCss: null,
 			translations: null,
-            isAdmin: null
+            isAdmin: null,
+            accountTime: null,
+            loginCount: null
 		},
 
 		initialize: function () {
@@ -108,8 +110,10 @@
 			$.cookie('coverUrl', this.get('coverUrl'));
 			$.cookie('translations', this.get('translations'));
 			$.cookie('isAdmin', this.get('isAdmin'));
+			$.cookie('accountTime', this.get('accountTime'));
+			$.cookie('loginCount', this.get('loginCount'));
 
-			this.trigger('started');
+            this.trigger('started');
 		},
 
 		load: function () {
@@ -125,7 +129,9 @@
 				iconUrl: $.cookie('iconUrl'),
 				coverUrl: $.cookie('coverUrl'),
 				translations: $.cookie('translations'),
-				isAdmin: $.cookie('isAdmin')
+				isAdmin: $.cookie('isAdmin'),
+				accountTime: $.cookie('accountTime'),
+				loginCount: $.cookie('loginCount')
 			});
 		},
 
@@ -169,7 +175,9 @@
 										username: result.username,
 										name: result.name,
 										iconUrl: result.icon_url,
-										coverUrl: result.cover_url
+										coverUrl: result.cover_url,
+										accountTime: result.created,
+										loginCount: result.login_count
 									});
 
 									self.save();
@@ -269,7 +277,12 @@
 		},
 
 		redirectToFeed: function () {
-			Backbone.history.navigate('feed', true);
+            loginCount = parseInt(this.session.get('loginCount'));
+            if (loginCount <= 5) {
+    			Backbone.history.navigate('welcome', true);
+            } else {
+    			Backbone.history.navigate('feed', true);
+            }
 		}
 	});
 
@@ -384,7 +397,7 @@
 
 		checkForNewPosts: function () {
 			var self = this;
-			var latestTimestamp = _.first(self.models).attributes.content.time_updated;
+            var latestTimestamp = _.max(self.models, function(latest){ return latest.attributes.content.time_updated; }).attributes.content.time_updated;
 			$.ajax({
 				type: 'GET',
 				url: App.resourceUrl,
@@ -566,7 +579,6 @@
 		removeFeed: function () {
 			var self = this;
 			var postGuid = self.model.get('guid');
-
 			$.ajax({
 				type: 'GET',
 				url: App.resourceUrl,
@@ -974,7 +986,9 @@
 		},
 
 		render: function () {
-            data.translate = function() {return function(text) {return t(text)}};
+            data = {translate : function() {return function(text) {return t(text)}}
+                    , displayWelcome : parseInt(App.models.session.get('accountTime')) + (60 * 60 * 24 * 30) > Math.round(new Date().getTime()) / 1000};
+
 			var element = ich.menuTemplate(data);
 			this.setElement(element);
 
@@ -995,6 +1009,8 @@
 				Backbone.history.navigate('profile', true);
 			} else if (action == 'tv') {
 				Backbone.history.navigate('tv', true);
+			} else if (action == 'welcome') {
+				Backbone.history.navigate('welcome', true);
 			}
 
 			return false;
@@ -1055,6 +1071,7 @@
 			var extraInfo = object;
 
 			extraInfo.isProfileComplete = true; // Is all optional info present?
+            extraInfo.isIntroductionLong = false;
 
 			for (i in self.optionalInfo) {
 				var varName = self.optionalInfo[i];
@@ -1072,6 +1089,9 @@
 			extraInfo.languages = (extraInfo.hasLanguages) ? JSON.parse(stripslashes(object.languages)): [];
 			extraInfo.socialmedia = (extraInfo.hasSocialmedia) ? JSON.parse(stripslashes(object.socialmedia)) : [];
 			extraInfo.introduction = (extraInfo.introduction) ? stripslashes(object.introduction) : [];
+            if (extraInfo.introduction.length > 190) {
+                extraInfo.isIntroductionLong = true;
+            }
 
 			_.each(extraInfo.socialmedia, function(item){
 				var type = item.service;
@@ -1115,7 +1135,8 @@
 			'click .avatar .btn': 'avatarEdit',
 			'click #cover-edit': 'coverEdit',
 			'click .sm-addnew': 'newSocialmedia',
-			'click .add-hobby': 'addHobby'/*,
+			'click .add-hobby': 'addHobby',
+			'click .show-all-text': 'toggleIntroduction'/*,
 			'click .update-actions a': 'updateAction'*/
 		},
 
@@ -1326,6 +1347,12 @@
             if (action == "coffeePoke") {
 
             }
+        },
+
+        toggleIntroduction : function () {
+            elm = $('.introductionCut');
+            elm.toggleClass('full');
+            return true;
         }
 
 	});
@@ -1352,6 +1379,25 @@
 
 	});
 
+	/* !View: WelcomeAppView */
+	var WelcomeAppView = Backbone.View.extend({
+		initialize: function () {
+			_.bindAll(this);
+			this.render();
+		},
+
+		render: function () {
+            data = {translate : function() {return function(text) {return t(text)}}};
+			var element = ich.welcomeAppTemplate(data);
+			this.setElement(element);
+
+			this.$el.prependTo('#container');
+
+			return this;
+		}
+
+	});
+
 	/* !Router: WorkspaceRouter */
 	var WorkspaceRouter = Backbone.Router.extend({
 		routes: {
@@ -1359,7 +1405,8 @@
 			"feed":					"feed",
 			"profile":				"myProfile",
 			"profile/:user_id":		"profile",
-			"tv":           		"tv"
+			"tv":           		"tv",
+			"welcome":           	"welcome"
 		},
 
 
@@ -1415,7 +1462,19 @@
 			} else {
 				Backbone.history.navigate('login', true);
 			}
+		},
+
+		welcome: function () {
+			App.removeAllViews();
+			if (App.models.session.authenticated()) {
+				App.views.welcomeAppView = new WelcomeAppView();
+				App.views.menuView = new MenuView();
+			} else {
+				Backbone.history.navigate('login', true);
+			}
 		}
+
+
 	});
 
 

@@ -133,7 +133,7 @@
 							{{/likes}}
 							<ul class="comments">
 								{{#comment.showAllLink}}
-									<li class="show-all"><a class="show-all-link" href="javascript:void(0)">{{#translate}}coffee:feeditem:showall{{/translate}} {{comment.total}} {{#translate}}coffee:feeditem:comments{{/translate}}</a></li>
+                                <li class="show-all"><a class="show-all-link" href="javascript:void(0)">{{#translate}}coffee:feeditem:showall{{/translate}}&nbsp; {{comment.total}} {{#translate}}coffee:feeditem:comments{{/translate}}</a></li>
 								{{/comment.showAllLink}}
 								{{#comment.comments}}
 									<li class="comment">
@@ -165,6 +165,7 @@
 		<script type="text/html" id="menuTemplate">
 			<div id="menu">
 				<ul id="navigation">
+					{{#displayWelcome}}<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:welcome{{/translate}}" data-action="welcome" data-placement="right"><i class="icon-flag icon-white"></i></a></li>{{/displayWelcome}}
 					<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:feedlist{{/translate}}" data-action="feed" data-placement="right"><i class="icon-home icon-white"></i></a></li>
 					<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:profile{{/translate}}" data-action="profile" data-placement="right"><i class="icon-user icon-white"></i></a></li>
 					<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:tvapp{{/translate}}" data-action="tv" data-placement="right"><i class="icon-tv icon-white"></i></a></li>
@@ -239,13 +240,21 @@
 						<div class="secondary-content">
                             <div class="other">
                                 <div class="introduction">
-                                    <h3>{{#translate}}coffee:profile:presentation{{/translate}}</h3>
+                                   <h3>{{#translate}}coffee:profile:presentation{{/translate}}</h3>
                                 {{#hasIntroduction}}
-                                    <span {{#isOwnProfile}}class="editable"{{/isOwnProfile}} data-name="introduction">{{{introduction}}}</span>
+                                    <span class="introductionCut{{#isOwnProfile}} editable{{/isOwnProfile}}" data-name="introduction">
+                                        {{{introduction}}}
+                                    </span>
                                 {{/hasIntroduction}}
-                                {{^hasIntroduction}}{{#isOwnProfile}}
+                                {{^hasIntroduction}}
+                                    {{#isOwnProfile}}
                                     <span class="editable editable-hover" data-name="introduction">{{#translate}}coffee:profile:add:presentation{{/translate}}</span>
-                                {{/isOwnProfile}}{{/hasIntroduction}}
+                                    {{/isOwnProfile}}
+                                {{/hasIntroduction}}
+                                {{#isIntroductionLong}}
+                                <!--<a class="show-all-text" href="javascript:void(0)">{{#translate}}coffee:feeditem:showalltext{{/translate}}</a>
+                                <a class="show-all-text hide" href="javascript:void(0)">{{#translate}}coffee:feeditem:hidealltext{{/translate}}</a>-->
+                                {{/isIntroductionLong}}
                                 </div>
                                 <div class="info">
                                     <h3>{{#translate}}coffee:profile:information{{/translate}}</h3>
@@ -323,6 +332,57 @@
                 </div>
             </div>
             <div id="fullscreen"><a href="#" onclick="javascript:pleinEcran()"><img src="static/img/full-screen.png" width="64" height="64" /></a></div>
+        </script>
+
+        <script type="text/html" id="welcomeAppTemplate">
+            <div id="content">
+                <div id="welcome">
+                    <div class="alert">
+                        <h3>Bienvenue !</h3>
+                        <p>CoffeePoke facilite les rencontres et échanges informels avec vos collègues. Consolidez vos liens et développez l'esprit d'équipe pour travailler ensemble plus efficacement et de manière plus conviviale.
+CoffeePoke, c'est votre pause-café "virtuelle" :-)</p>
+                    </div>
+					<div class="content-module">
+                        <div class="primary-content">
+                            <h3>Comment ça marche ?</h3>
+                            <p>Chaque employé dispose d'un profil lui permettant de se présenter.
+Sur la page d'accueil, tous les employés sont invités à échanger via des messages publics courts.
+Publiez, partagez, commentez… c'est aussi simple que ça!</p>
+
+                            <h3>Quelques étapes à suivre pour bien démarrer...</h3>
+                            <div class="steps">
+                                <span class="stepN">1.</span>
+                                <span class="instruction">
+                                    <a href="#profile">Personnalisez votre profil</a>
+                                    <br />
+                                    A la machine à café, l'informel prédomine. Sur CoffeePoke aussi. Renseignez vos hobbies, ajoutez une photo de vous et choisissez un fond d'écran qui vous caractérise.
+                                </span>
+                            </div>
+                            <div class="steps">
+                                <span class="stepN">2.</span>
+                                <span class="instruction">
+                                    <a href="#feed">Publiez un message</a>
+                                    <br />
+                                    Dites sur quoi vous travaillez en ce moment, posez une question, demandez un conseil, partagez une information, un article (n'oubliez pas d'y joindre le lien) ou encore une photo.
+                                </span>
+                            </div>
+                            <div class="steps">
+                                <span class="stepN">3.</span>
+                                <span class="instruction">
+                                    <a href="#feed">Soyez actif !</a>
+                                    <br />
+                                    Tout comme lors de la pause café, dans un environnement convivial et informel, Coffee Poke vous permet de vous tenir informé, de créer du lien, de trouver des solutions… en un mot, d'être plus productif. Restez connecté pour développer l'esprit de partage et d'entraide.…partout!
+                                    <br />
+Coffee Poke est accessible sur votre ordinateur et sur votre smartphone.
+Si ce n'est pas encore le cas, demandez à votre manager d'installer l'application TV dans les lieux d'échanges de l'entreprise; à-côté de votre machine à café par exemple.
+                                </span>
+                            </div>
+
+                            <h3><a href="#feed">Plus d'infos</a> pour obtenir le meilleur de Coffe Poke.</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </script>
 
 		<script src="static/js/coffee.js"></script>

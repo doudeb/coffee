@@ -49,7 +49,7 @@ $exposed[$i]['params']          	= array(
                                                             , 'default' => array())
                                                 , "type" => array('type' => 'string'
                                                             , 'required' => false
-                                                            , 'default' => '')
+                                                            , 'default' => COFFEE_SUBTYPE)
                                                 );
 $exposed[$i]['comment']          	= 'Allow user to create a new post.
                                         @param attachment array : contain guid

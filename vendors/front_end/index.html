@@ -21,7 +21,6 @@
 		<script src="static/js/vendor/underscore-min.js"></script>
 		<script src="static/js/vendor/ICanHaz.min.js"></script>
 		<script src="static/js/vendor/backbone.js"></script>
-		<script src="static/js/vendor/jquery.cookie.js"></script>
 		<script src="static/js/vendor/jquery.form.js"></script>
 	</head>
 	<body>
@@ -338,47 +337,11 @@
             <div id="content">
                 <div id="welcome">
                     <div class="alert">
-                        <h3>Bienvenue !</h3>
-                        <p>CoffeePoke facilite les rencontres et échanges informels avec vos collègues. Consolidez vos liens et développez l'esprit d'équipe pour travailler ensemble plus efficacement et de manière plus conviviale.
-CoffeePoke, c'est votre pause-café "virtuelle" :-)</p>
+                        {{#translate}}coffee:welcome:headline{{/translate}}
                     </div>
 					<div class="content-module">
                         <div class="primary-content">
-                            <h3>Comment ça marche ?</h3>
-                            <p>Chaque employé dispose d'un profil lui permettant de se présenter.
-Sur la page d'accueil, tous les employés sont invités à échanger via des messages publics courts.
-Publiez, partagez, commentez… c'est aussi simple que ça!</p>
-
-                            <h3>Quelques étapes à suivre pour bien démarrer...</h3>
-                            <div class="steps">
-                                <span class="stepN">1.</span>
-                                <span class="instruction">
-                                    <a href="#profile">Personnalisez votre profil</a>
-                                    <br />
-                                    A la machine à café, l'informel prédomine. Sur CoffeePoke aussi. Renseignez vos hobbies, ajoutez une photo de vous et choisissez un fond d'écran qui vous caractérise.
-                                </span>
-                            </div>
-                            <div class="steps">
-                                <span class="stepN">2.</span>
-                                <span class="instruction">
-                                    <a href="#feed">Publiez un message</a>
-                                    <br />
-                                    Dites sur quoi vous travaillez en ce moment, posez une question, demandez un conseil, partagez une information, un article (n'oubliez pas d'y joindre le lien) ou encore une photo.
-                                </span>
-                            </div>
-                            <div class="steps">
-                                <span class="stepN">3.</span>
-                                <span class="instruction">
-                                    <a href="#feed">Soyez actif !</a>
-                                    <br />
-                                    Tout comme lors de la pause café, dans un environnement convivial et informel, Coffee Poke vous permet de vous tenir informé, de créer du lien, de trouver des solutions… en un mot, d'être plus productif. Restez connecté pour développer l'esprit de partage et d'entraide.…partout!
-                                    <br />
-Coffee Poke est accessible sur votre ordinateur et sur votre smartphone.
-Si ce n'est pas encore le cas, demandez à votre manager d'installer l'application TV dans les lieux d'échanges de l'entreprise; à-côté de votre machine à café par exemple.
-                                </span>
-                            </div>
-
-                            <h3><a href="#feed">Plus d'infos</a> pour obtenir le meilleur de Coffe Poke.</h3>
+                             {{#translate}}coffee:welcome:instructions{{/translate}}
                         </div>
                     </div>
                 </div>
@@ -403,6 +366,7 @@ Si ce n'est pas encore le cas, demandez à votre manager d'installer l'applicati
         $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange',function () {
             $('#menu').toggle();
         });
+
 		</script>
 	</body>
 </html>

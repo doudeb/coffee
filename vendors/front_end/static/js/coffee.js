@@ -43,7 +43,7 @@
     }
 
     var t = function (key) {
-        if (translations === null) translations = $.parseJSON($.cookie('translations'));
+        if (translations === null) translations = $.parseJSON(sessionStorage.getItem('translations'));
         if (translations[key]) {
             return translations[key];
         }
@@ -98,40 +98,40 @@
 		},
 
 		save: function () {
-			$.cookie('userId', this.get('userId'));
-			$.cookie('authToken', this.get('authToken'));
-			$.cookie('siteName', this.get('siteName'));
-			$.cookie('logoUrl', this.get('logoUrl'));
-			$.cookie('backgroundUrl', this.get('backgroundUrl'));
-			$.cookie('customCss', this.get('customCss'));
-			$.cookie('username', this.get('username'));
-			$.cookie('name', this.get('name'));
-			$.cookie('iconUrl', this.get('iconUrl'));
-			$.cookie('coverUrl', this.get('coverUrl'));
-			$.cookie('translations', this.get('translations'));
-			$.cookie('isAdmin', this.get('isAdmin'));
-			$.cookie('accountTime', this.get('accountTime'));
-			$.cookie('loginCount', this.get('loginCount'));
+			sessionStorage.setItem('userId', this.get('userId'));
+			sessionStorage.setItem('authToken', this.get('authToken'));
+			sessionStorage.setItem('siteName', this.get('siteName'));
+			sessionStorage.setItem('logoUrl', this.get('logoUrl'));
+			sessionStorage.setItem('backgroundUrl', this.get('backgroundUrl'));
+			sessionStorage.setItem('customCss', this.get('customCss'));
+			sessionStorage.setItem('username', this.get('username'));
+			sessionStorage.setItem('name', this.get('name'));
+			sessionStorage.setItem('iconUrl', this.get('iconUrl'));
+			sessionStorage.setItem('coverUrl', this.get('coverUrl'));
+			sessionStorage.setItem('translations', this.get('translations'));
+			sessionStorage.setItem('isAdmin', this.get('isAdmin'));
+			sessionStorage.setItem('accountTime', this.get('accountTime'));
+			sessionStorage.setItem('loginCount', this.get('loginCount'));
 
             this.trigger('started');
 		},
 
 		load: function () {
 			this.set({
-				userId: $.cookie('userId'),
-				authToken: $.cookie('authToken'),
-				siteName: $.cookie('siteName'),
-				logoUrl: $.cookie('logoUrl'),
-				backgroundUrl: $.cookie('backgroundUrl'),
-				customCss: $.cookie('custom_css'),
-				username: $.cookie('username'),
-				name: $.cookie('name'),
-				iconUrl: $.cookie('iconUrl'),
-				coverUrl: $.cookie('coverUrl'),
-				translations: $.cookie('translations'),
-				isAdmin: $.cookie('isAdmin'),
-				accountTime: $.cookie('accountTime'),
-				loginCount: $.cookie('loginCount')
+				userId: sessionStorage.getItem('userId'),
+				authToken: sessionStorage.getItem('authToken'),
+				siteName: sessionStorage.getItem('siteName'),
+				logoUrl: sessionStorage.getItem('logoUrl'),
+				backgroundUrl: sessionStorage.getItem('backgroundUrl'),
+				customCss: sessionStorage.getItem('custom_css'),
+				username: sessionStorage.getItem('username'),
+				name: sessionStorage.getItem('name'),
+				iconUrl: sessionStorage.getItem('iconUrl'),
+				coverUrl: sessionStorage.getItem('coverUrl'),
+				translations: sessionStorage.getItem('translations'),
+				isAdmin: sessionStorage.getItem('isAdmin'),
+				accountTime: sessionStorage.getItem('accountTime'),
+				loginCount: sessionStorage.getItem('loginCount')
 			});
 		},
 
@@ -197,17 +197,20 @@
 		end: function () {
 			this.clear();
 
-			$.cookie('userId', null);
-			$.cookie('authToken', null);
-			$.cookie('siteName', null);
-			$.cookie('logoUrl', null);
-			$.cookie('backgroundUrl', null);
-			$.cookie('backgroundPos', null);
-			$.cookie('username', null);
-			$.cookie('name', null);
-			$.cookie('iconUrl', null);
-			$.cookie('coverUrl', null);
-			$.cookie('isAdmin', null);
+			sessionStorage.removeItem('userId');
+			sessionStorage.removeItem('authToken');
+			sessionStorage.removeItem('siteName');
+			sessionStorage.removeItem('logoUrl');
+			sessionStorage.removeItem('backgroundUrl');
+			sessionStorage.removeItem('backgroundPos');
+			sessionStorage.removeItem('username');
+			sessionStorage.removeItem('name');
+			sessionStorage.removeItem('iconUrl');
+			sessionStorage.removeItem('coverUrl');
+			sessionStorage.removeItem('isAdmin');
+			sessionStorage.removeItem('translations');
+			sessionStorage.removeItem('accountTime');
+    		sessionStorage.removeItem('loginCount');
 
 			Backbone.history.navigate('login', true);
 		}
@@ -1469,6 +1472,8 @@
 			if (App.models.session.authenticated()) {
 				App.views.welcomeAppView = new WelcomeAppView();
 				App.views.menuView = new MenuView();
+                setBackground (App.models.session.get('backgroundUrl'));
+                setLogo (App.models.session.get('logoUrl'));
 			} else {
 				Backbone.history.navigate('login', true);
 			}

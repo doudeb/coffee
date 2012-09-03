@@ -32,7 +32,7 @@ try {
     $site            = new ElggSite();
     $site->name      = $sitename;
     $site->url       = $url;
-    $site->access_id = ACCESS_LOGGED_IN;
+    $site->access_id = ACCESS_PUBLIC;
     $site->email     = $email;
     $guid            = $site->save();
 
@@ -45,7 +45,7 @@ try {
     set_config('allow_registration', FALSE, $site->getGUID());
     set_config('walled_garden', TRUE, $site->getGUID());
     set_config('allow_user_default_access', '', $site->getGUID());
-    set_config('https_login', TRUE, $site->getGUID());
+    set_config('https_login', FALSE, $site->getGUID());
     set_config('api', TRUE, $site->getGUID());
     set_config('sitename', $sitename, $site->getGUID());
     set_config('siteemail', $email, $site->getGUID());

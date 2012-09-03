@@ -122,7 +122,7 @@
 						<div class="interactions">
 							{{#likes}}
 								{{#isOne}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a> {{/likes.users}}{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isOne}}
-								{{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a> {{#first}}{{#translate}}coffee:feeditem:and{{/translate}} {{/first}}{{/likes.users}} {{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isTwo}}
+								{{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a> {{#first}}{{#translate}}coffee:feeditem:and{{/translate}}&nbsp;{{/first}}{{/likes.users}}&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isTwo}}
 								{{#isMore}}<p class="likes">
                                     {{#likes.users}}
                                         {{#first}}<a href="#profile/{{owner_guid}}">{{name}}</a>{{/first}}
@@ -132,7 +132,7 @@
 							{{/likes}}
 							<ul class="comments">
 								{{#comment.showAllLink}}
-                                <li class="show-all"><a class="show-all-link" href="javascript:void(0)">{{#translate}}coffee:feeditem:showall{{/translate}}&nbsp; {{comment.total}} {{#translate}}coffee:feeditem:comments{{/translate}}</a></li>
+                                <li class="show-all"><a class="show-all-link" href="javascript:void(0)">{{#translate}}coffee:feeditem:showall{{/translate}}&nbsp;{{comment.total}}&nbsp;{{#translate}}coffee:feeditem:comments{{/translate}}</a></li>
 								{{/comment.showAllLink}}
 								{{#comment.comments}}
 									<li class="comment">

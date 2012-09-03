@@ -996,7 +996,15 @@
 			this.setElement(element);
 
 			this.$el.prependTo('#container');
-
+            var navigationItems = $('#navigation').find('li');
+            $.each(navigationItems, function (key,item) {
+                var current = $(item).find('a').attr('data-action');
+                if (current == Backbone.history.fragment) {
+                    $(item).addClass('active');
+                } else {
+                    $(item).removeClass('active');
+                }
+            });
 			return this;
 		},
 

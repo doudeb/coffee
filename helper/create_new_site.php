@@ -1,5 +1,7 @@
 <?php
 $_SERVER['REQUEST_URI'] = '/';
+$_SERVER['SERVER_PORT'] = '';
+$_SERVER['HTTP_HOST'] = '/';
 
 include_once("../../../engine/start.php");
 global $CONFIG;

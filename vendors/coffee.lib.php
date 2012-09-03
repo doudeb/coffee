@@ -205,6 +205,12 @@ function user_login ($action,$type,$user) {
     return false;
 }
 
+function modify_header() {
+    if(in_array(elgg_get_viewtype(),array('json','php','xml'))) {
+        header('Access-Control-Allow-Origin: *');
+    }
+}
+
 /**
 
  * Exposed function for ws api

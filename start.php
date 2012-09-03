@@ -16,6 +16,7 @@ function coffee_init() {
 	elgg_register_plugin_hook_handler('public_pages', 'walled_garden', 'coffee_api_public_pages');
     elgg_register_plugin_hook_handler('permissions_check', 'object', 'coffee_write_permission_check');
     elgg_register_plugin_hook_handler('index','system','lock_index');
+    elgg_register_plugin_hook_handler('output', 'page', 'modify_header');
     elgg_register_event_handler('login', 'user','user_login');
     elgg_register_class('ElggCoffee', elgg_get_plugins_path() . 'coffee/vendors/coffee.class.php');
     //clean IT
@@ -29,6 +30,8 @@ function coffee_init() {
     elgg_register_page_handler('coffee','coffee_page_handler');
     //register actions
     elgg_register_action('coffee/settings/save', elgg_get_plugins_path() . 'coffee/actions/save_settings.php');
+    //view extend
+    elgg_extend_view('api/output','coffee/api/json/output',501,'json');
 
 }
 

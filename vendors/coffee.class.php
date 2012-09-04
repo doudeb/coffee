@@ -16,6 +16,9 @@ class ElggCoffee {
      */
     public function new_post($post, $attachment = false, $type = COFFEE_SUBTYPE) {
         if (strlen($post) > 0) {
+            if ($type === COFFEE_SUBTYPE_BROADCAST_MESSAGE && !elgg_is_admin_logged_in()) {
+                return false;
+            }
             $new_post = new ElggObject();
             $new_post->subtype = $type;
             $new_post->access_id = COFFEE_DEFAULT_ACCESS_ID;
@@ -23,7 +26,7 @@ class ElggCoffee {
             if (!$new_post->save()) {
                 return false;
             }
-            add_to_river('coffee/river/new_post', 'create', elgg_get_logged_in_user_guid(), $new_post->guid);
+            //add_to_river('coffee/river/new_post', 'create', elgg_get_logged_in_user_guid(), $new_post->guid);
             ElggCoffee::_add_attachment($new_post->guid,$attachment);
             return array('guid' => $new_post->guid);
         }
@@ -37,7 +40,7 @@ class ElggCoffee {
             if ($comment_id) {
                 $post->time_updated = time();
                 $post->save();
-                add_to_river('coffee/river/new_comment', 'create', elgg_get_logged_in_user_guid(), $post->guid,$comment_id);
+                //add_to_river('coffee/river/new_comment', 'create', elgg_get_logged_in_user_guid(), $post->guid,$comment_id);
                 return true;
             }
         }
@@ -217,7 +220,7 @@ class ElggCoffee {
         if (!empty($type)) {
             $return = add_entity_relationship($guid_parent, $type, $guid_child);
             if ($return) {
-                add_to_river('coffee/river/' . $type, 'create', $guid_parent, $guid_child);
+                //add_to_river('coffee/river/' . $type, 'create', $guid_parent, $guid_child);
                 $post = get_entity($guid_child);
                 if ($post instanceof ElggEntity) {
                     $post->time_updated = time();
@@ -241,7 +244,7 @@ class ElggCoffee {
         if (!empty($type)) {
             $return = remove_entity_relationship($guid_parent, $type, $guid_child);
             if ($return) {
-                add_to_river('coffee/river/' . $type, 'remove', $guid_parent, $guid_child);
+                //add_to_river('coffee/river/' . $type, 'remove', $guid_parent, $guid_child);
 
                 return true;
             } elseif (!$return) {
@@ -294,7 +297,7 @@ class ElggCoffee {
         $file->close();
         move_uploaded_file($_FILES['upload']['tmp_name'], $file->getFilenameOnFilestore());
         $guid = $file->save();
-        add_to_river('river/object/file/create', 'create', elgg_get_logged_in_user_guid(), $file->guid);
+        //add_to_river('river/object/file/create', 'create', elgg_get_logged_in_user_guid(), $file->guid);
         if ($guid && $file->simpletype == "image") {
             $file->icontime = time();
             $thumbnail = get_resized_image_from_existing_file($file->getFilenameOnFilestore(), 60, 60, true);
@@ -428,7 +431,7 @@ class ElggCoffee {
         if (elgg_trigger_event('profileiconupdate', $owner->type, $owner)) {
             $view = 'river/user/default/profileiconupdate';
             elgg_delete_river(array('subject_guid' => $owner->guid, 'view' => $view));
-            add_to_river($view, 'update', $owner->guid, $owner->guid);
+            //add_to_river($view, 'update', $owner->guid, $owner->guid);
         }
         if (is_array($square)
                 && isset($square['x1'])
@@ -469,8 +472,8 @@ class ElggCoffee {
 
             system_message(elgg_echo('avatar:crop:success'));
             $view = 'river/user/default/profileiconupdate';
-            elgg_delete_river(array('subject_guid' => $owner->guid, 'view' => $view));
-            add_to_river($view, 'update', $owner->guid, $owner->guid);
+            //elgg_delete_river(array('subject_guid' => $owner->guid, 'view' => $view));
+            //add_to_river($view, 'update', $owner->guid, $owner->guid);
         }
         return static::_get_user_icon_url($owner);
     }

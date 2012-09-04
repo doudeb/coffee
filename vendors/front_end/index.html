@@ -34,9 +34,9 @@
 				<form class="form-horizontal">
 					<legend>Login</legend>
 					<div class="control-group">
-						<label class="control-label" for="inputUsername">Username</label>
+						<label class="control-label" for="inputEmail">Email</label>
 						<div class="controls">
-							<input type="text" class="input-large" id="inputUsername" />
+							<input type="text" class="input-large" id="inputEmail" />
 						</div>
 					</div>
 					<div class="control-group">

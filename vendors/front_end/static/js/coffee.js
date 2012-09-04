@@ -104,7 +104,6 @@
 			sessionStorage.setItem('logoUrl', this.get('logoUrl'));
 			sessionStorage.setItem('backgroundUrl', this.get('backgroundUrl'));
 			sessionStorage.setItem('customCss', this.get('customCss'));
-			sessionStorage.setItem('username', this.get('username'));
 			sessionStorage.setItem('name', this.get('name'));
 			sessionStorage.setItem('iconUrl', this.get('iconUrl'));
 			sessionStorage.setItem('coverUrl', this.get('coverUrl'));
@@ -124,7 +123,6 @@
 				logoUrl: sessionStorage.getItem('logoUrl'),
 				backgroundUrl: sessionStorage.getItem('backgroundUrl'),
 				customCss: sessionStorage.getItem('custom_css'),
-				username: sessionStorage.getItem('username'),
 				name: sessionStorage.getItem('name'),
 				iconUrl: sessionStorage.getItem('iconUrl'),
 				coverUrl: sessionStorage.getItem('coverUrl'),
@@ -172,7 +170,6 @@
 									var result = response.result;
 
 									self.set({
-										username: result.username,
 										name: result.name,
 										iconUrl: result.icon_url,
 										coverUrl: result.cover_url,
@@ -181,15 +178,21 @@
 									});
 
 									self.save();
-								} else {
-									/* Error */
-								}
+								} else if (response.message == 'pam_auth_userpass:failed') {
+                                    sessionStorage.clear();
+                                    Backbone.history.navigate('login', true);
+                                } else {
+                                    Backbone.history.navigate('feed', true);
+                                }
 							}
 						});
 
+					} else if (response.message == 'pam_auth_userpass:failed') {
+						sessionStorage.clear();
+                        Backbone.history.navigate('login', true);
 					} else {
-						/* Error */
-					}
+                        Backbone.history.navigate('feed', true);
+                    }
 				}
 			});
 		},
@@ -203,7 +206,6 @@
 			sessionStorage.removeItem('logoUrl');
 			sessionStorage.removeItem('backgroundUrl');
 			sessionStorage.removeItem('backgroundPos');
-			sessionStorage.removeItem('username');
 			sessionStorage.removeItem('name');
 			sessionStorage.removeItem('iconUrl');
 			sessionStorage.removeItem('coverUrl');
@@ -246,15 +248,15 @@
 		doLogin: function () {
 			var self = this;
 
-			var username = this.$el.find('#inputUsername').val();
+			var email = this.$el.find('#inputEmail').val();
 			var password = this.$el.find('#inputPassword').val();
 
 			$.ajax({
 				type: 'POST',
 				data: {
-					username: username,
+					email: email,
 					password: password,
-					method: 'auth.gettoken'
+					method: 'coffee.getTokenByEmail'
 				},
 				headers: {
 					'Accept': 'application/json'
@@ -366,9 +368,12 @@
 						var result = response.result;
 						self.add(result);
 						self.startCheckingForNewPosts();
+					} else if (response.message == 'pam_auth_userpass:failed') {
+						sessionStorage.clear();
+                        Backbone.history.navigate('login', true);
 					} else {
-						/* Error */
-					}
+                        Backbone.history.navigate('feed', true);
+                    }
 				}
 			});
         },
@@ -389,7 +394,12 @@
 					if (response.status != -1) {
 						var result = response.result;
 						self.unshift(result[0]);
-					}
+					} else if (response.message == 'pam_auth_userpass:failed') {
+						sessionStorage.clear();
+                        Backbone.history.navigate('login', true);
+					} else {
+                        Backbone.history.navigate('feed', true);
+                    }
 				}
 			});
 		},
@@ -426,7 +436,12 @@
                             }
 						}
 						self.startCheckingForNewPosts();
-					}
+					} else if (response.message == 'pam_auth_userpass:failed') {
+						sessionStorage.clear();
+                        Backbone.history.navigate('login', true);
+					} else {
+                        Backbone.history.navigate('feed', true);
+                    }
 				}
 			});
 		}
@@ -481,9 +496,12 @@
 
 						update.comment = response.result;
 						self.model.set(update);
+					} if (response.message == 'pam_auth_userpass:failed') {
+						sessionStorage.clear();
+                        Backbone.history.navigate('login', true);
 					} else {
-						/* Error */
-					}
+                        Backbone.history.navigate('feed', true);
+                    }
 				}
 			});
 		},
@@ -545,9 +563,12 @@
 				success: function (response) {
 					if (response.status != -1) {
 						self.refresh();
+					} if (response.message == 'pam_auth_userpass:failed') {
+						sessionStorage.clear();
+                        Backbone.history.navigate('login', true);
 					} else {
-						/* Error */
-					}
+                        Backbone.history.navigate('feed', true);
+                    }
 
 				}
 			});
@@ -571,9 +592,12 @@
 				success: function (response) {
 					if (response.status != -1) {
 						self.refresh();
+					} if (response.message == 'pam_auth_userpass:failed') {
+						sessionStorage.clear();
+                        Backbone.history.navigate('login', true);
 					} else {
-						/* Error */
-					}
+                        Backbone.history.navigate('feed', true);
+                    }
 
 				}
 			});
@@ -594,9 +618,12 @@
 				success: function (response) {
 					if (response.status != -1) {
 						self.remove();
+					} if (response.message == 'pam_auth_userpass:failed') {
+						sessionStorage.clear();
+                        Backbone.history.navigate('login', true);
 					} else {
-						/* Error */
-					}
+                        Backbone.history.navigate('feed', true);
+                    }
 
 				}
 			});
@@ -618,9 +645,12 @@
 				success: function (response) {
 					if (response.status != -1) {
 						self.refresh();
+					} if (response.message == 'pam_auth_userpass:failed') {
+						sessionStorage.clear();
+                        Backbone.history.navigate('login', true);
 					} else {
-						/* Error */
-					}
+                        Backbone.history.navigate('feed', true);
+                    }
 
 				}
 			});
@@ -659,9 +689,12 @@
 						self.model.set(update);
                         self.model.attributes.isComposing = false;
 						self.render();
+					} else if (response.message == 'pam_auth_userpass:failed') {
+						sessionStorage.clear();
+                        Backbone.history.navigate('login', true);
 					} else {
-						// Error
-					}
+                        Backbone.history.navigate('feed', true);
+                    }
 				}
 			});
 		},
@@ -688,6 +721,8 @@
                             self.destroy();
                         }
 					} else {
+                        sessionStorage.clear();
+                        Backbone.history.navigate('login', true);
 					}
 				}
 			});
@@ -1072,7 +1107,12 @@
 								}
 							}
 						});
-					}
+					} else if (response.message == 'pam_auth_userpass:failed') {
+						sessionStorage.clear();
+                        Backbone.history.navigate('login', true);
+					} else {
+                        Backbone.history.navigate('feed', true);
+                    }
 				}
 			});
 		},

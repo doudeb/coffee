@@ -266,5 +266,15 @@ $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
 
+$exposed[++$i]['method']            = "coffee.getTokenByEmail";
+$exposed[$i]['function']            = "auth_gettoken_by_email";
+$exposed[$i]['params']          	= array("email" => array('type' => 'string'
+                                                            , 'required' => true)
+                                            , "password" => array('type' => 'string'
+                                                            , 'required' => true));
+$exposed[$i]['comment']          	= 'Authenticate a user by email and password';
+$exposed[$i]['call_method']      	= 'POST';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = false;
 
 $GLOBALS['CONFIG']->exposed                    = $exposed;

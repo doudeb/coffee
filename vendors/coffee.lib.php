@@ -6,9 +6,17 @@ function coffee_api_set_site_id () {
     register_pam_handler('pam_auth_usertoken');
     $method = get_input('method');
 	$token = get_input('auth_token');
-	if ($method == 'auth.gettoken') {
-		$username = get_input('username');
+	if (in_array($method,array('auth.gettoken','coffee.getTokenByEmail'))) {
+		$username   = get_input('username');
+		$email      = get_input('email');
 		$password = get_input('password');
+        if ($email && !$username) {
+            if ($user_ent = get_user_by_email($email)) {
+                $username = $user_ent[0]->username;
+            } else {
+                return false;
+            }
+        }
 		if (elgg_authenticate($username, $password)) {
 			$user_ent = get_user_by_username($username);
             $login_count = (int)$user_ent->getPrivateSetting('login_count') +1;
@@ -208,6 +216,13 @@ function user_login ($action,$type,$user) {
 function modify_header() {
     if(in_array(elgg_get_viewtype(),array('json','php','xml'))) {
         header('Access-Control-Allow-Origin: *');
+    }
+}
+
+function auth_gettoken_by_email ($email,$password) {
+    if($user_entity = get_user_by_email($email)) {
+        $username = $user_entity[0]->username;
+        return auth_gettoken($username,$password);
     }
 }
 

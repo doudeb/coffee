@@ -36,8 +36,6 @@
         , 'coffee:feeditem:action:like' => 'Like'
         , 'coffee:feeditem:action:unlike' => 'Unlike'
         , 'coffee:feeditem:action:removecomment' => 'Remove comment'
-        , 'coffee:feeditem:action:addcomment' => 'Write a comment...'
-        , 'coffee:feeditem:action:addcomment' => 'Write a comment...'
         /*menu*/
         , 'coffee:menu:welcome' => 'Welcome !!'
         , 'coffee:menu:feedlist' => 'News Feed'
@@ -82,6 +80,6 @@ Si ce n\'est pas encore le cas, demandez à votre manager d\'installer l\'applic
                                 </span>
                             </div>
 
-                            <h3><a href="#feed">Plus d\'infos</a> pour obtenir le meilleur de Coffe Poke.</h3>'
+                            <h3><a href="/static/doc/CoffeePoke_fr.pdf">Plus d\'infos</a> pour obtenir le meilleur de Coffe Poke.</h3>'
 
     );

@@ -195,7 +195,7 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 #profile .secondary-content .other:before,#profile .secondary-content .other:after{display:table;content:"";}
 #profile .secondary-content .other:after{clear:both;}
 #profile .secondary-content .other .hobbies-interests, #profile .secondary-content .other .languages,#profile .secondary-content .other .introduction{width:237px;float:left;}
-#profile .secondary-content .other .introduction{width:270px;padding-right: 10px;margin-right:10px;border-right:1px solid #D8D8D8;min-height: 250px;}
+#profile .secondary-content .other .introduction{width:270px;padding-right: 10px;margin-right:10px;border-right:1px solid #D8D8D8;min-height: 130px;}
 ##profile .secondary-content .other .introduction:hover, #profile .secondary-content .other .introduction textarea { overflow: hidden;height: auto;background-color: #F0F0F0}
 #profile .secondary-content .other h3, #profile .secondary-content .introduction h3, #profile .secondary-content .info h3 {color:#7b7b7b;font-size:13px;text-transform:uppercase;margin:1.5em 0 5px 0;}
 #profile .secondary-content .other ul{list-style-type:none;padding:0;margin-top:0;}

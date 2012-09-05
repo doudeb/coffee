@@ -1437,10 +1437,8 @@
             data =  {scripts : '<script src="static/js/jquery.color.js"></script><script src="static/js/animation.js"></script>'};
 			var element = ich.tvAppTemplate(data);
 			this.setElement(element);
-
 			this.$el.prependTo('#container');
-
-			return this;
+         	return this;
 		}
 
 	});

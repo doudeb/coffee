@@ -503,7 +503,7 @@ class ElggCoffee {
         $value = strip_tags($value,'<br><br/><em><strong>');
         $guid = elgg_get_logged_in_user_guid();
         $user_ent = get_user($guid);
-        if ($user_ent instanceof ElggUser) {
+        if ($user_ent instanceof ElggUser && strlen($value)>0) {
             $user_ent->$name = $value;
             if ($user_ent->save()) {
                 return true;

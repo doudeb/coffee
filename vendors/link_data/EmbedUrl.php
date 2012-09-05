@@ -12,6 +12,7 @@ class Embed_url {
 	var $images;
 	var $sortedImage;
 	var $dom;
+	var $encoding;
 
 	function __construct($args = array()) {
 
@@ -24,6 +25,7 @@ class Embed_url {
 
 	public function embed () {
 		$this->fetchRecord();
+		$this->getEncoding();
 		$this->getTags();
 		$this->getTitle();
 		$this->getDescription();
@@ -74,7 +76,7 @@ class Embed_url {
 			preg_match_all($title_regex, $this->html, $title, PREG_PATTERN_ORDER);
             //$titre = eregi("<title>(.*)</title>",$this->html,$title);
 			//$this->title = $title[1];
-			$this->title = _convert($title[1][0]);
+			$this->title = _convert($title[1][0],$this->encoding);
 		}
 	}
 
@@ -83,7 +85,7 @@ class Embed_url {
 	}
 
 	private function getDescription () {
-		$this->description = _convert($this->tags['description']);
+		$this->description = _convert($this->tags['description'],$this->encoding);
 	}
 
 	private function getImages () {
@@ -101,6 +103,12 @@ class Embed_url {
 		preg_match_all($image_regex, $this->html, $img, PREG_PATTERN_ORDER);
 		$this->images = $img[1];
 	}
+
+    private function getEncoding () {
+        $encoding_regex = '/charset=(.*?)"/is';
+        preg_match_all($encoding_regex, $this->html, $encoding, PREG_PATTERN_ORDER);
+        $this->encoding = $encoding[1][0];
+    }
 
 	private function sortImages () {
 		if (isset($this->images['image'])) {

@@ -180,6 +180,7 @@
 									self.save();
 								} else if (response.message == 'pam_auth_userpass:failed') {
                                     sessionStorage.clear();
+                                    App.models.session.end();
                                     Backbone.history.navigate('login', true);
                                 } else {
                                     Backbone.history.navigate('feed', true);
@@ -189,6 +190,7 @@
 
 					} else if (response.message == 'pam_auth_userpass:failed') {
 						sessionStorage.clear();
+                        App.models.session.end();
                         Backbone.history.navigate('login', true);
 					} else {
                         Backbone.history.navigate('feed', true);
@@ -370,6 +372,7 @@
 						self.startCheckingForNewPosts();
 					} else if (response.message == 'pam_auth_userpass:failed') {
 						sessionStorage.clear();
+                        App.models.session.end();
                         Backbone.history.navigate('login', true);
 					} else {
                         Backbone.history.navigate('feed', true);
@@ -396,6 +399,7 @@
 						self.unshift(result[0]);
 					} else if (response.message == 'pam_auth_userpass:failed') {
 						sessionStorage.clear();
+                        App.models.session.end();
                         Backbone.history.navigate('login', true);
 					} else {
                         Backbone.history.navigate('feed', true);
@@ -435,9 +439,12 @@
                                 }
                             }
 						}
-						self.startCheckingForNewPosts();
+                        if (Backbone.history.fragment === 'feed') {
+    						self.startCheckingForNewPosts();
+                        }
 					} else if (response.message == 'pam_auth_userpass:failed') {
 						sessionStorage.clear();
+                        App.models.session.end();
                         Backbone.history.navigate('login', true);
 					} else {
                         Backbone.history.navigate('feed', true);
@@ -498,6 +505,7 @@
 						self.model.set(update);
 					} if (response.message == 'pam_auth_userpass:failed') {
 						sessionStorage.clear();
+                        App.models.session.end();
                         Backbone.history.navigate('login', true);
 					} else {
                         Backbone.history.navigate('feed', true);
@@ -565,6 +573,7 @@
 						self.refresh();
 					} if (response.message == 'pam_auth_userpass:failed') {
 						sessionStorage.clear();
+                        App.models.session.end();
                         Backbone.history.navigate('login', true);
 					} else {
                         Backbone.history.navigate('feed', true);
@@ -594,6 +603,7 @@
 						self.refresh();
 					} if (response.message == 'pam_auth_userpass:failed') {
 						sessionStorage.clear();
+                        App.models.session.end();
                         Backbone.history.navigate('login', true);
 					} else {
                         Backbone.history.navigate('feed', true);
@@ -620,6 +630,7 @@
 						self.remove();
 					} if (response.message == 'pam_auth_userpass:failed') {
 						sessionStorage.clear();
+                        App.models.session.end();
                         Backbone.history.navigate('login', true);
 					} else {
                         Backbone.history.navigate('feed', true);
@@ -647,6 +658,7 @@
 						self.refresh();
 					} if (response.message == 'pam_auth_userpass:failed') {
 						sessionStorage.clear();
+                        App.models.session.end();
                         Backbone.history.navigate('login', true);
 					} else {
                         Backbone.history.navigate('feed', true);
@@ -691,6 +703,7 @@
 						self.render();
 					} else if (response.message == 'pam_auth_userpass:failed') {
 						sessionStorage.clear();
+                        App.models.session.end();
                         Backbone.history.navigate('login', true);
 					} else {
                         Backbone.history.navigate('feed', true);
@@ -718,10 +731,11 @@
                             self.model.set(result[0]);
                             self.render();
                         } else {
-                            self.destroy();
+                            self.remove();
                         }
 					} else {
                         sessionStorage.clear();
+                        App.models.session.end();
                         Backbone.history.navigate('login', true);
 					}
 				}
@@ -1109,6 +1123,7 @@
 						});
 					} else if (response.message == 'pam_auth_userpass:failed') {
 						sessionStorage.clear();
+                        App.models.session.end();
                         Backbone.history.navigate('login', true);
 					} else {
                         Backbone.history.navigate('feed', true);

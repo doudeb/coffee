@@ -121,8 +121,8 @@
 					<div class="secondary-content">
 						<div class="interactions">
 							{{#likes}}
-								{{#isOne}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a> {{/likes.users}}{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isOne}}
-								{{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a> {{#first}}{{#translate}}coffee:feeditem:and{{/translate}}&nbsp;{{/first}}{{/likes.users}}&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isTwo}}
+								{{#isOne}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{/likes.users}}{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isOne}}
+								{{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{#first}}{{#translate}}coffee:feeditem:and{{/translate}}&nbsp;{{/first}}{{/likes.users}}&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isTwo}}
 								{{#isMore}}<p class="likes">
                                     {{#likes.users}}
                                         {{#first}}<a href="#profile/{{owner_guid}}">{{name}}</a>{{/first}}

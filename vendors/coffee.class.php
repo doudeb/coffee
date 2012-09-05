@@ -16,6 +16,7 @@ class ElggCoffee {
      */
     public function new_post($post, $attachment = false, $type = COFFEE_SUBTYPE) {
         if (strlen($post) > 0) {
+            $post = strip_tags($post,'<br><br/><em><strong>');
             if ($type === COFFEE_SUBTYPE_BROADCAST_MESSAGE && !elgg_is_admin_logged_in()) {
                 return false;
             }
@@ -35,6 +36,7 @@ class ElggCoffee {
 
     public function new_comment($guid, $comment) {
         $post = get_entity($guid);
+        $comment = strip_tags($comment,'<br><br/><em><strong>');
         if ($post instanceof ElggObject && strlen($comment) > 0) {
             $comment_id = $post->annotate(COFFEE_COMMENT_TYPE, $comment, COFFEE_DEFAULT_ACCESS_ID);
             if ($comment_id) {
@@ -126,9 +128,10 @@ class ElggCoffee {
         if (!$guid) {
             $user_ent           = elgg_get_logged_in_user_entity();
         } else {
-            $user_ent           = get_entity($guid);
+            $user_ent           = get_user($guid);
         }
-        if ($user_ent instanceof ElggUser) {
+        if ($user_ent instanceof ElggUser
+                && $user_ent->site_guid == $GLOBALS['CONFIG']->site_guid) {
             if (is_array($extended)) {
                 $extended = static::get_user_extra_info($extended);
             }
@@ -259,24 +262,26 @@ class ElggCoffee {
 
     public function disable_object ($guid) {
         $ent = get_entity($guid);
-        if ($ent instanceof ElggObject) {
+        if ($ent instanceof ElggObject
+                && (elgg_is_admin_logged_in() || $ent->owner_guid == elgg_get_logged_in_user_guid())) {
             if ($ent->disable()) {
                 return true;
                 //find a solution to trigger a refresh for other opened session
             }
         }
-        return false;
+        throw new SecurityException(elgg_echo('SecurityException:cantremoveobject'));
     }
 
     public static function disable_annotation ($id) {
         $annotation = get_annotation($id);
-        if ($annotation instanceof ElggAnnotation) {
+        if ($annotation instanceof ElggAnnotation
+                && (elgg_is_admin_logged_in() || $annotation->owner_guid == elgg_get_logged_in_user_guid())) {
             if ($annotation->disable()) {
                 static::update_entity_time($annotation->entity_guid);
                 return true;
             }
         }
-        return false;
+        throw new SecurityException(elgg_echo('SecurityException:cantremoveannotation'));
     }
 
     public static function upload_data () {
@@ -495,6 +500,7 @@ class ElggCoffee {
     }
 
     public static function set_user_extra_info ($name, $value) {
+        $value = strip_tags($value,'<br><br/><em><strong>');
         $guid = elgg_get_logged_in_user_guid();
         $user_ent = get_user($guid);
         if ($user_ent instanceof ElggUser) {

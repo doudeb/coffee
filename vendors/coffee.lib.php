@@ -150,25 +150,12 @@ function coffee_get_relationships($guid, $relationship, $inverse = false, $offse
         return false;
 }
 
-function _convert($content) {
-     /*if(!mb_check_encoding($content, 'UTF-8')
-         OR !($content === mb_convert_encoding(mb_convert_encoding($content, 'UTF-32', 'UTF-8' ), 'UTF-8', 'UTF-32'))) {
-
-         $content = mb_convert_encoding($content, 'UTF-8');
-
-         if (mb_check_encoding($content, 'UTF-8')) {
-             // log('Converted to UTF-8');
-         } else {
-             // log('Could not converted to UTF-8');
-         }
-     } else {
-         $content = utf8_decode($content);
-     }*/
+function _convert($content, $from = false) {
     $content =  html_entity_decode($content, ENT_QUOTES);
-    $content =  html_entity_decode($content, ENT_QUOTES);
-    $from = mb_detect_encoding($content);
+    if (!$from) {
+        $from = mb_detect_encoding($content);
+    }
     return mb_convert_encoding ($content , 'UTF-8', $from);
-     //return iconv(mb_detect_encoding($content), "UTF-8", $content);
  }
 
  /**

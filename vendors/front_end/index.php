@@ -34,9 +34,9 @@
 				<form class="form-horizontal">
 					<legend>Login</legend>
 					<div class="control-group">
-						<label class="control-label" for="inputUsername">Username</label>
+						<label class="control-label" for="inputEmail">Email</label>
 						<div class="controls">
-							<input type="text" class="input-large" id="inputUsername" />
+							<input type="text" class="input-large" id="inputEmail" />
 						</div>
 					</div>
 					<div class="control-group">
@@ -121,13 +121,13 @@
 					<div class="secondary-content">
 						<div class="interactions">
 							{{#likes}}
-								{{#isOne}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a> {{/likes.users}}{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isOne}}
-								{{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a> {{#first}}{{#translate}}coffee:feeditem:and{{/translate}}&nbsp;{{/first}}{{/likes.users}}&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isTwo}}
+								{{#isOne}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{/likes.users}}{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isOne}}
+								{{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{#first}}{{#translate}}coffee:feeditem:and{{/translate}}&nbsp;{{/first}}{{/likes.users}}&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isTwo}}
 								{{#isMore}}<p class="likes">
                                     {{#likes.users}}
-                                        {{#first}}<a href="#profile/{{owner_guid}}">{{name}}</a>{{/first}}
+                                        {{#first}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{/first}
                                     {{/likes.users}}
-                                    {{#translate}}coffee:feeditem:and{{/translate}} <a href="#" rel="tooltip" title="{{#likes.others}}{{name}}<br /> {{/likes.others}}" data-placement="bottom">{{likes.total}} {{#translate}}coffee:feeditem:others{{/translate}}</a> {{#translate}}coffee:feeditem:likesthis{{/translate}}</p>
+                                    {{#translate}}coffee:feeditem:and{{/translate}}&nbsp;<a href="#" rel="tooltip" title="{{#likes.others}}{{name}}<br /> {{/likes.others}}" data-placement="bottom">{{likes.total}}&nbsp;{{#translate}}coffee:feeditem:others{{/translate}}</a>&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>
                                 {{/isMore}}
 							{{/likes}}
 							<ul class="comments">

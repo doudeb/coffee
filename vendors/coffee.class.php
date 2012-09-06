@@ -14,8 +14,12 @@ class ElggCoffee {
      * @param array $attachment An array of guid
      * @param string $type The post subtype
      */
-    public function new_post($post, $attachment = false, $type = COFFEE_SUBTYPE) {
+    public static function new_post($post, $attachment = false, $type = COFFEE_SUBTYPE) {
         if (strlen($post) > 0) {
+            $post = strip_tags($post,'<br><br/><em><strong>');
+            if ($type === COFFEE_SUBTYPE_BROADCAST_MESSAGE && !elgg_is_admin_logged_in()) {
+                return false;
+            }
             $new_post = new ElggObject();
             $new_post->subtype = $type;
             $new_post->access_id = COFFEE_DEFAULT_ACCESS_ID;
@@ -23,35 +27,36 @@ class ElggCoffee {
             if (!$new_post->save()) {
                 return false;
             }
-            add_to_river('coffee/river/new_post', 'create', elgg_get_logged_in_user_guid(), $new_post->guid);
+            //add_to_river('coffee/river/new_post', 'create', elgg_get_logged_in_user_guid(), $new_post->guid);
             ElggCoffee::_add_attachment($new_post->guid,$attachment);
             return array('guid' => $new_post->guid);
         }
         return false;
     }
 
-    public function new_comment($guid, $comment) {
+    public static function new_comment($guid, $comment) {
         $post = get_entity($guid);
+        $comment = strip_tags($comment,'<br><br/><em><strong>');
         if ($post instanceof ElggObject && strlen($comment) > 0) {
             $comment_id = $post->annotate(COFFEE_COMMENT_TYPE, $comment, COFFEE_DEFAULT_ACCESS_ID);
             if ($comment_id) {
                 $post->time_updated = time();
                 $post->save();
-                add_to_river('coffee/river/new_comment', 'create', elgg_get_logged_in_user_guid(), $post->guid,$comment_id);
+                //add_to_river('coffee/river/new_comment', 'create', elgg_get_logged_in_user_guid(), $post->guid,$comment_id);
                 return true;
             }
         }
         return false;
     }
 
-    public function get_post($guid) {
+    public static function get_post($guid) {
         if (!$guid) {
             return false;
         }
         return static::get_posts(0,0,10,false,array(COFFEE_SUBTYPE,COFFEE_SUBTYPE_BROADCAST_MESSAGE), $guid);
     }
 
-    public function get_site_data () {
+    public static function get_site_data () {
         $site           = elgg_get_site_entity();
         $user_ent       = elgg_get_logged_in_user_entity();
         if ($site instanceof ElggSite) {
@@ -119,13 +124,14 @@ class ElggCoffee {
 
     public function get_activity ($offset = 0, $limit = 10) {}
 
-    public function get_user_data ($guid, $extended = false) {
+    public static function get_user_data ($guid, $extended = false) {
         if (!$guid) {
             $user_ent           = elgg_get_logged_in_user_entity();
         } else {
-            $user_ent           = get_entity($guid);
+            $user_ent           = get_user($guid);
         }
-        if ($user_ent instanceof ElggUser) {
+        if ($user_ent instanceof ElggUser
+                && $user_ent->site_guid == $GLOBALS['CONFIG']->site_guid) {
             if (is_array($extended)) {
                 $extended = static::get_user_extra_info($extended);
             }
@@ -210,14 +216,14 @@ class ElggCoffee {
         return $return;
     }
 
-    public function set_relationship ($guid_parent, $guid_child, $type) {
+    public static function set_relationship ($guid_parent, $guid_child, $type) {
         $guid_parent = (int)$guid_parent;
         $guid_child = (int)$guid_child;
         $type = sanitise_string($type);
         if (!empty($type)) {
             $return = add_entity_relationship($guid_parent, $type, $guid_child);
             if ($return) {
-                add_to_river('coffee/river/' . $type, 'create', $guid_parent, $guid_child);
+                //add_to_river('coffee/river/' . $type, 'create', $guid_parent, $guid_child);
                 $post = get_entity($guid_child);
                 if ($post instanceof ElggEntity) {
                     $post->time_updated = time();
@@ -234,14 +240,14 @@ class ElggCoffee {
         return $return;
     }
 
-     public function remove_relationship ($guid_parent, $guid_child, $type) {
+     public static function remove_relationship ($guid_parent, $guid_child, $type) {
         $guid_parent = (int)$guid_parent;
         $guid_child = (int)$guid_child;
         $type = sanitise_string($type);
         if (!empty($type)) {
             $return = remove_entity_relationship($guid_parent, $type, $guid_child);
             if ($return) {
-                add_to_river('coffee/river/' . $type, 'remove', $guid_parent, $guid_child);
+                //add_to_river('coffee/river/' . $type, 'remove', $guid_parent, $guid_child);
 
                 return true;
             } elseif (!$return) {
@@ -254,26 +260,28 @@ class ElggCoffee {
         return $return;
     }
 
-    public function disable_object ($guid) {
+    public static function disable_object ($guid) {
         $ent = get_entity($guid);
-        if ($ent instanceof ElggObject) {
+        if ($ent instanceof ElggObject
+                && (elgg_is_admin_logged_in() || $ent->owner_guid == elgg_get_logged_in_user_guid())) {
             if ($ent->disable()) {
                 return true;
                 //find a solution to trigger a refresh for other opened session
             }
         }
-        return false;
+        throw new SecurityException(elgg_echo('SecurityException:cantremoveobject'));
     }
 
     public static function disable_annotation ($id) {
         $annotation = get_annotation($id);
-        if ($annotation instanceof ElggAnnotation) {
+        if ($annotation instanceof ElggAnnotation
+                && (elgg_is_admin_logged_in() || $annotation->owner_guid == elgg_get_logged_in_user_guid())) {
             if ($annotation->disable()) {
                 static::update_entity_time($annotation->entity_guid);
                 return true;
             }
         }
-        return false;
+        throw new SecurityException(elgg_echo('SecurityException:cantremoveannotation'));
     }
 
     public static function upload_data () {
@@ -294,7 +302,7 @@ class ElggCoffee {
         $file->close();
         move_uploaded_file($_FILES['upload']['tmp_name'], $file->getFilenameOnFilestore());
         $guid = $file->save();
-        add_to_river('river/object/file/create', 'create', elgg_get_logged_in_user_guid(), $file->guid);
+        //add_to_river('river/object/file/create', 'create', elgg_get_logged_in_user_guid(), $file->guid);
         if ($guid && $file->simpletype == "image") {
             $file->icontime = time();
             $thumbnail = get_resized_image_from_existing_file($file->getFilenameOnFilestore(), 60, 60, true);
@@ -428,7 +436,7 @@ class ElggCoffee {
         if (elgg_trigger_event('profileiconupdate', $owner->type, $owner)) {
             $view = 'river/user/default/profileiconupdate';
             elgg_delete_river(array('subject_guid' => $owner->guid, 'view' => $view));
-            add_to_river($view, 'update', $owner->guid, $owner->guid);
+            //add_to_river($view, 'update', $owner->guid, $owner->guid);
         }
         if (is_array($square)
                 && isset($square['x1'])
@@ -469,8 +477,8 @@ class ElggCoffee {
 
             system_message(elgg_echo('avatar:crop:success'));
             $view = 'river/user/default/profileiconupdate';
-            elgg_delete_river(array('subject_guid' => $owner->guid, 'view' => $view));
-            add_to_river($view, 'update', $owner->guid, $owner->guid);
+            //elgg_delete_river(array('subject_guid' => $owner->guid, 'view' => $view));
+            //add_to_river($view, 'update', $owner->guid, $owner->guid);
         }
         return static::_get_user_icon_url($owner);
     }
@@ -478,7 +486,7 @@ class ElggCoffee {
     public static function upload_user_cover() {
         if (!isset($_FILES['cover']) || $_FILES['cover']['error'] != 0) return false;
         $guid = elgg_get_logged_in_user_guid();
-        $owner = get_entity($guid);
+        $owner = get_user($guid);
         $file = new ElggFile();
         $file->owner_guid = $guid;
         $file->setFilename("cover/{$guid}.jpg");
@@ -492,9 +500,10 @@ class ElggCoffee {
     }
 
     public static function set_user_extra_info ($name, $value) {
+        $value = strip_tags($value,'<br><br/><em><strong>');
         $guid = elgg_get_logged_in_user_guid();
         $user_ent = get_user($guid);
-        if ($user_ent instanceof ElggUser) {
+        if ($user_ent instanceof ElggUser && strlen($value)>0) {
             $user_ent->$name = $value;
             if ($user_ent->save()) {
                 return true;
@@ -560,7 +569,9 @@ class ElggCoffee {
     }
 
     private static function _get_user_cover_url ($entity) {
-        return $GLOBALS['CONFIG']->url . 'userCover/' . $GLOBALS['CONFIG']->auth_token . '/' . $entity->guid. '?icontime=' . $entity->covertime;
+        if ($entity instanceof ElggUser) {
+            return $GLOBALS['CONFIG']->url . 'userCover/' . $GLOBALS['CONFIG']->auth_token . '/' . $entity->guid. '?icontime=' . $entity->covertime;
+        }
     }
 
     private static function _get_dwl_url ($guid) {

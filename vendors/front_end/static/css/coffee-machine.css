@@ -195,8 +195,8 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 #profile .secondary-content .other:before,#profile .secondary-content .other:after{display:table;content:"";}
 #profile .secondary-content .other:after{clear:both;}
 #profile .secondary-content .other .hobbies-interests, #profile .secondary-content .other .languages,#profile .secondary-content .other .introduction{width:237px;float:left;}
-#profile .secondary-content .other .introduction{width:270px;padding-right: 10px;margin-right:10px;border-right:1px solid #D8D8D8;height: 115px; overflow: hidden;}
-#profile .secondary-content .other .introduction:hover, #profile .secondary-content .other .introduction textarea { overflow: hidden;height: auto;background-color: #F0F0F0}
+#profile .secondary-content .other .introduction{width:270px;padding-right: 10px;margin-right:10px;border-right:1px solid #D8D8D8;min-height: 130px;}
+##profile .secondary-content .other .introduction:hover, #profile .secondary-content .other .introduction textarea { overflow: hidden;height: auto;background-color: #F0F0F0}
 #profile .secondary-content .other h3, #profile .secondary-content .introduction h3, #profile .secondary-content .info h3 {color:#7b7b7b;font-size:13px;text-transform:uppercase;margin:1.5em 0 5px 0;}
 #profile .secondary-content .other ul{list-style-type:none;padding:0;margin-top:0;}
 #profile .secondary-content .other .languages, #profile .secondary-content .other .info{margin-left:15px;margin-top:0px}
@@ -216,9 +216,10 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 #profile .editing-introduction{position:relative;width:267px;min-height: 200px;}
 #profile .popover h3,#profile .popover p{margin:0;}
 #welcome{padding-top:15px;width:520px;}
-#welcome .content-module .primary-content .steps {margin-top: 25px;}
+#welcome .content-module .primary-content p {margin-bottom: 25px;}
+#welcome .content-module .primary-content .steps {margin-top: 50px;}
 #welcome .content-module .primary-content .stepN {font-size: 500%; font-weight: bold;display: block;}
-#welcome .content-module .primary-content .instruction {display: block;margin: -37px 0px 0px 55px;}
+#welcome .content-module .primary-content .instruction {display: block;margin: -37px 0px 0px 5px;}
 .pull-right{float:right;}
 .pull-left{float:left;}
 .hide{display:none;}

@@ -1,3 +1,4 @@
+#!/usr/bin/php5
 <?php
 $_SERVER['REQUEST_URI'] = '/';
 $_SERVER['SERVER_PORT'] = '';

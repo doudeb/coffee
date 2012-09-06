@@ -6,9 +6,17 @@ function coffee_api_set_site_id () {
     register_pam_handler('pam_auth_usertoken');
     $method = get_input('method');
 	$token = get_input('auth_token');
-	if ($method == 'auth.gettoken') {
-		$username = get_input('username');
+	if (in_array($method,array('auth.gettoken','coffee.getTokenByEmail'))) {
+		$username   = get_input('username');
+		$email      = get_input('email');
 		$password = get_input('password');
+        if ($email && !$username) {
+            if ($user_ent = get_user_by_email($email)) {
+                $username = $user_ent[0]->username;
+            } else {
+                return false;
+            }
+        }
 		if (elgg_authenticate($username, $password)) {
 			$user_ent = get_user_by_username($username);
             $login_count = (int)$user_ent->getPrivateSetting('login_count') +1;
@@ -142,25 +150,12 @@ function coffee_get_relationships($guid, $relationship, $inverse = false, $offse
         return false;
 }
 
-function _convert($content) {
-     /*if(!mb_check_encoding($content, 'UTF-8')
-         OR !($content === mb_convert_encoding(mb_convert_encoding($content, 'UTF-32', 'UTF-8' ), 'UTF-8', 'UTF-32'))) {
-
-         $content = mb_convert_encoding($content, 'UTF-8');
-
-         if (mb_check_encoding($content, 'UTF-8')) {
-             // log('Converted to UTF-8');
-         } else {
-             // log('Could not converted to UTF-8');
-         }
-     } else {
-         $content = utf8_decode($content);
-     }*/
+function _convert($content, $from = false) {
     $content =  html_entity_decode($content, ENT_QUOTES);
-    $content =  html_entity_decode($content, ENT_QUOTES);
-    $from = mb_detect_encoding($content);
+    if (!$from) {
+        $from = mb_detect_encoding($content);
+    }
     return mb_convert_encoding ($content , 'UTF-8', $from);
-     //return iconv(mb_detect_encoding($content), "UTF-8", $content);
  }
 
  /**
@@ -208,6 +203,13 @@ function user_login ($action,$type,$user) {
 function modify_header() {
     if(in_array(elgg_get_viewtype(),array('json','php','xml'))) {
         header('Access-Control-Allow-Origin: *');
+    }
+}
+
+function auth_gettoken_by_email ($email,$password) {
+    if($user_entity = get_user_by_email($email)) {
+        $username = $user_entity[0]->username;
+        return auth_gettoken($username,$password);
     }
 }
 

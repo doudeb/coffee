@@ -65,6 +65,7 @@ function animationTxt(id) {
 
 function animerPost(id) {
 	var post = objJson[id];
+
 	$('#logo').animate({ opacity:1},1000, function() {
 		$('#icon_url').attr('src',post.user.icon_url);
 		$('#fond_icon_url').attr('src',post.user.cover_url);
@@ -107,6 +108,9 @@ function animerPost(id) {
 				$('#attachment').hide('blind');
 				setTimeout("arreterRoue()",seconds);
 			}
+            if (id==9) {
+                setTimeout("location.reload()",seconds);
+            }
 			});
 		});
 }

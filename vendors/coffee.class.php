@@ -14,7 +14,7 @@ class ElggCoffee {
      * @param array $attachment An array of guid
      * @param string $type The post subtype
      */
-    public function new_post($post, $attachment = false, $type = COFFEE_SUBTYPE) {
+    public static function new_post($post, $attachment = false, $type = COFFEE_SUBTYPE) {
         if (strlen($post) > 0) {
             $post = strip_tags($post,'<br><br/><em><strong>');
             if ($type === COFFEE_SUBTYPE_BROADCAST_MESSAGE && !elgg_is_admin_logged_in()) {
@@ -34,7 +34,7 @@ class ElggCoffee {
         return false;
     }
 
-    public function new_comment($guid, $comment) {
+    public static function new_comment($guid, $comment) {
         $post = get_entity($guid);
         $comment = strip_tags($comment,'<br><br/><em><strong>');
         if ($post instanceof ElggObject && strlen($comment) > 0) {
@@ -49,14 +49,14 @@ class ElggCoffee {
         return false;
     }
 
-    public function get_post($guid) {
+    public static function get_post($guid) {
         if (!$guid) {
             return false;
         }
         return static::get_posts(0,0,10,false,array(COFFEE_SUBTYPE,COFFEE_SUBTYPE_BROADCAST_MESSAGE), $guid);
     }
 
-    public function get_site_data () {
+    public static function get_site_data () {
         $site           = elgg_get_site_entity();
         $user_ent       = elgg_get_logged_in_user_entity();
         if ($site instanceof ElggSite) {
@@ -124,7 +124,7 @@ class ElggCoffee {
 
     public function get_activity ($offset = 0, $limit = 10) {}
 
-    public function get_user_data ($guid, $extended = false) {
+    public static function get_user_data ($guid, $extended = false) {
         if (!$guid) {
             $user_ent           = elgg_get_logged_in_user_entity();
         } else {
@@ -216,7 +216,7 @@ class ElggCoffee {
         return $return;
     }
 
-    public function set_relationship ($guid_parent, $guid_child, $type) {
+    public static function set_relationship ($guid_parent, $guid_child, $type) {
         $guid_parent = (int)$guid_parent;
         $guid_child = (int)$guid_child;
         $type = sanitise_string($type);
@@ -240,7 +240,7 @@ class ElggCoffee {
         return $return;
     }
 
-     public function remove_relationship ($guid_parent, $guid_child, $type) {
+     public static function remove_relationship ($guid_parent, $guid_child, $type) {
         $guid_parent = (int)$guid_parent;
         $guid_child = (int)$guid_child;
         $type = sanitise_string($type);
@@ -260,7 +260,7 @@ class ElggCoffee {
         return $return;
     }
 
-    public function disable_object ($guid) {
+    public static function disable_object ($guid) {
         $ent = get_entity($guid);
         if ($ent instanceof ElggObject
                 && (elgg_is_admin_logged_in() || $ent->owner_guid == elgg_get_logged_in_user_guid())) {
@@ -486,7 +486,7 @@ class ElggCoffee {
     public static function upload_user_cover() {
         if (!isset($_FILES['cover']) || $_FILES['cover']['error'] != 0) return false;
         $guid = elgg_get_logged_in_user_guid();
-        $owner = get_entity($guid);
+        $owner = get_user($guid);
         $file = new ElggFile();
         $file->owner_guid = $guid;
         $file->setFilename("cover/{$guid}.jpg");
@@ -569,7 +569,9 @@ class ElggCoffee {
     }
 
     private static function _get_user_cover_url ($entity) {
-        return $GLOBALS['CONFIG']->url . 'userCover/' . $GLOBALS['CONFIG']->auth_token . '/' . $entity->guid. '?icontime=' . $entity->covertime;
+        if ($entity instanceof ElggUser) {
+            return $GLOBALS['CONFIG']->url . 'userCover/' . $GLOBALS['CONFIG']->auth_token . '/' . $entity->guid. '?icontime=' . $entity->covertime;
+        }
     }
 
     private static function _get_dwl_url ($guid) {

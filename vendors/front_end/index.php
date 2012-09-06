@@ -125,9 +125,9 @@
 								{{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{#first}}{{#translate}}coffee:feeditem:and{{/translate}}&nbsp;{{/first}}{{/likes.users}}&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isTwo}}
 								{{#isMore}}<p class="likes">
                                     {{#likes.users}}
-                                        {{#first}}<a href="#profile/{{owner_guid}}">{{name}}</a>{{/first}}&nbsp;
+                                        {{#first}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{/first}
                                     {{/likes.users}}
-                                    {{#translate}}coffee:feeditem:and{{/translate}} <a href="#" rel="tooltip" title="{{#likes.others}}{{name}}<br /> {{/likes.others}}" data-placement="bottom">{{likes.total}} {{#translate}}coffee:feeditem:others{{/translate}}</a> {{#translate}}coffee:feeditem:likesthis{{/translate}}</p>
+                                    {{#translate}}coffee:feeditem:and{{/translate}}&nbsp;<a href="#" rel="tooltip" title="{{#likes.others}}{{name}}<br /> {{/likes.others}}" data-placement="bottom">{{likes.total}}&nbsp;{{#translate}}coffee:feeditem:others{{/translate}}</a>&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>
                                 {{/isMore}}
 							{{/likes}}
 							<ul class="comments">

@@ -1554,7 +1554,8 @@
 		}
 
         $(window).scroll(function() {
-            if($(window).scrollTop() == $(document).height() - $(window).height()) {
+            if($(window).scrollTop() == $(document).height() - $(window).height()
+                && Backbone.history.fragment === 'feed') {
                 App.views.microbloggingView.offset = App.views.microbloggingView.offset + 10;
                 App.views.microbloggingView.feedItemsView.collection.loadFeed(App.views.microbloggingView.offset);
             }

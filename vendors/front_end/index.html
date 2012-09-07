@@ -5,7 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport" id="viewport">
     <meta content="yes" name="apple-mobile-web-app-capable" />
     <meta content="black" name="apple-mobile-web-app-status-bar-style" />
-    <meta name=‚Äùviewport‚Äù content=‚Äùwidth=320,user-scalable=false‚Äù />
+    <meta name="viewport" content="width=320,user-scalable=false" />
 
     <title>Enlightn Coffee Machine</title>
     <link href="static/css/coffee-machine.css" rel="stylesheet" />
@@ -13,7 +13,7 @@
     <link href="static/img/favicon.ico" rel="shortcut icon"/>
     <link rel="apple-touch-icon" href="static/img/iphone-icon.png" />
     <link rel="apple-touch-icon" sizes="72x72" href="static/img/ipad-icon.png" />
-    <link rel="apple-touch-icon" sizes="114x114" href="/static/img/iphone4-icon.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="static/img/iphone4-icon.png" />
     <link rel="apple-touch-startup-image" href="static/img/iphone-startup.png">
 
     <script src="static/js/vendor/json2.js"></script>
@@ -353,8 +353,8 @@
         <form class="form-horizontal">
           <legend>Login</legend>
           <div class="form-item">
-            <label for="inputUsername">Username</label>
-            <input type="text" class="input-large" id="inputUsername" />
+            <label for="inputEmail">Email</label>
+            <input type="text" class="input-large" id="inputEmail" />
           </div>
           <div class="form-item">
             <label for="inputPassword">Password</label>
@@ -395,7 +395,7 @@
           <div class="secondary-content">
             <div class="interactions line">
               <ul class="comments unit size1of2">
-                <li class="update-action update-action-comment"><a href="#" title="Add a comment" data-action="comment">Comment</a> | </li>
+                <li class="update-action update-action-comment update-action-comment-mobile"><a href="#" title="Add a comment" data-action="comment">Comment</a> | </li>
                 {{^hasLiked}}<li class="update-action update-action-like"><a href="{{id}}" title="Like" data-action="like">Like</a></li>{{/hasLiked}}
                 {{#hasLiked}}<li class="update-action update-action-unlike"><a href="#" title="Unlike" data-action="unlike">Unlike</a></li>{{/hasLiked}}
               </ul>
@@ -413,7 +413,7 @@
       <div id="menu">
         <ul>
           <li><a href="" title="Profile" data-action="profile" class="profile"><i class="icon-user icon-white"></i></a></li>
-          <li><a href="" title="Post feed" data-action="post" class="postfeed"><i class="icon-off icon-white"></i></a></li>
+          <li><a href="" title="Post feed" data-action="post" class="postfeed"><i class="icon-pencil icon-white"></i></a></li>
           <li><a href="" title="Home" data-action="feed" class="home">&nbsp;</a></li>
         </ul>
       </div>
@@ -421,6 +421,23 @@
 
     <script type="text/html" id="mobileProfileTemplate">
       <div id="content">
+        <div id="microblogging" class="content-module">
+          <div class="primary-content">
+            <div class="update-content line">
+              <textarea class="update-text" placeholder="{{#translate}}coffee:feed:share{{/translate}}"></textarea>
+            </div>
+            <div class="update-actions">
+              <button id="cancelPostUpdate" class="btn btn-danger">{{#translate}}coffee:feed:cancel{{/translate}}</button>
+              <button id="postUpdate" class="btn btn-primary">{{#translate}}coffee:feed:send{{/translate}}</button>
+              <img class="loader" src="static/img/loader.gif" width="16" height="16" />
+              {{#isAdmin}}
+              <span class="broadcastMessage">
+                <a class="" rel="tooltip" title="Broadcast message" href="" data-placement="left"><i class="icon-bullhorn"></i></a>
+              </span>
+              {{/isAdmin}}
+            </div>
+          </div>
+        </div>
         <div id="profile">
           <div class="content-module">
             <div class="primary-content line">
@@ -509,6 +526,45 @@
           {{#isOwnProfile}}
           <a href="" title="Log out" data-action="logout" class="btn btn-danger logout">Log out</a>
           {{/isOwnProfile}}
+        </div>
+      </div>
+    </script>
+    
+    <script type="text/html" id="mobileMicrobloggingTemplate">
+      <div id="content">
+        <div id="microblogging" class="content-module">
+          <div class="primary-content">
+            <div class="update-content line">
+              <textarea class="update-text" placeholder="{{#translate}}coffee:feed:share{{/translate}}"></textarea>
+            </div>
+            <div class="update-actions">
+              <button id="cancelPostUpdate" class="btn btn-danger">{{#translate}}coffee:feed:cancel{{/translate}}</button>
+              <button id="postUpdate" class="btn btn-primary">{{#translate}}coffee:feed:send{{/translate}}</button>
+              <img class="loader" src="static/img/loader.gif" width="16" height="16" />
+              {{#isAdmin}}
+              <span class="broadcastMessage">
+                <a class="" rel="tooltip" title="Broadcast message" href="" data-placement="left"><i class="icon-bullhorn"></i></a>
+              </span>
+              {{/isAdmin}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </script>
+    
+    <script type="text/html" id="mobileCommentTemplate">
+      <div id="content">
+        <div id="comments" class="content-module">
+          <div class="primary-content">
+            <div class="update-content line">
+              <textarea class="new-comment-textarea" placeholder="{{#translate}}coffee:feeditem:action:addcomment{{/translate}}"></textarea>
+            </div>
+            <div class="update-actions">
+              <button id="cancelPostUpdate" class="btn btn-danger">{{#translate}}coffee:feed:cancel{{/translate}}</button>
+              <button id="postUpdate" class="btn btn-primary">{{#translate}}coffee:feed:send{{/translate}}</button>
+              <img class="loader" src="static/img/loader.gif" width="16" height="16" />
+            </div>
+          </div>
         </div>
       </div>
     </script>

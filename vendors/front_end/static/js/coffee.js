@@ -13,7 +13,7 @@
       return navigator.userAgent.match(/IEMobile/i) ? true : false;
     },
     any: function() {
-      return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
+      return (!isMobile.Android() || !isMobile.BlackBerry() || !isMobile.iOS() || !isMobile.Windows());
     }
   };
   
@@ -73,8 +73,8 @@
     collections: {},
     views: {},
 
-    baseUrl: "/",
-    resourceUrl: '/services/api/rest/json',
+    baseUrl: "http://localhost" + "/",
+    resourceUrl: "http://localhost" + '/services/api/rest/json',
 
     isComposing: false,
 
@@ -153,7 +153,6 @@
 
     start: function () {
       var self = this;
-
       $.ajax({
         type: 'GET',
         url: App.resourceUrl,
@@ -163,6 +162,7 @@
           auth_token: self.get('authToken')
         },
         success: function (response) {
+          console.log(response);
           if (response.status != -1) {
             var result = response.result;
             self.set({
@@ -492,21 +492,15 @@
     },
 
     events: {
-      'click .show-all-link': 'showAllComments'
-      , 
-      'keyup .new-comment-textarea': 'textareaKeyup'
-      , 
-      'keypress .new-comment-textarea': 'textareaKeypress'
-      , 
-      'click .update-action a': 'updateAction'
-      , 
-      'focus .new-comment-textarea': 'changeComposingFlag'
-      , 
-      'blur .new-comment-textarea': 'changeComposingFlag'
-      , 
-      'click .remove-comment': 'removeComment'
-      , 
-      'click .show-all-text': 'toggleAllText'
+      'click .show-all-link': 'showAllComments',
+      'keyup .new-comment-textarea': 'textareaKeyup',
+      'keypress .new-comment-textarea': 'textareaKeypress',
+      'click .update-action a': 'updateAction',
+      'focus .new-comment-textarea': 'changeComposingFlag',
+      'blur .new-comment-textarea': 'changeComposingFlag',
+      'click .remove-comment': 'removeComment',
+      'click .show-all-text': 'toggleAllText',
+      'click .update-action-comment-mobile a': 'showMobileCommentForm'
     },
 
     render: function () {
@@ -517,11 +511,11 @@
         }
       };
       if(isMobile.any()){
-        var element = ich.mobilefeedItemTemplate(data);
+        var element = ich.mobileFeedItemTemplate(data);
       } else {
         var element = ich.feedItemTemplate(data);
       }
-//      var element = ich.mobilefeedItemTemplate(data);
+//      var element = ich.mobileFeedItemTemplate(data);
 
       $(this.el).replaceWith(element);
       this.setElement(element);
@@ -805,6 +799,10 @@
       .parent().find('a.hide').toggle();
       elm.addClass('hide');
       return false;
+    },
+    
+    showMobileCommentForm: function(e) {
+      Backbone.history.navigate('mobileComment', true);
     }
   });
 
@@ -877,7 +875,8 @@
       'keyup .update-text': 'listenForLink',
       'click .attachment .remove': 'removeAttachment',
       'click .add-media': 'uploadMedia',
-      'click .broadcastMessage': 'toggleBroadcastMessage'
+      'click .broadcastMessage': 'toggleBroadcastMessage',
+      'click #cancelPostUpdate': 'hideMobileCommentForm'
     },
 
     render: function () {
@@ -891,7 +890,12 @@
           return t(text);
         }
       };
-      var element = ich.microbloggingTemplate(data);
+      
+      if(isMobile.any()){
+        var element = ich.mobileMicrobloggingTemplate(data);
+      } else {
+        var element = ich.microbloggingTemplate(data);
+      }
       this.setElement(element);
 
       this.$el.prependTo('#container');
@@ -947,6 +951,10 @@
                 var postGuid = response.result.guid;
                 self.clear();
                 self.feedItemsView.addNew(postGuid);
+                
+                if(isMobile.any()){
+                  self.hideMobileCommentForm();
+                }
               } else {
                 alert('There was an error posting the update.');
               }
@@ -1083,6 +1091,13 @@
       elm.toggleClass('on');
       this.isBroadCastMessage = elm.hasClass('on');
       return false;
+    },
+    
+    hideMobileCommentForm : function (e) {
+      $('#profile').hide();
+      $('#feed-items').show();
+      $('#microblogging').hide();
+      $('#microblogging .update-text').val('');
     }
 
   });
@@ -1095,7 +1110,8 @@
     },
 
     events: {
-      'click a': 'handleClick'
+      'click a': 'handleClick',
+      'click #menu .postfeed': 'showMobileCommentForm'
     },
 
     render: function () {
@@ -1147,6 +1163,12 @@
       }
 
       return false;
+    },
+    
+    showMobileCommentForm: function (e) {
+      $('#profile').hide();
+      $('#feed-items').hide();
+      $('#microblogging').show();
     }
   });
 
@@ -1277,12 +1299,18 @@
       'click #cover-edit': 'coverEdit',
       'click .sm-addnew': 'newSocialmedia',
       'click .add-hobby': 'addHobby',
+      'click #profile .btn-danger': 'logout',
+      'click #cancelPostUpdate': 'hideMobileCommentForm',
       'click .show-all-text': 'toggleIntroduction'/*,
 			'click .update-actions a': 'updateAction'*/
     },
 
     firstRender: function () {
       this.render().$el.appendTo('#container');
+    },
+    
+    logout: function () {
+      App.models.session.end();
     },
 
     render: function () {
@@ -1292,9 +1320,19 @@
           return t(text);
         }
       };
-      var element = ich.profileTemplate(data);
+      if(isMobile.any()){
+        var element = ich.mobileProfileTemplate(data);
+      } else {
+        var element = ich.profileTemplate(data);
+      }
       $(this.el).replaceWith(element);
       this.setElement(element);
+      
+      if(isMobile.any()){
+        var element = ich.mobileMicrobloggingTemplate(data).find('#microblogging');
+        $('#content').prepend(element);
+      }
+
       setBackground (this.model.get('cover_url'));
 
       return this;
@@ -1507,6 +1545,12 @@
       elm = $('.introductionCut');
       elm.toggleClass('full');
       return true;
+    },
+    
+    hideMobileCommentForm : function (e) {
+      $('#profile').show();
+      $('#microblogging').hide();
+      $('#microblogging .update-text').val('');
     }
 
   });
@@ -1566,7 +1610,8 @@
       "profile":				"myProfile",
       "profile/:user_id":		"profile",
       "tv":           		"tv",
-      "welcome":           	"welcome"
+      "welcome":           	"welcome",
+      "mobileComment": "mobileComment"
     },
 
 
@@ -1651,6 +1696,10 @@
 
     if (window.location.hash == "") {
       Backbone.history.navigate('feed', true);
+    }
+    
+    if(isMobile.any()){
+      $(document.body).addClass('mobile');
     }
 
     $(window).scroll(function() {

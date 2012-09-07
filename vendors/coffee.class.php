@@ -110,6 +110,7 @@ class ElggCoffee {
                         $return[$key]['user']['username'] = $user->username;
                         $return[$key]['user']['name'] = $user->name;
                         $return[$key]['user']['icon_url'] = ElggCoffee::_get_user_icon_url($user,'medium');
+                        $return[$key]['user']['icon_url_small'] = ElggCoffee::_get_user_icon_url($user,'small');
                         $return[$key]['user']['cover_url'] = ElggCoffee::_get_user_cover_url($user);
                     }
 

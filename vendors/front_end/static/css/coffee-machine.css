@@ -29,6 +29,7 @@ a:hover{color:#005580;text-decoration:underline;}
 #container #menu ul#navigation li a:hover,#container #menu ul#navigation li.active a{background-color:rgba(0, 0, 0, 0.4);}#container #menu ul#navigation li a:hover i,#container #menu ul#navigation li.active a i{opacity:1;filter:alpha(opacity=100);}
 #container #content{min-height:100%;margin-left:73px;padding-bottom:50px;}
 #container .watermark{display: block;top:15px;right:15px;z-index:1;position:fixed;background-color: rgba(0, 0, 0, 0.35);padding: 4px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;}
+#uploadSpinner .progress{width: 100%;text-align: center}
 form{margin:0 0 18px;}
 fieldset{padding:0;margin:0;border:0;}
 legend{display:block;width:100%;padding:0;margin-bottom:27px;font-size:19.5px;line-height:36px;color:#333333;border:0;border-bottom:1px solid #e5e5e5;}legend small{font-size:13.5px;color:#d8d8d8;}
@@ -453,7 +454,7 @@ button.btn.btn-mini,input[type="submit"].btn.btn-mini{*padding-top:1px;*padding-
 .popover-title{padding:9px 15px;line-height:1;background-color:#f5f5f5;border-bottom:1px solid #eee;-webkit-border-radius:3px 3px 0 0;-moz-border-radius:3px 3px 0 0;border-radius:3px 3px 0 0;}
 .popover-content{padding:14px;background-color:#ffffff;-webkit-border-radius:0 0 3px 3px;-moz-border-radius:0 0 3px 3px;border-radius:0 0 3px 3px;-webkit-background-clip:padding-box;-moz-background-clip:padding-box;background-clip:padding-box;}.popover-content p,.popover-content ul,.popover-content ol{margin-bottom:0;}
 @media screen and (max-width: 640px){
-	
+
 }
 
 .line:after{content: ".";display: block;height: 0;clear: both;visibility: hidden;}

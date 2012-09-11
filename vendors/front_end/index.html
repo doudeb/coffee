@@ -27,6 +27,14 @@
     <div id="container">
       <div class="watermark"><img src="static/img/logo.png" id="watermark" /></div>
     </div>
+      <div class="modal hide" id="uploadSpinner" tabindex="-1">
+           <div class="modal-body">
+                <div class="progress">
+                    <div><img class="loader" src="static/img/loader.gif" width="16" height="16" /></div >
+                    <div class="percent">0%</div >
+                </div>
+           </div>
+      </div>
 
 
     <script type="text/html" id="loginTemplate">
@@ -529,7 +537,7 @@
         </div>
       </div>
     </script>
-    
+
     <script type="text/html" id="mobileMicrobloggingTemplate">
       <div id="content">
         <div id="microblogging" class="content-module">
@@ -551,7 +559,7 @@
         </div>
       </div>
     </script>
-    
+
     <script type="text/html" id="mobileCommentTemplate">
       <div id="content">
         <div id="comments" class="content-module">
@@ -570,7 +578,7 @@
     </script>
 
     <script src="static/js/coffee.js"></script>
-    <script src="static/js/bootstrap-tooltip.js"></script>
+    <script src="static/js/vendor/bootstrap.min.js"></script>
     <script>
       $('body').delegate('[rel*=tooltip]', 'mouseenter mouseleave mousedown', function(e) {
         var element = $(this);

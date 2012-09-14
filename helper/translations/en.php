@@ -24,6 +24,7 @@
         , 'coffee:feed:share' => 'Share something with your colleagues…'
         , 'coffee:feed:upload' => 'Upload something...'
         , 'coffee:feed:send' => 'Send'
+        , 'coffee:feed:cancel' => 'Cancel'
         , 'coffee:feeditem:showalltext' => 'Show all text'
         , 'coffee:feeditem:hidetext' => 'Hide text'
         , 'coffee:feeditem:likesthis' => 'likes this'

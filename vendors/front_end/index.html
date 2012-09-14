@@ -2,10 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport" id="viewport">
     <meta content="yes" name="apple-mobile-web-app-capable" />
     <meta content="black" name="apple-mobile-web-app-status-bar-style" />
-    <meta name="viewport" content="width=320,user-scalable=false" />
 
     <title>Enlightn Coffee Machine</title>
     <link href="static/css/coffee-machine.css" rel="stylesheet" />
@@ -35,7 +33,6 @@
                 </div>
            </div>
       </div>
-
 
     <script type="text/html" id="loginTemplate">
       <div id="login">
@@ -117,10 +114,30 @@
               <p class="time"><i class="icon-time"></i> {{content.friendly_time}}</p>
               {{#attachment}}
               <div class="attachment">
-                <a class="thumbnail" href="{{url}}" target="_blank"><img width="100" src="{{thumbnail}}" /></a>
+                <a class="thumbnail" href="#attachment{{guid}}" target="_blank" data-toggle="modal"><img width="100" src="{{thumbnail}}" /></a>
                 <div class="info">
-                  <a href="{{url}}" class="title" target="_blank">{{title}}</a>
+                  <a href="#attachment{{guid}}" class="title" target="_blank" data-toggle="modal">{{title}}</a>
                   <span class="description">{{description}}</span>
+                </div>
+                <div class="modal hide fade" id="attachment{{guid}}" tabindex="-1" role="dialog" aria-labelledby="attachment" aria-hidden="true">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                      <h3><a href="{{url}}" target="_blank">{{title}}</a></h3>
+                    </div>
+                    <div class="modal-body">
+                      {{#html}}
+                        <p>{{{html}}}</p>
+                      {{/html}}
+                      {{^html}}
+                      <img src="{{thumbnail}}" class="thumbnail {{type}}">
+                      <img src="{{url}}" class="imageLarge {{type}}">
+                      {{/html}}
+                    </div>
+                    <div class="modal-footer">
+                      {{^html}}
+                      <a href="{{url}}" class="btn btn-primary">Download</a>
+                      {{/html}}
+                    </div>
                 </div>
               </div>
               {{/attachment}}
@@ -133,9 +150,9 @@
               {{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{#first}}{{#translate}}coffee:feeditem:and{{/translate}}&nbsp;{{/first}}{{/likes.users}}&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isTwo}}
               {{#isMore}}<p class="likes">
                 {{#likes.users}}
-                {{#first}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{/first}
+                    {{#isFirst}}<a href="#profile/{{owner_guid}}">{{name}}</a>{{/isFirst}}
                 {{/likes.users}}
-                {{#translate}}coffee:feeditem:and{{/translate}}&nbsp;<a href="#" rel="tooltip" title="{{#likes.others}}{{name}}<br /> {{/likes.others}}" data-placement="bottom">{{likes.total}}&nbsp;{{#translate}}coffee:feeditem:others{{/translate}}</a>&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>
+                {{#translate}}coffee:feeditem:and{{/translate}}&nbsp;<a href="#" rel="tooltip" title="{{#likes.others}}{{name}}<br />{{/likes.others}}" data-placement="bottom">{{likes.totaltoDisplay}}&nbsp;{{#translate}}coffee:feeditem:others{{/translate}}</a>&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>
               {{/isMore}}
               {{/likes}}
               <ul class="comments">
@@ -421,7 +438,7 @@
       <div id="menu">
         <ul>
           <li><a href="" title="Profile" data-action="profile" class="profile"><i class="icon-user icon-white"></i></a></li>
-          <li><a href="" title="Post feed" data-action="post" class="postfeed"><i class="icon-pencil icon-white"></i></a></li>
+          <li><a href="" title="Post feed" data-action="mobilePost" class="mobilePost"><i class="icon-pencil icon-white"></i></a></li>
           <li><a href="" title="Home" data-action="feed" class="home">&nbsp;</a></li>
         </ul>
       </div>
@@ -540,7 +557,7 @@
 
     <script type="text/html" id="mobileMicrobloggingTemplate">
       <div id="content">
-        <div id="microblogging" class="content-module">
+        <div id="microblogging" class="content-module postForm">
           <div class="primary-content">
             <div class="update-content line">
               <textarea class="update-text" placeholder="{{#translate}}coffee:feed:share{{/translate}}"></textarea>
@@ -562,15 +579,51 @@
 
     <script type="text/html" id="mobileCommentTemplate">
       <div id="content">
-        <div id="comments" class="content-module">
+        <div class="content-module postForm feed-item">
           <div class="primary-content">
-            <div class="update-content line">
-              <textarea class="new-comment-textarea" placeholder="{{#translate}}coffee:feeditem:action:addcomment{{/translate}}"></textarea>
+            <a class="avatar" href="#profile/{{user.guid}}"><img src="{{user.icon_url_small}}" title="{{user.name}}" width="40" height="40" /></a>
+            <div class="update">
+              <a class="name" href="#profile/{{user.guid}}">{{user.name}}</a>
+              <p class="text">{{{content.text}}}</p>
+              {{#isLong}}
+              <p class="text-orig">{{{content.textOrig}}}</p>
+              <a class="show-all-text" href="javascript:void(0)">Show all text</a>
+              <a class="show-all-text hide" href="javascript:void(0)">Hide text</a>
+              {{/isLong}}
+              <p class="time"><i class="icon-time"></i> {{content.friendly_time}}</p>
+              {{#attachment}}
+              <div class="attachment">
+                <a class="thumbnail" href="{{url}}" target="_blank"><img width="100" src="{{thumbnail}}" /></a>
+                <div class="info">
+                  <a href="{{url}}" class="title" target="_blank">{{title}}</a>
+                  <span class="description">{{description}}</span>
+                </div>
+              </div>
+              {{/attachment}}
             </div>
-            <div class="update-actions">
-              <button id="cancelPostUpdate" class="btn btn-danger">{{#translate}}coffee:feed:cancel{{/translate}}</button>
-              <button id="postUpdate" class="btn btn-primary">{{#translate}}coffee:feed:send{{/translate}}</button>
-              <img class="loader" src="static/img/loader.gif" width="16" height="16" />
+          </div>
+          <div class="secondary-content line">
+            <div class="interactions">
+              <ul class="comments">
+                {{#comment.comments}}
+                <li class="comment">
+                  <a class="avatar" href="#profile/{{owner_guid}}"><img src="{{icon_url}}" title="{{name}}" width="35" height="35" /></a>
+                  <div class="comment-content">
+                    <a href="#profile/{{owner_guid}}" class="name">{{name}}</a>
+                    {{#isCommentOwner}}<span class="pull-right remove-comment" data-id="{{id}}"><a href="javascript:void(0)" rel="tooltip" title="{{#translate}}coffee:feeditem:action:removecomment{{/translate}}" data-placement="right"><i class="icon-trash"></i></a></span>{{/isCommentOwner}}
+                    <p class="text">{{text}}</p>
+                    <p class="time">{{friendly_time}}</p>
+                  </div>
+                </li>
+                {{/comment.comments}}
+              </ul>
+            </div>
+            <div class="update-content line">
+              <textarea class="update-text new-comment-textarea" placeholder="{{#translate}}coffee:feeditem:action:addcomment{{/translate}}"></textarea>
+            </div>
+            <div class="">
+              <button id="cancelCommentUpdate" class="btn btn-danger">{{#translate}}coffee:feed:cancel{{/translate}}</button>
+              <button id="commentUpdate" class="btn btn-primary">{{#translate}}coffee:feed:send{{/translate}}</button>
             </div>
           </div>
         </div>

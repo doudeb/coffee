@@ -324,7 +324,7 @@
         },
 
         set: function (attributes, options) {
-            attributes.isOwner = (attributes.user.guid == App.models.session.get('userId')) ? true : false;
+            attributes.isOwner = (attributes.user.guid == App.models.session.get('userId')) || (App.models.session.get('isAdmin')) ? true : false;
 
             attributes.isLong =  (attributes.content.text.length > 500) ? true : false;
             if (attributes.isLong) {
@@ -338,16 +338,17 @@
             attributes.likes.isTwo = (attributes.likes.total == 2) ? true : false;
             if (attributes.likes.total > 2) {
                 attributes.likes.isMore = true;
-                attributes.likes.total = attributes.likes.total - 1;
+                attributes.likes.totaltoDisplay = attributes.likes.total - 1;
             }
 
             if (attributes.likes.users != false) {
-                attributes.likes.users[0].first = true;
+                attributes.likes.users[0].isFirst = true;
                 attributes.likes.others = [];
                 _.each(attributes.likes.users, function(like,key) {
                     if (like.owner_guid == App.models.session.get('userId')) attributes.hasLiked = true;
                     if (key >= 1 && attributes.likes.isMore) {
                         attributes.likes.others[key] = like;
+                        attributes.likes.users[key].isFirst = false;
                     }
                 });
             }
@@ -356,7 +357,7 @@
                 attributes.comment.showAllLink = (attributes.comment.total > attributes.comment.comments.length) ? true : false;
                 for (i=0; i < attributes.comment.total; i++) {
                     try {
-                        if (attributes.comment.comments[i].owner_guid == App.models.session.get('userId')) attributes.comment.comments[i].isCommentOwner = true;
+                        if (attributes.comment.comments[i].owner_guid == App.models.session.get('userId') || (App.models.session.get('isAdmin') == 'true')) attributes.comment.comments[i].isCommentOwner = true;
                     } catch (Err) {}
                 }
             }
@@ -384,12 +385,9 @@
                 dataType: 'json',
                 data: {
                     method: 'coffee.getPosts'
-                    ,
-                    auth_token: App.models.session.get('authToken')
-                    ,
-                    offset: offset?offset:0
-                    ,
-                    limit: limit?limit:10
+                    , auth_token: App.models.session.get('authToken')
+                    , offset: offset?offset:0
+                    , limit: limit?limit:10
                 },
                 success: function (response) {
                     if (response.status != -1) {
@@ -802,6 +800,7 @@
         },
 
         showMobileCommentForm: function(e) {
+            sessionStorage.setItem('postId', $(e.currentTarget).parents('.feed-item').attr('data-guid'));
             Backbone.history.navigate('mobileComment', true);
         }
     });
@@ -1059,14 +1058,18 @@
                 var options = {
                     success:       self.updateAttachement
                     /*, uploadProgress: function(event, position, total, percentComplete) {
-	                    var percentVal = percentComplete + '%';
-	                    percent.html(percentVal);
+                        var percentVal = percentComplete + '%';
+                        percent.html(percentVal);
                     }*/
-                    , url: App.resourceUrl
-                    , dataType: 'json'
-                    , data: {
+                    ,
+                    url: App.resourceUrl
+                    ,
+                    dataType: 'json'
+                    ,
+                    data: {
                         method: 'coffee.uploadData'
-                        , auth_token: App.models.session.get('authToken')
+                        ,
+                        auth_token: App.models.session.get('authToken')
                     }
                 };
                 uploadForm.ajaxSubmit(options);
@@ -1075,7 +1078,7 @@
 
         updateAttachement: function (response) {
             var self = this
-                ,percent = $('.percent');
+            ,percent = $('.percent');
             if (response.status != -1) {
                 var result = response.result;
                 self.attachmentGuid = result.guid;
@@ -1116,8 +1119,7 @@
         },
 
         events: {
-            'click a': 'handleClick',
-            'click #menu .postfeed': 'showMobileCommentForm'
+            'click a': 'handleClick'
         },
 
         render: function () {
@@ -1166,6 +1168,8 @@
                 Backbone.history.navigate('tv', true);
             } else if (action == 'welcome') {
                 Backbone.history.navigate('welcome', true);
+            } else if (action == 'mobilePost') {
+                Backbone.history.navigate('mobilePost', true);
             }
 
             return false;
@@ -1608,6 +1612,145 @@
 
     });
 
+    /* !View: MobileCommentView */
+    var MobileCommentView = Backbone.View.extend({
+        initialize: function () {
+            _.bindAll(this);
+
+            this.render();
+        },
+
+        render: function () {
+            var self = this;
+            $.ajax({
+                type: 'GET',
+                url: App.resourceUrl,
+                dataType: 'json',
+                data: {
+                    method: 'coffee.getPost',
+                    auth_token: App.models.session.get('authToken'),
+                    guid: sessionStorage.getItem('postId')
+                },
+                success: function (response) {
+                    if (response.status != -1) {
+                        data = response.result[0];
+                        data.translate = function() {
+                            return function(text) {
+                                return t(text);
+                            }
+                        };
+
+                        var element = ich.mobileCommentTemplate(data);
+                        self.setElement(element);
+
+                        self.$el.prependTo('#container');
+                    } else if (response.message == 'pam_auth_userpass:failed') {
+                        sessionStorage.clear();
+                        App.models.session.end();
+                        Backbone.history.navigate('login', true);
+                    } else {
+                        Backbone.history.navigate('feed', true);
+                    }
+                }
+            });
+        },
+
+        events: {
+            "click #commentUpdate": "comment",
+            "click #cancelCommentUpdate": "back"
+        },
+
+        back: function() {
+            Backbone.history.navigate('feed', true);
+        },
+
+        comment: function(e) {
+            var postGuid = sessionStorage.getItem('postId');
+            var theComment = $('.new-comment-textarea').val();
+
+            $.ajax({
+                type: 'POST',
+                url: App.resourceUrl,
+                dataType: 'json',
+                data: {
+                    method: 'coffee.comment',
+                    auth_token: App.models.session.get('authToken'),
+                    guid: postGuid,
+                    comment: theComment
+                },
+                success: function (response) {
+                    if (response.message == 'pam_auth_userpass:failed') {
+                        sessionStorage.clear();
+                        App.models.session.end();
+                        Backbone.history.navigate('login', true);
+                    } else {
+                        Backbone.history.navigate('feed', true);
+                    }
+                }
+            });
+        }
+    });
+
+    /* !View: MobilePostView */
+    var MobilePostView = Backbone.View.extend({
+        initialize: function () {
+            _.bindAll(this);
+
+            this.render();
+        },
+
+        render: function () {
+            var self = this;
+            data = {
+                'translate': function() {
+                    return function(text) {
+                        return t(text);
+                    }
+                }
+            };
+
+            var element = ich.mobileMicrobloggingTemplate(data);
+            self.setElement(element);
+
+            self.$el.prependTo('#container');
+            $('#microblogging').show();
+        },
+
+        events: {
+            "click #postUpdate": "post",
+            "click #cancelPostUpdate": "back"
+        },
+
+        back: function() {
+            Backbone.history.navigate('feed', true);
+        },
+
+        post: function(e) {
+            var updateText = $('.update-text').val();
+
+            var data = {
+                method: 'coffee.createNewPost',
+                auth_token: App.models.session.get('authToken'),
+                post: updateText,
+                type: ''
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: App.resourceUrl,
+                dataType: 'json',
+                data: data,
+                success: function (response) {
+                    if (response.status != -1) {
+                        Backbone.history.navigate('feed', true);
+                    } else {
+                        alert('There was an error posting the update.');
+                    }
+                }
+            });
+        }
+    });
+
     /* !Router: WorkspaceRouter */
     var WorkspaceRouter = Backbone.Router.extend({
         routes: {
@@ -1617,7 +1760,8 @@
             "profile/:user_id":		"profile",
             "tv":           		"tv",
             "welcome":           	"welcome",
-            "mobileComment": "mobileComment"
+            "mobileComment": "mobileComment",
+            "mobilePost": "mobilePost"
         },
 
 
@@ -1689,6 +1833,30 @@
             } else {
                 Backbone.history.navigate('login', true);
             }
+        },
+
+        mobileComment: function () {
+            App.removeAllViews();
+            if (App.models.session.authenticated()) {
+                App.views.mobileCommentView = new MobileCommentView();
+                App.views.menuView = new MenuView();
+                setBackground (App.models.session.get('backgroundUrl'));
+                setLogo (App.models.session.get('logoUrl'));
+            } else {
+                Backbone.history.navigate('login', true);
+            }
+        },
+
+        mobilePost: function () {
+            App.removeAllViews();
+            if (App.models.session.authenticated()) {
+                App.views.mobilePostView = new MobilePostView();
+                App.views.menuView = new MenuView();
+                setBackground (App.models.session.get('backgroundUrl'));
+                setLogo (App.models.session.get('logoUrl'));
+            } else {
+                Backbone.history.navigate('login', true);
+            }
         }
 
 
@@ -1704,7 +1872,7 @@
             Backbone.history.navigate('feed', true);
         }
 
-        if(isMobile.any()) {
+        if(isMobile.any()){
             $(document.body).addClass('mobile');
         }
 

@@ -114,7 +114,7 @@ class ElggCoffee {
                         $return[$key]['user']['cover_url'] = ElggCoffee::_get_user_cover_url($user);
                     }
 
-                    $return[$key]['likes'] = ElggCoffee::get_likes ($post->guid, 0, 3);
+                    $return[$key]['likes'] = ElggCoffee::get_likes ($post->guid, 0, 10);
                     $return[$key]['comment'] = ElggCoffee::get_comments ($post->guid, 0, 2);
                     $return[$key]['attachment'] = ElggCoffee::get_attachment ($post->guid);
                 }
@@ -174,7 +174,7 @@ class ElggCoffee {
     }
 
     public static function get_likes ($guid, $offset = 0, $limit = 3) {
-        $likes = ElggCoffee::_get_likes ($guid, $offset = 0, $limit = 3);
+        $likes = ElggCoffee::_get_likes ($guid, $offset, $limit);
         if (is_array($likes['details'])) {
             $return['total'] = $likes['count'];
             foreach ($likes['details'] as $like) {
@@ -354,7 +354,7 @@ class ElggCoffee {
         $return = false;
         try {
             $api = new Embedly_API(array('user_agent' => 'Mozilla/5.0 (compatible; embedly/example-app; support@embed.ly)'));
-            $oembed = $api->oembed(array('url' => $url));
+            $oembed = $api->oembed(array('url' => $url, 'maxwidth' => 530));
             if (!isset($oembed[0]->error_code)) {
                 $return = array('title' => $oembed[0]->title
                                 , 'description' => $oembed[0]->description
@@ -365,11 +365,16 @@ class ElggCoffee {
             }
         } catch (Exception $e) {}
         if (!is_array($return)) {
+            require_once elgg_get_plugins_path() . "coffee/vendors/Readability.inc.php";
             $embedUrl = new Embed_url(array('url' => $url));
             $embedUrl->embed();
+            //Readability
+            $readability = new Readability($embedUrl->html, $embedUrl->encoding);
+            $content = $readability->getContent();
             $return = array('title' => $embedUrl->title
                                     , 'description' => $embedUrl->description
-                                    , 'thumbnail' => $embedUrl->sortedImage[0]);
+                                    , 'thumbnail' => $embedUrl->sortedImage[0]
+                                    , 'html' => $content['content']);
         }
         if (is_array($return)) {
             $link = new ElggObject();
@@ -582,7 +587,7 @@ class ElggCoffee {
     private static function _get_likes ($guid, $offset = 0, $limit = 3) {
         $likes = array();
         $likes = array();
-        $likes['details'] = coffee_get_relationships($guid, COFFEE_LIKE_RELATIONSHIP, true , $offset = 0, $limit = 3);
+        $likes['details'] = coffee_get_relationships($guid, COFFEE_LIKE_RELATIONSHIP, true , $offset, $limit);
         $options_like = array(
                         'relationship' => COFFEE_LIKE_RELATIONSHIP,
                         'relationship_guid' => $guid,

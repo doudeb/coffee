@@ -480,23 +480,25 @@ button.close { padding: 0;cursor: pointer;background: transparent;border: 0;-web
 .lastUnit {display: table-cell; *display:block;*zoom:1;float:none;_position:relative; _left:-3px; _margin-right: -3px;width:auto;}
 
 /*  .mobile #container { -webkit-overflow-scrolling : touch; }*/
-.mobile #login, .mobile #profile, .mobile #profile .primary-content .info, .mobile #profile .secondary-content .other .introduction, .mobile .feed-item .primary-content .update .attachment .info { width: auto; }
+.mobile { background-image: none !important; background-color: #494949 !important; }
+.mobile #login, .mobile #profile, .mobile #profile .primary-content .info, .mobile #profile .secondary-content .other .introduction, .mobile .feed-item .primary-content .update .attachment .info, .mobile #welcome { width: auto; }
 .mobile #login { margin: 100px 15px; }
 .mobile #login form legend { width: 94%; padding: 3% 3% 0; }
 .mobile #container .watermark { border-radius: 0; top: 0; left: 0; width: 100%; text-align: center; padding: 5px 0; background-color: rgba(73, 73, 73, 0.5); }
 .mobile .form-item { padding: 0 10px; }
-.mobile .input-large {width: 95%;}
+.mobile .input-large { width: 95%; }
 .mobile .form-horizontal .form-actions { padding: 10px 0; text-align: center; }
-.mobile .btn {width: 90%;}
-.mobile #microblogging { -webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px; }
-.mobile #microblogging .btn { width: auto; }
-.mobile #microblogging .update-content .update-text { width: 98%; height: 300px; margin-left: 0; }
+.mobile .btn {width: 88%;}
+.mobile #microblogging, .mobile .postForm { -webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px; }
+.mobile #microblogging .btn, .mobile .postForm .btn { width: auto; float: right; margin-right: 5px; }
+.mobile #microblogging .update-content .update-text, .mobile .postForm .update-content .update-text { width: 98%; height: 300px; margin-left: 0; }
+.mobile .postForm .update-content .new-comment-textarea { height: auto; }
 .mobile #container #content { margin: 60px 0 0 0; }
 .mobile #container #menu { width: 100%; height: 30px; top: 0; z-index: 2; background-color: transparent; box-shadow: none; }
 .mobile #container #menu ul { margin: 0; padding: 0; }
 .mobile #container #menu li { list-style: none; }
-.mobile #container .profile, .mobile #container .postfeed { width: 20%; height: 20px; display: inline-block; text-align: center; position: absolute; top: 50%; left: 0; }
-.mobile #container .postfeed { left: auto; right: 0; }
+.mobile #container .profile, .mobile #container .mobilePost { width: 20%; height: 20px; display: inline-block; text-align: center; position: absolute; top: 50%; left: 0; margin-top: -5px; }
+.mobile #container .mobilePost { left: auto; right: 0; }
 .mobile #container .home { display: block; height: 20px; padding: 7px 0; }
 .mobile #container a:hover.home { text-decoration: none; }
 .mobile #microblogging { display: none; }
@@ -519,3 +521,5 @@ button.close { padding: 0;cursor: pointer;background: transparent;border: 0;-web
 .mobile .content-module .primary-content, .mobile .content-module .secondary-content { padding: 10px; }
 .mobile .feed-item .secondary-content .interactions .comments .comment { padding: 0; }
 .mobile .feed-item .secondary-content .interactions .counters { text-align: right; }
+.mobile .comments { list-style-type: none; margin: 0 10px; padding: 0; }
+.mobile .comments p { margin: 0.1em 0; }

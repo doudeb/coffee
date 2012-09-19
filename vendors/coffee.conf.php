@@ -47,7 +47,7 @@ $exposed[$i]['params']          	= array(
                                                             , 'default' => '')
                                                 , "attachment" => array('type' => 'array'
                                                             , 'required' => false
-                                                            , 'default' => false)
+                                                            , 'default' => array())
                                                 , "type" => array('type' => 'string'
                                                             , 'required' => false
                                                             , 'default' => COFFEE_SUBTYPE)

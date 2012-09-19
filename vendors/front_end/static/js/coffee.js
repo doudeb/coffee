@@ -61,7 +61,7 @@
     }
 
     var t = function (key) {
-        if (translations === null) translations = $.parseJSON(sessionStorage.getItem('translations'));
+        if (translations === null) translations = $.parseJSON(localStorage.getItem('translations'));
         if (translations[key]) {
             return translations[key];
         }
@@ -116,38 +116,38 @@
         },
 
         save: function () {
-            sessionStorage.setItem('userId', this.get('userId'));
-            sessionStorage.setItem('authToken', this.get('authToken'));
-            sessionStorage.setItem('siteName', this.get('siteName'));
-            sessionStorage.setItem('logoUrl', this.get('logoUrl'));
-            sessionStorage.setItem('backgroundUrl', this.get('backgroundUrl'));
-            sessionStorage.setItem('customCss', this.get('customCss'));
-            sessionStorage.setItem('name', this.get('name'));
-            sessionStorage.setItem('iconUrl', this.get('iconUrl'));
-            sessionStorage.setItem('coverUrl', this.get('coverUrl'));
-            sessionStorage.setItem('translations', this.get('translations'));
-            sessionStorage.setItem('isAdmin', this.get('isAdmin'));
-            sessionStorage.setItem('accountTime', this.get('accountTime'));
-            sessionStorage.setItem('loginCount', this.get('loginCount'));
+            localStorage.setItem('userId', this.get('userId'));
+            localStorage.setItem('authToken', this.get('authToken'));
+            localStorage.setItem('siteName', this.get('siteName'));
+            localStorage.setItem('logoUrl', this.get('logoUrl'));
+            localStorage.setItem('backgroundUrl', this.get('backgroundUrl'));
+            localStorage.setItem('customCss', this.get('customCss'));
+            localStorage.setItem('name', this.get('name'));
+            localStorage.setItem('iconUrl', this.get('iconUrl'));
+            localStorage.setItem('coverUrl', this.get('coverUrl'));
+            localStorage.setItem('translations', this.get('translations'));
+            localStorage.setItem('isAdmin', this.get('isAdmin'));
+            localStorage.setItem('accountTime', this.get('accountTime'));
+            localStorage.setItem('loginCount', this.get('loginCount'));
 
             this.trigger('started');
         },
 
         load: function () {
             this.set({
-                userId: sessionStorage.getItem('userId'),
-                authToken: sessionStorage.getItem('authToken'),
-                siteName: sessionStorage.getItem('siteName'),
-                logoUrl: sessionStorage.getItem('logoUrl'),
-                backgroundUrl: sessionStorage.getItem('backgroundUrl'),
-                customCss: sessionStorage.getItem('custom_css'),
-                name: sessionStorage.getItem('name'),
-                iconUrl: sessionStorage.getItem('iconUrl'),
-                coverUrl: sessionStorage.getItem('coverUrl'),
-                translations: sessionStorage.getItem('translations'),
-                isAdmin: sessionStorage.getItem('isAdmin'),
-                accountTime: sessionStorage.getItem('accountTime'),
-                loginCount: sessionStorage.getItem('loginCount')
+                userId: localStorage.getItem('userId'),
+                authToken: localStorage.getItem('authToken'),
+                siteName: localStorage.getItem('siteName'),
+                logoUrl: localStorage.getItem('logoUrl'),
+                backgroundUrl: localStorage.getItem('backgroundUrl'),
+                customCss: localStorage.getItem('custom_css'),
+                name: localStorage.getItem('name'),
+                iconUrl: localStorage.getItem('iconUrl'),
+                coverUrl: localStorage.getItem('coverUrl'),
+                translations: localStorage.getItem('translations'),
+                isAdmin: localStorage.getItem('isAdmin'),
+                accountTime: localStorage.getItem('accountTime'),
+                loginCount: localStorage.getItem('loginCount')
             });
         },
 
@@ -197,7 +197,7 @@
 
                                     self.save();
                                 } else if (response.message == 'pam_auth_userpass:failed') {
-                                    sessionStorage.clear();
+                                    localStorage.clear();
                                     App.models.session.end();
                                     Backbone.history.navigate('login', true);
                                 } else {
@@ -207,7 +207,7 @@
                         });
 
                     } else if (response.message == 'pam_auth_userpass:failed') {
-                        sessionStorage.clear();
+                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -220,19 +220,19 @@
         end: function () {
             this.clear();
 
-            sessionStorage.removeItem('userId');
-            sessionStorage.removeItem('authToken');
-            sessionStorage.removeItem('siteName');
-            sessionStorage.removeItem('logoUrl');
-            sessionStorage.removeItem('backgroundUrl');
-            sessionStorage.removeItem('backgroundPos');
-            sessionStorage.removeItem('name');
-            sessionStorage.removeItem('iconUrl');
-            sessionStorage.removeItem('coverUrl');
-            sessionStorage.removeItem('isAdmin');
-            sessionStorage.removeItem('translations');
-            sessionStorage.removeItem('accountTime');
-            sessionStorage.removeItem('loginCount');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('siteName');
+            localStorage.removeItem('logoUrl');
+            localStorage.removeItem('backgroundUrl');
+            localStorage.removeItem('backgroundPos');
+            localStorage.removeItem('name');
+            localStorage.removeItem('iconUrl');
+            localStorage.removeItem('coverUrl');
+            localStorage.removeItem('isAdmin');
+            localStorage.removeItem('translations');
+            localStorage.removeItem('accountTime');
+            localStorage.removeItem('loginCount');
 
             Backbone.history.navigate('login', true);
         }
@@ -395,7 +395,7 @@
                         self.add(result);
                         self.startCheckingForNewPosts();
                     } else if (response.message == 'pam_auth_userpass:failed') {
-                        sessionStorage.clear();
+                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -422,7 +422,7 @@
                         var result = response.result;
                         self.unshift(result[0]);
                     } else if (response.message == 'pam_auth_userpass:failed') {
-                        sessionStorage.clear();
+                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -471,7 +471,7 @@
                             self.startCheckingForNewPosts();
                         }
                     } else if (response.message == 'pam_auth_userpass:failed') {
-                        sessionStorage.clear();
+                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -543,7 +543,7 @@
                         self.model.set(update);
                     }
                     if (response.message == 'pam_auth_userpass:failed') {
-                        sessionStorage.clear();
+                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -612,7 +612,7 @@
                         self.refresh();
                     }
                     if (response.message == 'pam_auth_userpass:failed') {
-                        sessionStorage.clear();
+                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -643,7 +643,7 @@
                         self.refresh();
                     }
                     if (response.message == 'pam_auth_userpass:failed') {
-                        sessionStorage.clear();
+                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -671,7 +671,7 @@
                         self.remove();
                     }
                     if (response.message == 'pam_auth_userpass:failed') {
-                        sessionStorage.clear();
+                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -700,7 +700,7 @@
                         self.refresh();
                     }
                     if (response.message == 'pam_auth_userpass:failed') {
-                        sessionStorage.clear();
+                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -745,7 +745,7 @@
                         self.model.attributes.isComposing = false;
                         self.render();
                     } else if (response.message == 'pam_auth_userpass:failed') {
-                        sessionStorage.clear();
+                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -777,7 +777,7 @@
                             self.remove();
                         }
                     } else {
-                        sessionStorage.clear();
+                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     }
@@ -800,7 +800,7 @@
         },
 
         showMobileCommentForm: function(e) {
-            sessionStorage.setItem('postId', $(e.currentTarget).parents('.feed-item').attr('data-guid'));
+            localStorage.setItem('postId', $(e.currentTarget).parents('.feed-item').attr('data-guid'));
             Backbone.history.navigate('mobileComment', true);
         }
     });
@@ -918,7 +918,7 @@
         postUpdate: function () {
             var self = this;
 
-            if (! this.isSending) {
+            if (! self.isSending && ! self.isAttaching) {
                 var updateText = self.$el.find('.update-text').eq(0).val();
 
                 if (! self.attachmentGuid && updateText.length == 0) {
@@ -974,6 +974,7 @@
                 if (self.isUrl(value)) {
                     var theUrl = value.substr(self.updateLength);
                     self.attachLink(theUrl);
+                    textarea.val(value.replace(theUrl, ''));
                 }
             } else {
                 if (e.keyCode == 32) {
@@ -981,6 +982,7 @@
                         var splitValue = value.split(' ');
                         var theUrl = splitValue[splitValue.length - 2];
                         self.attachLink(theUrl);
+                        textarea.val(value.replace(theUrl, ''));
                     }
                 }
             }
@@ -1227,7 +1229,7 @@
                             }
                         });
                     } else if (response.message == 'pam_auth_userpass:failed') {
-                        sessionStorage.clear();
+                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -1301,8 +1303,9 @@
         events: {
             'mouseenter .editable': 'toggleEditable',
             'mouseleave .editable': 'toggleEditable',
-            'focusout .editing-introduction': 'updateIntroduction',
+            'focusout .editing-introduction': 'updateField',
             'click .editable': 'startInlineEdit',
+            'focusout .editing' : 'updateField',
             'keyup .editing': 'textareaKeyup',
             'keypress .editing': 'textareaKeypress',
             'click .avatar .btn': 'avatarEdit',
@@ -1366,11 +1369,12 @@
         },
 
         startInlineEdit: function (e) {
-            var element = $(e.currentTarget)
+
+            var self = this
+            , element = $(e.currentTarget)
             , name = element.attr('data-name')
             , key = element.attr('data-key')
-            , prevValue = element.html().replace('<br>', '');
-
+            , prevValue = typeof eval('self.model.attributes.' + name) == 'undefined' ? '':element.html().replace('<br>', '');
             var editingTextarea = $('<textarea class="editing editing-'+name+'" data-name="'+name+'" data-key="'+key+'">' + prevValue + '</textarea>')
             .bind('blur', function(){
                 editingTextarea.replaceWith(element);
@@ -1444,11 +1448,12 @@
             elm.toggle();
         },
 
-        updateIntroduction: function (e) {
+        updateField: function (e) {
             var element = $(e.currentTarget)
             , value = element.val()
-            , name = element.data('name');
-            this.finishedEditing(value, name);
+            , name = element.data('name')
+            , key = element.data('key');
+            this.finishedEditing(value, name, key);
         },
 
         avatarEdit: function () {
@@ -1629,7 +1634,7 @@
                 data: {
                     method: 'coffee.getPost',
                     auth_token: App.models.session.get('authToken'),
-                    guid: sessionStorage.getItem('postId')
+                    guid: localStorage.getItem('postId')
                 },
                 success: function (response) {
                     if (response.status != -1) {
@@ -1645,7 +1650,7 @@
 
                         self.$el.prependTo('#container');
                     } else if (response.message == 'pam_auth_userpass:failed') {
-                        sessionStorage.clear();
+                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -1665,7 +1670,7 @@
         },
 
         comment: function(e) {
-            var postGuid = sessionStorage.getItem('postId');
+            var postGuid = localStorage.getItem('postId');
             var theComment = $('.new-comment-textarea').val();
 
             $.ajax({
@@ -1680,7 +1685,7 @@
                 },
                 success: function (response) {
                     if (response.message == 'pam_auth_userpass:failed') {
-                        sessionStorage.clear();
+                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -1751,6 +1756,64 @@
         }
     });
 
+   /* !View: userSettings */
+    var userSettingsView = Backbone.View.extend({
+        initialize: function () {
+            _.bindAll(this);
+
+            this.render();
+        },
+
+        render: function () {
+            var self = this;
+            data = {
+                'translate': function() {
+                    return function(text) {
+                        return t(text);
+                    }
+                }
+                , 'userSetting' : App.models.session.toJSON()
+            };
+
+            var element = ich.userSettingsTemplate(data);
+            self.setElement(element);
+
+            self.$el.prependTo('#container');
+        },
+
+        events: {
+            "click #saveSettings" : "post"
+        },
+
+        post: function(e) {
+
+            var data = {
+                method: 'coffee.editUserDetail'
+                , auth_token: App.models.session.get('authToken')
+                , name: $('#inputName').val()
+                , current_password: $('#inputCurrentPassword').val()
+                , password: $('#inputNewPassword').val()
+                , language: $('#inputLanguage').val()
+            };
+            $.ajax({
+                type: 'POST',
+                url: App.resourceUrl,
+                dataType: 'json',
+                data: data,
+                success: function (response) {
+                    console.log(response);
+                    if (response.status != -1) {
+                        $('#settingUpdateSuccess').fadeIn();
+                    } else {
+                        alert('There was an error posting the update.\n\
+                                Message : ' + response.message);
+                    }
+                }
+            });
+            return false;
+        }
+    });
+
     /* !Router: WorkspaceRouter */
     var WorkspaceRouter = Backbone.Router.extend({
         routes: {
@@ -1760,8 +1823,9 @@
             "profile/:user_id":		"profile",
             "tv":           		"tv",
             "welcome":           	"welcome",
-            "mobileComment": "mobileComment",
-            "mobilePost": "mobilePost"
+            "mobileComment":        "mobileComment",
+            "mobilePost":           "mobilePost",
+            "userSettings":         "userSettings"
         },
 
 
@@ -1827,6 +1891,18 @@
             App.removeAllViews();
             if (App.models.session.authenticated()) {
                 App.views.welcomeAppView = new WelcomeAppView();
+                App.views.menuView = new MenuView();
+                setBackground (App.models.session.get('backgroundUrl'));
+                setLogo (App.models.session.get('logoUrl'));
+            } else {
+                Backbone.history.navigate('login', true);
+            }
+        },
+
+        userSettings: function () {
+            App.removeAllViews();
+            if (App.models.session.authenticated()) {
+                App.views.userSettingsView = new userSettingsView();
                 App.views.menuView = new MenuView();
                 setBackground (App.models.session.get('backgroundUrl'));
                 setLogo (App.models.session.get('logoUrl'));

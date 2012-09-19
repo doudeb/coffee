@@ -43,10 +43,11 @@ $exposed[++$i]['method']            = "coffee.createNewPost";
 $exposed[$i]['function']            = "ElggCoffee::new_post";
 $exposed[$i]['params']          	= array(
                                              "post" => array('type' => 'string'
-                                                            , 'required' => true )
+                                                            , 'required' => false
+                                                            , 'default' => '')
                                                 , "attachment" => array('type' => 'array'
                                                             , 'required' => false
-                                                            , 'default' => array())
+                                                            , 'default' => false)
                                                 , "type" => array('type' => 'string'
                                                             , 'required' => false
                                                             , 'default' => COFFEE_SUBTYPE)
@@ -237,13 +238,14 @@ $exposed[$i]['function']            = "ElggCoffee::edit_user_detail";
 $exposed[$i]['params']          	= array("language" => array('type' => 'string'
                                                             , 'required' => true)
                                                         , "name" => array('type' => 'string'
-                                                            , 'required' => true)
-                                                        , "email" => array('type' => 'string'
-                                                            , 'required' => true)
+                                                            , 'required' => true
+                                                            , 'default' => false)
                                                         , "current_password" => array('type' => 'string'
-                                                            , 'required' => true)
+                                                            , 'required' => false
+                                                            , 'default' => false)
                                                         , "password" => array('type' => 'string'
-                                                            , 'required' => true));
+                                                            , 'required' => true
+                                                            , 'default' => false));
 $exposed[$i]['comment']          	= '';
 $exposed[$i]['call_method']      	= 'POST';
 $exposed[$i]['require_api_auth']    = false;

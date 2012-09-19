@@ -35,12 +35,12 @@ function coffee_api_set_site_id () {
         elgg_unregister_event_handler('login', 'user','user_login');
         login($user_ent);
         $CONFIG->auth_token = $token;
-        $time_refresh = $time + (60*60*24);
+        $time_refresh = $time + (60*60*24*30);
         update_data("Update {$CONFIG->dbprefix}users_apisessions Set expires = $time_refresh Where id = " . $user_session->id);
 	} elseif (elgg_is_logged_in()) {
         $time = time();
         $user_ent = elgg_get_logged_in_user_entity();
-        $time_refresh = $time + (60*60*24);
+        $time_refresh = $time + (60*60*24*30);
         $user_token = get_data_row("SELECT * from {$CONFIG->dbprefix}users_apisessions where user_guid='$user_ent->guid'");
         update_data("Update {$CONFIG->dbprefix}users_apisessions Set expires = $time_refresh Where id = " . $user_token->id);
         $CONFIG->auth_token = $user_token->token;
@@ -211,6 +211,63 @@ function auth_gettoken_by_email ($email,$password) {
         $username = $user_entity[0]->username;
         return auth_gettoken($username,$password);
     }
+}
+
+function create_attachement ($filename, $content) {
+    $prefix             = "file/";
+    $file               = new FilePluginFile();
+	$file->subtype      = "file";
+    $file->title        = $filename;
+	$file->access_id    = COFFEE_DEFAULT_ACCESS_ID;
+    $filestorename      = elgg_strtolower(time().$filename);
+    $file->setFilename($prefix.$filestorename);
+    $file->setMimeType($content['mime_type']);
+    $file->originalfilename = $filename;
+    $file->description  = $file->originalfilename;
+    $file->simpletype   = get_general_file_type($content['mime_type']);
+    // Open the file to guarantee the directory exists
+    $file->open("write");
+    $file->close();
+    // move using built in function to allow large files to be uploaded
+    file_put_contents($file->getFilenameOnFilestore(), $content['content']);
+    $guid = $file->save();
+    // if image, we need to create thumbnails (this should be moved into a function)
+    if ($guid && $file->simpletype == "image") {
+        $thumbnail = get_resized_image_from_existing_file($file->getFilenameOnFilestore(),60,60, true);
+        if ($thumbnail) {
+            $thumb = new ElggFile();
+            $thumb->setMimeType($content['mime_type']);
+
+            $thumb->setFilename($prefix."thumb".$filestorename);
+            $thumb->open("write");
+            $thumb->write($thumbnail);
+            $thumb->close();
+
+            $file->thumbnail = $prefix."thumb".$filestorename;
+            unset($thumbnail);
+        }
+
+        $thumbsmall = get_resized_image_from_existing_file($file->getFilenameOnFilestore(),153,153, true);
+        if ($thumbsmall) {
+            $thumb->setFilename($prefix."smallthumb".$filestorename);
+            $thumb->open("write");
+            $thumb->write($thumbsmall);
+            $thumb->close();
+            $file->smallthumb = $prefix."smallthumb".$filestorename;
+            unset($thumbsmall);
+        }
+
+        $thumblarge = get_resized_image_from_existing_file($file->getFilenameOnFilestore(),600,600, false);
+        if ($thumblarge) {
+            $thumb->setFilename($prefix."largethumb".$filestorename);
+            $thumb->open("write");
+            $thumb->write($thumblarge);
+            $thumb->close();
+            $file->largethumb = $prefix."largethumb".$filestorename;
+            unset($thumblarge);
+        }
+    }
+    return $file->guid;
 }
 
 /**

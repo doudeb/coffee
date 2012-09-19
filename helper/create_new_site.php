@@ -15,11 +15,13 @@ if(cli_prompt("This will create a new site... sure : [y/N]") !== 'y') exit("Than
 
 input:
 $sitename   =  cli_prompt("\nSite name : ");
-$url        =  cli_prompt("\nSite url (including trailling slash), must be http://something.api.coffepoke.com/ : ");
-$username   =  cli_prompt("\nSite admin username : ");
-$password   =  cli_prompt("\nSite admin password (min " . $CONFIG->min_password_length. " chars): ");
 $email      =  cli_prompt("\nSite admin email : ");
 $displayname=  cli_prompt("\nSite admin display name : ");
+$password   =  cli_prompt("\nSite admin password (min " . $CONFIG->min_password_length. " chars): ");
+//$url        =  cli_prompt("\nSite url (including trailling slash), must be http://something.api.coffepoke.com/ : ");
+$url        = "http://" . $sitename . ".api.coffepoke.com/";
+//$username   =  cli_prompt("\nSite admin username : ");
+$username   = str_replace(array('@','-','_'), '', $email);
 
 
 if (in_array('', array($sitename,$url,$username,$password,$email,$displayname))) {
@@ -27,7 +29,7 @@ if (in_array('', array($sitename,$url,$username,$password,$email,$displayname)))
     goto input;
 }
 
-if(cli_prompt("Confirm the new site value : " . var_export(array('sitename'=>$sitename,'url'=>$url,'username'=>$username,'password'=>$password,'email'=>$email,'displayname'=>$displayname),true) . "[y/N]") !== 'y') exit("Thanks anyway....\n");
+if (cli_prompt("Confirm the new site value : " . var_export( array ( 'sitename'=>$sitename,'url'=>$url,'username'=>$username,'password'=>$password,'email'=>$email,'displayname'=>$displayname ),true ) . "[y/N]") !== 'y') exit("Thanks anyway....\n" );
 
 echo "Now create the site entity....";
 elgg_set_ignore_access(TRUE);

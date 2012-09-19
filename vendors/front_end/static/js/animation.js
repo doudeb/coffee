@@ -12,7 +12,7 @@ $(document).ready(function() {
         dataType: 'json',
         data: {
             method: 'coffee.getPosts'
-            , auth_token: sessionStorage.getItem('authToken')
+            , auth_token: localStorage.getItem('authToken')
             , offset: 0
             , limit: 10
         },

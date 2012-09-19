@@ -15,7 +15,7 @@ class ElggCoffee {
      * @param string $type The post subtype
      */
     public static function new_post($post, $attachment = false, $type = COFFEE_SUBTYPE) {
-        if (strlen($post) > 0) {
+        if (strlen($post) > 0 || $attachment) {
             $post = strip_tags($post,'<br><br/><em><strong>');
             if ($type === COFFEE_SUBTYPE_BROADCAST_MESSAGE && !elgg_is_admin_logged_in()) {
                 return false;
@@ -534,29 +534,27 @@ class ElggCoffee {
         return array();
     }
 
-    public static function edit_user_detail($language = false, $name = false, $email = false, $curent_password = false, $password = false) {
+    public static function edit_user_detail($language = false, $name = false, $curent_password = false, $password = false) {
+        set_input('guid', elgg_get_logged_in_user_guid());
         set_input('language', $language);
         set_input('current_password', $curent_password);
         set_input('password', $password);
         set_input('password2', $password);
         set_input('name', $name);
-        set_input('email', $email);
+        $return = true;
         if ($language) {
-            elgg_set_user_language();
+            $return = elgg_set_user_language();
         }
         if ($name) {
-            elgg_set_user_name();
-        }
-        if ($email) {
-            elgg_set_user_email();
+            $return = elgg_set_user_name();
         }
         if ($password && $curent_password) {
-            elgg_set_user_password();
+            $return = elgg_set_user_password();
         }
-        if (count_messages("error") === 0) {
-            return true;
+        if (!$return) {
+            throw new Exception (print_r($_SESSION['msg']['error'], true));
         }
-        return false;
+        return true;
     }
 
 

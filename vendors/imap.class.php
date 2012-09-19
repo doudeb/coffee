@@ -17,7 +17,6 @@ class IMAP {
 				,$password
 			);
 			$error = imap_last_error();
-            echo $error;
 			/* An error occured, set the stream to null */
 			if ( $error != "" ) {
 				$this->stream = null;
@@ -53,6 +52,10 @@ class IMAP {
 
 	public function imap_headerinfo( $msgno ) {
 		return imap_headerinfo( $this->stream, $msgno );
+	}
+
+ 	public function imap_fetchheader( $msgno ) {
+		return imap_fetchheader( $this->stream, $msgno );
 	}
 
 	public function view_message( $msgno ) {
@@ -108,7 +111,7 @@ class IMAP {
 				if(!$part_number) {
 					$part_number = "1";
 				}
-				$text = imap_fetchbody($stream, $uid, $part_number, FT_UID|FT_PEEK);
+				$text = imap_fetchbody($stream, $uid, $part_number, FT_UID);
 				if($structure->encoding == 3) {
 					$text = imap_base64($text);
 				} else if($structure->encoding == 4) {

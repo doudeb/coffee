@@ -25,7 +25,7 @@ if (php_sapi_name() !== 'cli') exit("To be runned under commande line");
 
 require_once(dirname(dirname(__FILE__)) . "/vendors/imap.class.php");
 
-$imapStream = new IMAP('mail.enlightn.com','143','post@enlightn.com','topsecure','imap/notls');
+$imapStream = new IMAP('mail.enlightn.com','143','post@enlightn.com','topsecure','tls/novalidate-cert');
 $messages = $imapStream->imap_search("UNSEEN");
 //$imapBox = $imapStream->imap_check();
 foreach ($messages as $key=>$email_msgno) {
@@ -45,17 +45,19 @@ foreach ($messages as $key=>$email_msgno) {
     $owner_email    = $email_full_headers->from[0]->mailbox . '@' . $email_full_headers->from[0]->host;
 
     $user_ent       = get_user_by_email(trim($owner_email));
-    if ($user_ent) {
+    if ($user_ent[0] instanceof ElggUser) {
+        $user_ent = $user_ent[0];
         if (login($user_ent)) {
             $DATALIST_CACHE['default_site'] = $CONFIG->site_guid = $CONFIG->site_id = $user_ent->site_guid;
             $CONFIG->site = get_entity($CONFIG->site_guid);
-            $new_message = ElggCoffee::new_post($message);
+            //proceed attachement
+            $attachment_guids = array();
+            foreach ($email_attachement as $key => $attachement) {
+                if (isset($attachement["filename"])) {
+                    $attachment_guids[] = create_attachement($attachement["filename"],$imapStream->get_attachments($email_headers[0]->uid,$attachement["filename"]));
+                }
+            }
+            $new_message = ElggCoffee::new_post($message,$attachment_guids);
         }
     }
-    //proceed attachement
-    /*foreach ($email_attachement as $key => $attachement) {
-        if (isset($attachement["filename"])) {
-            create_attachement($new_message['success'],$attachement["filename"],$imapStream->get_attachments($email_headers[0]->uid,$attachement["filename"]));
-        }
-    }*/
 }

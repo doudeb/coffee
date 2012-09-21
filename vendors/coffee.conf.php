@@ -9,6 +9,7 @@ define('COFFEE_LIKE_RELATIONSHIP', 'coffee_like');
 define('COFFEE_POKE_RELATIONSHIP', 'coffee_poke');
 define('COFFEE_POST_ATTACHMENT_RELATIONSHIP', 'coffee_post_attachment');
 define('COFFEE_COMMENT_ATTACHMENT_RELATIONSHIP', 'coffee_comment_attachment');
+define('COFFEE_POST_MENTIONED_RELATIONSHIP', 'post::mentioned');
 define('COFFEE_COMMENT_TYPE', 'generic_comment');
 
 
@@ -46,6 +47,9 @@ $exposed[$i]['params']          	= array(
                                                             , 'required' => false
                                                             , 'default' => '')
                                                 , "attachment" => array('type' => 'array'
+                                                            , 'required' => false
+                                                            , 'default' => array())
+                                                , "mentionedUser" => array('type' => 'array'
                                                             , 'required' => false
                                                             , 'default' => array())
                                                 , "type" => array('type' => 'string'
@@ -278,5 +282,21 @@ $exposed[$i]['comment']          	= 'Authenticate a user by email and password';
 $exposed[$i]['call_method']      	= 'POST';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = false;
+
+$exposed[++$i]['method']            = "coffee.getUserList";
+$exposed[$i]['function']            = "ElggCoffee::get_user_list";
+$exposed[$i]['params']          	= array("username" => array('type' => 'string'
+                                                            , 'required' => false
+                                                            , 'default' => false)
+                                            , "offset" => array('type' => 'int'
+                                                            , 'required' => false
+                                                            , 'default' => 0)
+                                            , "limit" => array('type' => 'int'
+                                                        , 'required' => false
+                                                        , 'default' => 10));
+$exposed[$i]['comment']          	= 'Search for user';
+$exposed[$i]['call_method']      	= 'GET';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
 
 $GLOBALS['CONFIG']->exposed                    = $exposed;

@@ -130,6 +130,7 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .feed-item .primary-content .avatar{float:left;width:40px;height:40px;overflow:hidden;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;}.feed-item .primary-content .avatar img{display:block;}
 .feed-item .primary-content .update{float:left;width:440px;margin-left:10px;}.feed-item .primary-content .update .name{font-weight:bold;}
 .feed-item .primary-content .update .text, .feed-item .primary-content .update .text-orig{margin:0.3em 0;}
+.feed-item .primary-content .update .text .mentioned {color: #0088CC;cursor:pointer}
 .feed-item .primary-content .update .text-orig{display:none}
 .feed-item .primary-content .update .time{margin:0;color:#7b7b7b;font-size:12px;}.feed-item .primary-content .update .time i{opacity:0.45;filter:alpha(opacity=45);}
 .feed-item .primary-content .update .attachment{margin-top:10px;background-color:#f0f0f0;padding:5px;*zoom:1;position:relative;}.feed-item .primary-content .update .attachment:before,.feed-item .primary-content .update .attachment:after{display:table;content:"";}
@@ -157,7 +158,9 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 #microblogging{-webkit-border-radius:0 0 3px 3px;-moz-border-radius:0 0 3px 3px;border-radius:0 0 3px 3px;}#microblogging .update-content,#microblogging .update-actions{*zoom:1;}#microblogging .update-content:before,#microblogging .update-actions:before,#microblogging .update-content:after,#microblogging .update-actions:after{display:table;content:"";}
 #microblogging .update-content:after,#microblogging .update-actions:after{clear:both;}
 #microblogging .update-content .avatar{float:left;width:60px;height:60px;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;overflow:hidden;}
-#microblogging .update-content .update-text{float:left;width:410px;height:50px;margin-left:10px;}
+#microblogging .update-content {min-height: 60px;  background-repeat: no-repeat; background-size: 60px}
+#microblogging .update-content .new-post {margin-left:70px}
+#microblogging .update-content .update-text{width:420px;height:50px}
 #microblogging .attachment{margin:0 0 10px 70px;background-color:#f0f0f0;padding:5px;*zoom:1;position:relative;}#microblogging .attachment:before,#microblogging .attachment:after{display:table;content:"";}
 #microblogging .attachment:after{clear:both;}
 #microblogging .attachment .thumbnail{float:left;padding:3px;background-color:#ffffff;}
@@ -524,3 +527,124 @@ button.close { padding: 0;cursor: pointer;background: transparent;border: 0;-web
 .mobile .feed-item .secondary-content .interactions .counters { text-align: right; }
 .mobile .comments { list-style-type: none; margin: 0 10px; padding: 0; }
 .mobile .comments p { margin: 0.1em 0; }
+.mentions-input-box {
+  position: relative;
+  background: #fff;
+}
+
+.mentions-input-box textarea {
+  width: 100%;
+  display: block;
+  height: 18px;
+  padding: 9px;
+  border: 1px solid #dcdcdc;
+  border-radius:3px;
+  overflow: hidden;
+  background: transparent;
+  position: relative;
+  outline: 0;
+  resize: none;
+
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.mentions-input-box .mentions-autocomplete-list {
+  display: none;
+  background: #fff;
+  border: 1px solid #b2b2b2;
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  margin-top: -2px;
+
+  border-radius:5px;
+  border-top-right-radius:0;
+  border-top-left-radius:0;
+
+  -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.148438);
+     -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.148438);
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.148438);
+}
+
+.mentions-input-box .mentions-autocomplete-list ul {
+    margin: 0;
+    padding: 0;
+}
+
+.mentions-input-box .mentions-autocomplete-list li {
+  background-color: #fff;
+  padding: 0 5px;
+  margin: 0;
+  width: auto;
+  border-bottom: 1px solid #eee;
+  height: 26px;
+  line-height: 26px;
+  overflow: hidden;
+  cursor: pointer;
+  list-style: none;
+  white-space: nowrap;
+}
+
+.mentions-input-box .mentions-autocomplete-list li:last-child {
+  border-radius:5px;
+}
+
+.mentions-input-box .mentions-autocomplete-list li > img,
+.mentions-input-box .mentions-autocomplete-list li > div.icon {
+  width: 16px;
+  height: 16px;
+  float: left;
+  margin-top:5px;
+  margin-right: 5px;
+  -moz-background-origin:3px;
+
+  border-radius:3px;
+}
+
+.mentions-input-box .mentions-autocomplete-list li em {
+  font-weight: bold;
+  font-style: none;
+}
+
+.mentions-input-box .mentions-autocomplete-list li:hover,
+.mentions-input-box .mentions-autocomplete-list li.active {
+  background-color: #f2f2f2;
+}
+
+.mentions-input-box .mentions-autocomplete-list li b {
+  background: #ffff99;
+  font-weight: normal;
+}
+
+.mentions-input-box .mentions {
+  position: absolute;
+  left: 1px;
+  right: 0;
+  top: 1px;
+  bottom: 0;
+  padding: 9px;
+  color: #fff;
+  overflow: hidden;
+  line-height: 18px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 13px;
+}
+
+.mentions-input-box .mentions > div {
+  color: #fff;
+  white-space: pre-wrap;
+  width: 100%;
+}
+
+.mentions-input-box .mentions > div > strong {
+  font-weight:normal;
+  background: #d8dfea;
+}
+
+.mentions-input-box .mentions > div > strong > span {
+  filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0);
+}

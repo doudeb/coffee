@@ -5,7 +5,10 @@ var couleur = new Array('#ff9c00','#ffd700','#3bd322','#419ac2','#f80077','#ff9c
 
 
 $(document).ready(function() {
+    loadPost(false);
+});
 
+function loadPost (isReload) {
     $.ajax({
         type: 'GET',
         url: '/services/api/rest/json',
@@ -23,13 +26,15 @@ $(document).ready(function() {
                 $.each(objJson, function(i,item) {
                     $('.roue span:eq('+i+')').html(item.user.name).attr('data-guid',item.guid).attr('data-user',item.user.name);
                 });
-                startRoue();
+                if (!isReload)
+                    startRoue();
             } else {
                 /* Error */
             }
         }
     });
-});
+}
+
 
 // Premier demarrage
 
@@ -109,7 +114,7 @@ function animerPost(id) {
 				setTimeout("arreterRoue()",seconds);
 			}
             if (id==9) {
-                setTimeout("location.reload()",seconds);
+                loadPost(true);
             }
 			});
 		});

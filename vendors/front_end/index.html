@@ -7,7 +7,7 @@
         <meta content="black" name="apple-mobile-web-app-status-bar-style" />
         <meta name="viewport" content="width=320,user-scalable=false" />
 
-        <title>Enlightn Coffee Machine</title>
+        <title>CoffeePoke</title>
         <link href="static/css/coffee-machine.css" rel="stylesheet" />
 
         <link href="static/img/favicon.ico" rel="shortcut icon"/>
@@ -22,6 +22,9 @@
         <script src="static/js/vendor/ICanHaz.min.js"></script>
         <script src="static/js/vendor/backbone.js"></script>
         <script src="static/js/vendor/jquery.form.js"></script>
+        <script src="static/js/vendor/jquery.events.input.js"></script>
+        <script src="static/js/vendor/jquery.elastic.js"></script>
+        <script src="static/js/vendor/jquery.mentionsInput.js"></script>
     </head>
     <body>
         <div id="container">
@@ -35,7 +38,9 @@
                 </div>
             </div>
         </div>
-
+        <script type="text/html" id="mentionUserTemplate">
+            <a class="mentioned" href="#profile/{{owner_guid}}">{{name}}</a>
+        </script>
         <script type="text/html" id="loginTemplate">
             <div id="login">
                 <form class="form-horizontal">
@@ -63,10 +68,14 @@
             <div id="content">
                 <div id="microblogging" class="content-module">
                     <div class="primary-content">
-                        <div class="update-content">
-                            <div class="avatar"><img src="{{icon_url}}" width="60" height="60" /></div>
-                            <textarea class="update-text input-xlarge" placeholder="{{#translate}}coffee:feed:share{{/translate}}"></textarea>
+                        <div class="update-content" style="background-image: url({{icon_url}})">
+                            <div class="new-post">
+                                    <textarea class="update-text mention" placeholder="{{#translate}}coffee:feed:share{{/translate}}"></textarea>
+                            </div>
+                            <!--<div class="avatar"><img src="{{icon_url}}" /></div>
+                            <textarea class="update-text input-xlarge mention" placeholder="{{#translate}}coffee:feed:share{{/translate}}"></textarea>-->
                         </div>
+
                         <div class="update-actions">
                             <span class="add-media"><a href="#">{{#translate}}coffee:feed:upload{{/translate}}</a></span>
                             <form action="" method="post" enctype="multipart/form-data" class="out" id="uploadForm">
@@ -173,7 +182,7 @@
                                 </li>
                                 {{/comment.comments}}
                                 <li class="new-comment">
-                                    <textarea class="new-comment-textarea" placeholder="{{#translate}}coffee:feeditem:action:addcomment{{/translate}}"></textarea>
+                                    <textarea class="new-comment-textarea mention" placeholder="{{#translate}}coffee:feeditem:action:addcomment{{/translate}}"></textarea>
                                 </li>
                             </ul>
                         </div>
@@ -277,10 +286,6 @@
                                     <span class="editable editable-hover" data-name="introduction">{{#translate}}coffee:profile:add:presentation{{/translate}}</span>
                                     {{/isOwnProfile}}
                                     {{/hasIntroduction}}
-                                    {{#isIntroductionLong}}
-                                    <!--<a class="show-all-text" href="javascript:void(0)">{{#translate}}coffee:feeditem:showalltext{{/translate}}</a>
-                                    <a class="show-all-text hide" href="javascript:void(0)">{{#translate}}coffee:feeditem:hidealltext{{/translate}}</a>-->
-                                    {{/isIntroductionLong}}
                                 </div>
                                 <div class="info">
                                     <h3>{{#translate}}coffee:profile:information{{/translate}}</h3>

@@ -7,7 +7,7 @@
             return navigator.userAgent.match(/BlackBerry/i) ? true : false;
         },
         iOS: function() {
-            return navigator.userAgent.match(/iPhone|iPad|iPod/i) ? true : false;
+            return navigator.userAgent.match(/iPhone|iPod/i) ? true : false;
         },
         Windows: function() {
             return navigator.userAgent.match(/IEMobile/i) ? true : false;
@@ -83,6 +83,29 @@
                 view.remove();
             });
             App.views = {};
+        },
+
+        initMention : function () {
+            $('textarea.mention').mentionsInput({
+                onDataRequest:function (mode, query, callback) {
+                    $.ajax({
+                        type: 'GET',
+                        url: App.resourceUrl,
+                        dataType: 'json',
+                        data: {
+                            method: 'coffee.getUserList',
+                            auth_token: App.models.session.get('authToken')
+                        },
+                        success: function (response) {
+                            if (response.status != -1) {
+                                responseData = response.result;
+                                //responseData = _.filter(responseData, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
+                                callback.call(this, responseData);
+                            }
+                        }
+                    });
+                }
+            });
         }
     };
 
@@ -362,8 +385,20 @@
                 }
             }
 
+            if (attributes.mentioned.length>0) {
+                attributes.content.text = this.replaceMentionedUsers(attributes.content.text,attributes.mentioned);
+            }
+
             attributes.isBroadCastMessage = (attributes.content.type === 'coffee_broadcast_message') ? true : false;
             Backbone.Model.prototype.set.call(this, attributes, options);
+        },
+
+        replaceMentionedUsers : function (text,mentionedUsers) {
+            _.each(mentionedUsers, function (user){
+                replacement = ich.mentionUserTemplate(user,true);
+                text = text.replace(user.name,replacement);
+            });
+            return text;
         }
     });
 
@@ -508,6 +543,7 @@
                     return t(text);
                 }
             };
+
             if(isMobile.any()){
                 var element = ich.mobileFeedItemTemplate(data);
             } else {
@@ -517,7 +553,7 @@
 
             $(this.el).replaceWith(element);
             this.setElement(element);
-
+            App.initMention();
             return this;
         },
 
@@ -881,8 +917,7 @@
         render: function () {
             data = {
                 icon_url: App.models.session.get('iconUrl')
-                ,
-                isAdmin: App.models.session.get('isAdmin')
+                , isAdmin: App.models.session.get('isAdmin')
             };
             data.translate = function() {
                 return function(text) {
@@ -901,7 +936,7 @@
 
             this.feedItemsView = new FeedItemsView();
             this.$el.append(this.feedItemsView.el);
-
+            App.initMention();
             return this;
         },
 
@@ -917,10 +952,9 @@
 
         postUpdate: function () {
             var self = this;
-
             if (! self.isSending && ! self.isAttaching) {
-                var updateText = self.$el.find('.update-text').eq(0).val();
-
+                var updateText = self.$el.find('.update-text').eq(0).val()
+                    , mentionedUser = self.getMentions();
                 if (! self.attachmentGuid && updateText.length == 0) {
                     alert('No update!');
                 } else {
@@ -932,7 +966,8 @@
                         method: 'coffee.createNewPost',
                         auth_token: App.models.session.get('authToken'),
                         post: updateText,
-                        type: this.isBroadCastMessage?'coffee_broadcast_message':''
+                        type: this.isBroadCastMessage?'coffee_broadcast_message':'',
+                        mentionedUser: mentionedUser
                     };
                     if (self.attachmentGuid != false) data.attachment = [self.attachmentGuid];
 
@@ -1063,15 +1098,11 @@
                         var percentVal = percentComplete + '%';
                         percent.html(percentVal);
                     }*/
-                    ,
-                    url: App.resourceUrl
-                    ,
-                    dataType: 'json'
-                    ,
-                    data: {
+                    , url: App.resourceUrl
+                    , dataType: 'json'
+                    , data: {
                         method: 'coffee.uploadData'
-                        ,
-                        auth_token: App.models.session.get('authToken')
+                        , auth_token: App.models.session.get('authToken')
                     }
                 };
                 uploadForm.ajaxSubmit(options);
@@ -1109,6 +1140,44 @@
             $('#feed-items').show();
             $('#microblogging').hide();
             $('#microblogging .update-text').val('');
+        },
+
+        initMention : function () {
+            alert("pouet");
+            $('textarea.mention').mentionsInput({
+                onDataRequest:function (mode, query, callback) {
+                    $.ajax({
+                        type: 'GET',
+                        url: App.resourceUrl,
+                        dataType: 'json',
+                        data: {
+                            method: 'coffee.getUserList',
+                            auth_token: App.models.session.get('authToken')
+                        },
+                        success: function (response) {
+                            if (response.status != -1) {
+                                responseData = response.result;
+                                //responseData = _.filter(responseData, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
+                                callback.call(this, responseData);
+                            }
+                        }
+                    });
+                }
+            });
+        },
+
+        getMentions: function () {
+            var mentionedUsers = new Array();
+            $('#microblogging .update-text')
+                .mentionsInput('getMentions', function(data) {
+                    _.each(data, function(user, key){
+                        mentionedUsers[key] = user.id;
+                    });
+                })
+                .mentionsInput('reset')
+                .css('height','50px');
+            return mentionedUsers;
+
         }
 
     });
@@ -1943,7 +2012,6 @@
         App.models.session = new Session();
         new WorkspaceRouter();
         Backbone.history.start();
-
         if (window.location.hash == "") {
             Backbone.history.navigate('feed', true);
         }

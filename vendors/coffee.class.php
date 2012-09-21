@@ -14,7 +14,7 @@ class ElggCoffee {
      * @param array $attachment An array of guid
      * @param string $type The post subtype
      */
-    public static function new_post($post, $attachment = false, $type = COFFEE_SUBTYPE) {
+    public static function new_post($post, $attachment = false, $mentioned_user = false, $type = COFFEE_SUBTYPE) {
         if (strlen($post) > 0 || $attachment) {
             $post = strip_tags($post,'<br><br/><em><strong>');
             if ($type === COFFEE_SUBTYPE_BROADCAST_MESSAGE && !elgg_is_admin_logged_in()) {
@@ -29,6 +29,7 @@ class ElggCoffee {
             }
             //add_to_river('coffee/river/new_post', 'create', elgg_get_logged_in_user_guid(), $new_post->guid);
             ElggCoffee::_add_attachment($new_post->guid,$attachment);
+            ElggCoffee::_add_mentioned($new_post->guid,$mentioned_user);
             return array('guid' => $new_post->guid);
         }
         return false;
@@ -117,6 +118,7 @@ class ElggCoffee {
                     $return[$key]['likes'] = ElggCoffee::get_likes ($post->guid, 0, 10);
                     $return[$key]['comment'] = ElggCoffee::get_comments ($post->guid, 0, 2);
                     $return[$key]['attachment'] = ElggCoffee::get_attachment ($post->guid);
+                    $return[$key]['mentioned'] = ElggCoffee::get_mentioned ($post->guid);
                 }
             }
         }
@@ -213,6 +215,22 @@ class ElggCoffee {
                                                 , 'url' => $attached_ent->simpletype === 'url'?$attached_ent->url:static::_get_dwl_url($attached_ent->guid)
                                                 , 'thumbnail' => $attached_ent->simpletype === 'url'?$attached_ent->thumbnail:$attached_ent->getIconURL('medium')
                 );
+        }
+        return $return;
+    }
+
+    public static function get_mentioned ($guid, $offset = 0, $limit = 3) {
+        $mentioned = coffee_get_relationships($guid, COFFEE_POST_MENTIONED_RELATIONSHIP);
+        if (is_array($mentioned)) {
+            foreach ($mentioned as $mention) {
+                $user = get_user($mention->guid_two);
+                if ($user instanceof ElggUser) {
+                    $return[] = array('owner_guid' => $user->guid
+                                                , 'name' => $user->name);
+                }
+            }
+        } else {
+            $return['users'] = false;
         }
         return $return;
     }
@@ -557,11 +575,44 @@ class ElggCoffee {
         return true;
     }
 
+    public static function get_user_list ($username, $offset = 0, $limit = 10) {
+        $return = array();
+        $results = elgg_trigger_plugin_hook('search','user',array('query' => $username, 'offset' => $offset, 'limit'=> $limit));
+        $return['count'] = $results['count'];
+        if ($return['count'] > 0) {
+            $return['users'] = array();
+            foreach ($results['entities'] as $key => $user) {
+                if ($user instanceof ElggUser) {
+                    $return['users'][$key] = array (
+                        'id' => $user->guid
+                        , 'username' => $user->username
+                        , 'name' => $user->name
+                        , 'avatar' => ElggCoffee::_get_user_icon_url($user,'medium')
+                        , 'icon_url_small' => ElggCoffee::_get_user_icon_url($user,'small')
+                        , 'cover_url' => ElggCoffee::_get_user_cover_url($user)
+                        , 'type' => 'user'
+
+                    );
+                }
+            }
+        }
+        return $return['users'];
+
+    }
+
 
     private static function _add_attachment ($guid_parent, $attachment) {
         if (!is_array($attachment)) return false;
         $type = COFFEE_POST_ATTACHMENT_RELATIONSHIP;
         foreach ($attachment as $key => $guid_child) {
+            add_entity_relationship ($guid_parent, $type, $guid_child);
+        }
+    }
+
+    private static function _add_mentioned ($guid_parent, $mentioned_user) {
+        if (!is_array($mentioned_user)) return false;
+        $type = COFFEE_POST_MENTIONED_RELATIONSHIP;
+        foreach ($mentioned_user as $key => $guid_child) {
             add_entity_relationship ($guid_parent, $type, $guid_child);
         }
     }

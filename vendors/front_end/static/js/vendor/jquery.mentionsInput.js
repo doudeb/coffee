@@ -221,7 +221,6 @@
     }
 
     function onInputBoxKeyDown(e) {
-
       // This also matches HOME/END on OSX which is CMD+LEFT, CMD+RIGHT
       if (e.keyCode == KEY.LEFT || e.keyCode == KEY.RIGHT || e.keyCode == KEY.HOME || e.keyCode == KEY.END) {
         // Defer execution to ensure carat pos has changed after HOME/END keys
@@ -268,9 +267,9 @@
 
         case KEY.RETURN:
         case KEY.TAB:
+          e.stopImmediatePropagation();
           if (elmActiveAutoCompleteItem && elmActiveAutoCompleteItem.length) {
             elmActiveAutoCompleteItem.trigger('mousedown');
-            return false;
           }
 
           break;

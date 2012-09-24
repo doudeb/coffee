@@ -68,6 +68,41 @@
         return key;
     }
 
+    $.print = function( message, insertType ) {
+        insertType = insertType || "append";
+        if ( typeof(message) == "object" ) {
+          var string = "{<br>",
+              values = [],
+              counter = 0;
+          $.each( message, function( key, value ) {
+            if ( value && value.nodeName ) {
+              var domnode = "&lt;" + value.nodeName.toLowerCase();
+              domnode += value.className ? " class='" + value.className + "'" : "";
+              domnode += value.id ? " id='" + value.id + "'" : "";
+              domnode += "&gt;";
+              value = domnode;
+            }
+            values[counter++] = key + ": " + value;
+          });
+          string += values.join( ",<br>" );
+          string += "<br>}";
+          message = string;
+        }
+
+        var $output = $( "#print-output" );
+
+        if ( !$output.length ) {
+          $output = $( "<div id='print-output' />" ).prependTo( "body" );
+        }
+
+        var newMsg = $('<div />', {
+          "class": "print-output-line",
+          html: message
+        });
+
+        $output[insertType]( newMsg );
+      };
+
     var App = {
         models: {},
         collections: {},
@@ -85,9 +120,10 @@
             App.views = {};
         },
 
-        initMention : function () {
-            $('textarea.mention').mentionsInput({
-                onDataRequest:function (mode, query, callback) {
+        initMention : function (elm) {
+            $(elm).mentionsInput({
+                elastic : true
+                , onDataRequest:function (mode, query, callback) {
                     $.ajax({
                         type: 'GET',
                         url: App.resourceUrl,
@@ -526,7 +562,7 @@
 
         events: {
             'click .show-all-link': 'showAllComments',
-            'keyup .new-comment-textarea': 'textareaKeyup',
+            'keydown .new-comment-textarea': 'textareaKeydown',
             'keypress .new-comment-textarea': 'textareaKeypress',
             'click .update-action a': 'updateAction',
             'focus .new-comment-textarea': 'changeComposingFlag',
@@ -553,7 +589,7 @@
 
             $(this.el).replaceWith(element);
             this.setElement(element);
-            App.initMention();
+            //App.initMention(element.find('textarea.mention'));
             return this;
         },
 
@@ -589,10 +625,10 @@
             });
         },
 
-        textareaKeyup: function (e) {
+        textareaKeydown: function (e) {
             if (e.keyCode == 13) { // Enter key
-                var theComment = $(e.currentTarget).val();
-                this.comment(theComment);
+                var comment = $(e.currentTarget).val();
+                this.comment(comment);
             }
         },
 
@@ -747,9 +783,10 @@
             });
         },
 
-        comment: function (theComment) {
+        comment: function (comment) {
             var self = this;
-            var postGuid = this.model.get('guid')
+            var postGuid = self.model.get('guid');
+            //var mentionedUser = self.getMentions();
 
             $.ajax({
                 type: 'POST',
@@ -759,7 +796,7 @@
                     method: 'coffee.comment',
                     auth_token: App.models.session.get('authToken'),
                     guid: postGuid,
-                    comment: theComment
+                    comment: comment
                 },
                 success: function (response) {
                     if (response.status != -1) {
@@ -773,7 +810,7 @@
                             icon_url: App.models.session.get('iconUrl'),
                             name: App.models.session.get('name'),
                             owner_guid: App.models.session.get('userId'),
-                            text: theComment,
+                            text: comment,
                             time_created: new Date().getTime()
                         });
 
@@ -838,6 +875,21 @@
         showMobileCommentForm: function(e) {
             localStorage.setItem('postId', $(e.currentTarget).parents('.feed-item').attr('data-guid'));
             Backbone.history.navigate('mobileComment', true);
+        },
+
+        getMentions: function () {
+            var self = this
+                , mentionedUsers = new Array()
+                , elm = $(self.el).find('textarea.mention');
+            elm
+                .mentionsInput('getMentions', function(data) {
+                    _.each(data, function(user, key){
+                        mentionedUsers[key] = user.id;
+                    });
+                })
+                .mentionsInput('reset')
+                .css('height','35px');
+            return mentionedUsers;
         }
     });
 
@@ -918,11 +970,7 @@
             data = {
                 icon_url: App.models.session.get('iconUrl')
                 , isAdmin: App.models.session.get('isAdmin')
-            };
-            data.translate = function() {
-                return function(text) {
-                    return t(text);
-                }
+                , translate: function() {return function(text) {return t(text);}}
             };
 
             if(isMobile.any()){
@@ -936,7 +984,7 @@
 
             this.feedItemsView = new FeedItemsView();
             this.$el.append(this.feedItemsView.el);
-            App.initMention();
+            App.initMention(element.find('textarea.update-text'));
             return this;
         },
 
@@ -1177,7 +1225,6 @@
                 .mentionsInput('reset')
                 .css('height','50px');
             return mentionedUsers;
-
         }
 
     });

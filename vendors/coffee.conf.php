@@ -10,6 +10,7 @@ define('COFFEE_POKE_RELATIONSHIP', 'coffee_poke');
 define('COFFEE_POST_ATTACHMENT_RELATIONSHIP', 'coffee_post_attachment');
 define('COFFEE_COMMENT_ATTACHMENT_RELATIONSHIP', 'coffee_comment_attachment');
 define('COFFEE_POST_MENTIONED_RELATIONSHIP', 'post::mentioned');
+define('COFFEE_COMMENT_MENTIONED_RELATIONSHIP', 'comment::mentioned');
 define('COFFEE_COMMENT_TYPE', 'generic_comment');
 
 
@@ -103,9 +104,11 @@ $exposed[$i]['params']          	= array(
                                             "guid" => array('type' => 'int'
                                                             , 'required' => true)
                                             , "offset" => array('type' => 'int'
-                                                            , 'required' => false )
+                                                            , 'required' => false
+                                                            , 'default' => 0)
                                             , "limit" => array('type' => 'int'
-                                                        , 'required' => false ));
+                                                        , 'required' => false
+                                                        , 'default' => 10));
 $exposed[$i]['comment']          	= 'Get all comments for an update';
 $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;
@@ -117,7 +120,10 @@ $exposed[$i]['params']          	= array(
                                             "guid" => array('type' => 'int'
                                                             , 'required' => true)
                                             , "comment" => array('type' => 'string'
-                                                            , 'required' => true ));
+                                                            , 'required' => true )
+                                            , "mentionedUser" => array('type' => 'array'
+                                                            , 'required' => false
+                                                            , 'default' => array()));
 $exposed[$i]['comment']          	= 'Post a comment';
 $exposed[$i]['call_method']      	= 'POST';
 $exposed[$i]['require_api_auth']    = false;

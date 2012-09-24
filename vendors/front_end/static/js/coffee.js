@@ -129,8 +129,9 @@
                         url: App.resourceUrl,
                         dataType: 'json',
                         data: {
-                            method: 'coffee.getUserList',
-                            auth_token: App.models.session.get('authToken')
+                            method: 'coffee.getUserList'
+                            , auth_token: App.models.session.get('authToken')
+                            , username: query
                         },
                         success: function (response) {
                             if (response.status != -1) {
@@ -415,9 +416,12 @@
                 attributes.comment.comments.reverse();
                 attributes.comment.showAllLink = (attributes.comment.total > attributes.comment.comments.length) ? true : false;
                 for (i=0; i < attributes.comment.total; i++) {
-                    try {
+                    if (typeof attributes.comment.comments[i] != 'undefined') {
+                        if (typeof attributes.comment.comments[i].mentioned != 'undefined' && attributes.comment.comments[i].mentioned.length>0) {
+                            attributes.comment.comments[i].text = this.replaceMentionedUsers(attributes.comment.comments[i].text,attributes.comment.comments[i].mentioned);
+                        }
                         if (attributes.comment.comments[i].owner_guid == App.models.session.get('userId') || (App.models.session.get('isAdmin') == 'true')) attributes.comment.comments[i].isCommentOwner = true;
-                    } catch (Err) {}
+                    }
                 }
             }
 
@@ -589,7 +593,7 @@
 
             $(this.el).replaceWith(element);
             this.setElement(element);
-            //App.initMention(element.find('textarea.mention'));
+            App.initMention(element.find('textarea.mention'));
             return this;
         },
 
@@ -786,17 +790,18 @@
         comment: function (comment) {
             var self = this;
             var postGuid = self.model.get('guid');
-            //var mentionedUser = self.getMentions();
+            var mentionedUser = self.getMentions();
 
             $.ajax({
                 type: 'POST',
                 url: App.resourceUrl,
                 dataType: 'json',
                 data: {
-                    method: 'coffee.comment',
-                    auth_token: App.models.session.get('authToken'),
-                    guid: postGuid,
-                    comment: comment
+                    method: 'coffee.comment'
+                    , auth_token: App.models.session.get('authToken')
+                    , guid: postGuid
+                    , comment: comment
+                    , mentionedUser : mentionedUser
                 },
                 success: function (response) {
                     if (response.status != -1) {

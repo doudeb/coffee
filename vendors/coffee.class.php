@@ -35,7 +35,7 @@ class ElggCoffee {
         return false;
     }
 
-    public static function new_comment($guid, $comment) {
+    public static function new_comment($guid, $comment, $mentioned_user) {
         $post = get_entity($guid);
         $comment = strip_tags($comment,'<br><br/><em><strong>');
         if ($post instanceof ElggObject && strlen($comment) > 0) {
@@ -43,6 +43,7 @@ class ElggCoffee {
             if ($comment_id) {
                 $post->time_updated = time();
                 $post->save();
+                ElggCoffee::_add_mentioned($post->guid,$mentioned_user,COFFEE_COMMENT_MENTIONED_RELATIONSHIP);
                 //add_to_river('coffee/river/new_comment', 'create', elgg_get_logged_in_user_guid(), $post->guid,$comment_id);
                 return true;
             }
@@ -165,7 +166,8 @@ class ElggCoffee {
                                                             , 'icon_url' => ElggCoffee::_get_user_icon_url($user,'small')
                                                             , 'time_created' => $comment->time_created
                                                             , 'friendly_time' => elgg_get_friendly_time($comment->time_created)
-                                                            , 'text' => $comment->value);
+                                                            , 'text' => $comment->value
+                                                            , 'mentioned' => ElggCoffee::get_mentioned ($guid,COFFEE_COMMENT_MENTIONED_RELATIONSHIP));
                 }
             }
         } else {
@@ -219,8 +221,8 @@ class ElggCoffee {
         return $return;
     }
 
-    public static function get_mentioned ($guid, $offset = 0, $limit = 3) {
-        $mentioned = coffee_get_relationships($guid, COFFEE_POST_MENTIONED_RELATIONSHIP);
+    public static function get_mentioned ($guid, $type = COFFEE_POST_MENTIONED_RELATIONSHIP,$offset = 0, $limit = 3) {
+        $mentioned = coffee_get_relationships($guid, $type);
         if (is_array($mentioned)) {
             foreach ($mentioned as $mention) {
                 $user = get_user($mention->guid_two);
@@ -609,9 +611,8 @@ class ElggCoffee {
         }
     }
 
-    private static function _add_mentioned ($guid_parent, $mentioned_user) {
+    private static function _add_mentioned ($guid_parent, $mentioned_user, $type = COFFEE_POST_MENTIONED_RELATIONSHIP) {
         if (!is_array($mentioned_user)) return false;
-        $type = COFFEE_POST_MENTIONED_RELATIONSHIP;
         foreach ($mentioned_user as $key => $guid_child) {
             add_entity_relationship ($guid_parent, $type, $guid_child);
         }

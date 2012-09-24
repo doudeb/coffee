@@ -14,12 +14,12 @@ if (php_sapi_name() !== 'cli') exit("To be runned under commande line");
 if(cli_prompt("This will create a new site... sure : [y/N]") !== 'y') exit("Thanks anyway....\n");
 
 input:
-$sitename   =  cli_prompt("\nSite name : ");
+$sitename   =  cli_prompt("\nSite name (without any special chars [-_ ]): ");
 $email      =  cli_prompt("\nSite admin email : ");
 $displayname=  cli_prompt("\nSite admin display name : ");
 $password   =  cli_prompt("\nSite admin password (min " . $CONFIG->min_password_length. " chars): ");
 //$url        =  cli_prompt("\nSite url (including trailling slash), must be http://something.api.coffepoke.com/ : ");
-$url        = "http://" . $sitename . ".api.coffepoke.com/";
+$url        = "http://" . $sitename . ".api.coffeepoke.com/";
 //$username   =  cli_prompt("\nSite admin username : ");
 $username   = str_replace(array('@','-','_'), '', $email);
 

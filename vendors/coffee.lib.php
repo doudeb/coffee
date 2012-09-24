@@ -300,3 +300,6 @@ unset($CONFIG->menus['page'][8]);
 unset($CONFIG->menus['page'][9]);
 unset($CONFIG->menus['page'][15]);
 unset($CONFIG->menus['page'][16]);
+unset($CONFIG->menus['page'][17]);
+//setting default file permission mask
+umask(002);

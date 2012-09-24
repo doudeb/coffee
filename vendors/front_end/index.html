@@ -16,7 +16,8 @@
         <link rel="apple-touch-icon" sizes="114x114" href="static/img/iphone4-icon.png" />
         <link rel="apple-touch-startup-image" href="static/img/iphone-startup.png">
 
-        <script src="static/js/vendor/json2.js"></script>
+        <script src="static/js/vendor/libs.min.js"></script>
+        <!--<script src="static/js/vendor/json2.js"></script>
         <script src="static/js/vendor/jquery.min.js"></script>
         <script src="static/js/vendor/underscore-min.js"></script>
         <script src="static/js/vendor/ICanHaz.min.js"></script>
@@ -24,7 +25,7 @@
         <script src="static/js/vendor/jquery.form.js"></script>
         <script src="static/js/vendor/jquery.events.input.js"></script>
         <script src="static/js/vendor/jquery.elastic.js"></script>
-        <script src="static/js/vendor/jquery.mentionsInput.js"></script>
+        <script src="static/js/vendor/jquery.mentionsInput.js"></script>-->
     </head>
     <body>
         <div id="container">
@@ -176,7 +177,7 @@
                                     <div class="comment-content">
                                         <a href="#profile/{{owner_guid}}" class="name">{{name}}</a>
                                         {{#isCommentOwner}}<span class="pull-right remove-comment" data-id="{{id}}"><a href="javascript:void(0)" rel="tooltip" title="{{#translate}}coffee:feeditem:action:removecomment{{/translate}}" data-placement="right"><i class="icon-trash"></i></a></span>{{/isCommentOwner}}
-                                        <p class="text">{{text}}</p>
+                                        <p class="text">{{{text}}}</p>
                                         <p class="time">{{friendly_time}}</p>
                                     </div>
                                 </li>

@@ -62,7 +62,7 @@ try {
     $plugins = elgg_get_plugins('any');
     foreach ($plugins as $plugin) {
         if ($plugin->getManifest()) {
-            if ($plugin->getManifest()->getActivateOnInstall() && in_array($plugin->title, array('uservalidationbyemail','search','logbrowser','file','coffee'))) {
+            if ($plugin->getManifest()->getActivateOnInstall() && in_array($plugin->title, array('uservalidationbyemail','search','file','coffee'))) {
                 $plugin->activate();
             }
         }

@@ -588,11 +588,13 @@ class ElggCoffee {
                     $return['users'][$key] = array (
                         'id' => $user->guid
                         , 'username' => $user->username
+                        , 'email' => $user->email
                         , 'name' => $user->name
                         , 'avatar' => ElggCoffee::_get_user_icon_url($user,'medium')
                         , 'icon_url_small' => ElggCoffee::_get_user_icon_url($user,'small')
                         , 'cover_url' => ElggCoffee::_get_user_cover_url($user)
                         , 'type' => 'user'
+                        , 'profile' => ElggCoffee::get_user_extra_info(array('headline','cellphone','phone','location'),$user->guid)
 
                     );
                 }
@@ -600,6 +602,73 @@ class ElggCoffee {
         }
         return $return['users'];
 
+    }
+
+    public static function register_user ($displayname, $email, $password, $password2, $language) {
+        admin_gatekeeper();
+        $username = str_replace(array("-","_",".","@"), '', $email);
+        $guid = register_user(
+                    $username,
+                    $password,
+                    $displayname,
+                    $email
+                    );
+        if ($guid) {
+            $user = get_user($guid);
+            if ($user instanceof ElggUser) {
+                $user->language = $language;
+                $user->save();
+            }
+        }
+
+        return array('guid' => $guid);
+    }
+
+    public static function edit_site_settings ($language) {
+        admin_gatekeeper();
+        $return = array();
+        if (is_array($_FILES)) {
+            foreach ($_FILES as $name=>$values) {
+                if ($values["error"]==0) {
+                    $file = new FilePluginFile();
+                    $file->subtype = "file";
+                    $file->title = $name;
+                    $file->access_id = COFFEE_DEFAULT_ACCESS_ID;
+                    $prefix = "file/";
+                    $filestorename = elgg_strtolower(time().$values['name']);
+                    $mime_type = $file->detectMimeType($values['tmp_name'], $values['type']);
+                    $file->setFilename($prefix . $filestorename);
+                    $file->setMimeType($mime_type);
+                    $file->originalfilename = $values['name'];
+                    $file->simpletype = file_get_simple_type($mime_type);
+                    // Open the file to guarantee the directory exists
+                    $file->open("write");
+                    $file->close();
+                    move_uploaded_file($values['tmp_name'], $file->getFilenameOnFilestore());
+                    $guid = $file->save();
+                    if ($guid) {
+                        $return[] = array($name => ElggCoffee::_get_dwl_url($file->guid));
+                    }
+                }
+            }
+        }
+        $site = elgg_get_site_entity();
+        if ($site instanceof ElggSite) {
+            if (set_config('language', $language, $site->getGUID())) {
+                $return[] = array('language' => $language);
+            }
+        }
+        return $return;
+    }
+
+   public static function ban_user ($guid) {
+        admin_gatekeeper();
+        $user_ent = get_user($guid);
+        if ($user_ent instanceof ElggUser) {
+            //return $user_ent->ban();
+            return $user_ent->delete();
+        }
+        return false;
     }
 
 

@@ -222,7 +222,6 @@
                     auth_token: self.get('authToken')
                 },
                 success: function (response) {
-                    console.log(response);
                     if (response.status != -1) {
                         var result = response.result;
                         self.set({
@@ -373,6 +372,166 @@
             } else {
                 Backbone.history.navigate('feed', true);
             }
+        }
+    });
+
+    /* !Model: UserItem */
+    var UserItem = Backbone.Model.extend({
+        initialize: function () {
+            _.bindAll(this);
+        }
+    });
+
+     /* !View: UserItemView */
+    var UserItemView = Backbone.View.extend({
+        initialize: function () {
+            _.bindAll(this);
+            this.model.bind('change', this.render);
+            this.model.bind('remove', this.remove);
+            //this.render();
+        },
+
+        render: function () {
+            data = this.model.toJSON();
+            console.log(data);
+
+            element = ich.userVcardTemplate(data);
+            $(this.el).replaceWith(element);
+            this.setElement(element);
+            return this;
+        },
+
+        events: {
+            'click .update-action a': 'updateAction'
+        },
+
+        updateAction: function (e) {
+            var self = this;
+            var action = $(e.currentTarget).attr('data-action');
+
+            switch (action) {
+                case 'remove' :
+                    self.removeUser();
+                    break;
+                default:
+                    return false;
+                    break;
+            }
+            return false;
+        },
+
+        removeUser: function () {
+            var self = this;
+            var guid = self.model.get('id');
+            $.ajax({
+                type: 'POST',
+                url: App.resourceUrl,
+                dataType: 'json',
+                data: {
+                    method: 'coffee.banUser',
+                    auth_token: App.models.session.get('authToken'),
+                    guid: guid
+                },
+                success: function (response) {
+                    if (response.status != -1) {
+                        self.remove();
+                    } else if (response.message == 'pam_auth_userpass:failed') {
+                        localStorage.clear();
+                        App.models.session.end();
+                        Backbone.history.navigate('login', true);
+                    } else {
+                        Backbone.history.navigate('feed', true);
+                    }
+
+                }
+            });
+        }
+    });
+
+   /* !Collection: UserItemList */
+    var UserItemList = Backbone.Collection.extend({
+        model: UserItem,
+
+        initialize: function () {
+            _.bindAll(this);
+            this.loadUser();
+
+        },
+
+        loadUser: function (username,offset,limit) {
+            var self = this;
+            $.ajax({
+                type: 'GET',
+                url: App.resourceUrl,
+                dataType: 'json',
+                data: {
+                    method: 'coffee.getUserList'
+                    , auth_token: App.models.session.get('authToken')
+                    , username: username?username:''
+                    , offset: offset?offset:0
+                    , limit: limit?limit:10
+                },
+                success: function (response) {
+                    if (response.status != -1) {
+                        var result = response.result;
+                        self.add(result);
+                        self.trigger('userReady');
+                    } else if (response.message == 'pam_auth_userpass:failed') {
+                        localStorage.clear();
+                        App.models.session.end();
+                        Backbone.history.navigate('login', true);
+                    }
+                }
+            });
+        },
+
+        removeList: function () {
+            var self = this;
+            _.each(this.models, function (item, key) {
+                console.log(item);
+                //item.remove();
+                self.remove();
+            });
+        }
+    });
+
+    /* !View: UserListView */
+    var UserListView = Backbone.View.extend({
+        tagName: 'div',
+        initialize: function () {
+            _.bindAll(this);
+            this.$el
+                .attr('id', 'user-list')
+                .attr('class', 'user-list');
+
+            this.collection = new UserItemList();
+            this.collection.bind('add', this.addUser);
+            this.collection.bind('userReady', this.render)
+        },
+
+        render: function () {
+            var self = this;
+            _(this.collection.models).each(function(userItem) {
+                //self.appendItem(userItem);
+            }, this);
+        },
+
+        addUser: function (item) {
+            var self = this;
+            var userItemView = new UserItemView ({
+                model: item
+            });
+
+            var element = $(userItemView.render().el);
+            if (self.collection.indexOf(item) == 0) {
+                element
+                .prependTo(self.$el)
+                .hide()
+                .fadeIn(500);
+            } else {
+                self.$el.append(element);
+            }
+            self.$el.appendTo('#manageUser');
         }
     });
 
@@ -1252,8 +1411,8 @@
                         return t(text);
                     }
                 }
-                ,
-                displayWelcome : parseInt(App.models.session.get('accountTime')) + (60 * 60 * 24 * 30) > Math.round(new Date().getTime()) / 1000
+                , displayWelcome : parseInt(App.models.session.get('accountTime')) + (60 * 60 * 24 * 30) > Math.round(new Date().getTime()) / 1000
+                , isAdmin : App.models.session.get('isAdmin')
             };
 
             if(isMobile.any()){
@@ -1293,6 +1452,8 @@
                 Backbone.history.navigate('welcome', true);
             } else if (action == 'mobilePost') {
                 Backbone.history.navigate('mobilePost', true);
+            } else if (action == 'admin') {
+                Backbone.history.navigate('admin', true);
             }
 
             return false;
@@ -1346,6 +1507,7 @@
 
                                     self.set(attributes);
                                     self.trigger('ready');
+                                    console.log('prodile say ready');
                                 }
                             }
                         });
@@ -1589,12 +1751,9 @@
                 if (self.isPicture(elm.val())) {
                     var options = {
                         success: self.updateAvatar
-                        ,
-                        url: App.resourceUrl
-                        ,
-                        dataType: 'json'
-                        ,
-                        data: {
+                        , url: App.resourceUrl
+                        , dataType: 'json'
+                        , data: {
                             method: 'coffee.uploadUserAvatar',
                             auth_token: App.models.session.get('authToken')
                         }
@@ -1617,12 +1776,9 @@
                 if (self.isPicture(elm.val())) {
                     var options = {
                         success: self.updateCover
-                        ,
-                        url: App.resourceUrl
-                        ,
-                        dataType: 'json'
-                        ,
-                        data: {
+                        , url: App.resourceUrl
+                        , dataType: 'json'
+                        , data: {
                             method: 'coffee.uploadUserCover',
                             auth_token: App.models.session.get('authToken')
                         }
@@ -1709,6 +1865,132 @@
             this.setElement(element);
             this.$el.prependTo('#container');
             return this;
+        }
+
+    });
+
+    /* !View: adminView */
+    var adminView = Backbone.View.extend({
+        initialize: function () {
+            _.bindAll(this);
+            this.userList = new UserListView();
+            this.render();
+            this.offset = 0;
+            this.limit = 0;
+            this.username = '';
+        },
+
+        events: {
+            'click #addNewUser' : 'addNewUser'
+            , 'click #siteSettingsUpdate' : 'siteSettingsUpdate'
+            , 'click #manageUser .nav li' : 'manageUserNav'
+            , 'keyup #manageUser #username' : 'manageUserNav'
+        },
+
+        render: function () {
+            data = {
+                translate : function() {
+                    return function(text) {
+                        return t(text);
+                    }
+                }
+            };
+
+            var element = ich.adminTemplate(data);
+            this.setElement(element);
+
+            this.$el.prependTo('#container');
+            $('#adminMenu a').click(function (e) {
+                e.preventDefault();
+                $(this).tab('show');
+            });
+
+            return this;
+        },
+
+        addNewUser: function () {
+            var self = this;
+            $.ajax({
+                type: 'POST',
+                url: App.resourceUrl,
+                dataType: 'json',
+                data: {
+                    method: 'coffee.registerUser'
+                    , auth_token: App.models.session.get('authToken')
+                    , display_name : this.$el.find('#addnewuser #displayName').val()
+                    , email : this.$el.find('#addnewuser #email').val()
+                    , password : this.$el.find('#addnewuser #password').val()
+                    , password2 : this.$el.find('#addnewuser #password2').val()
+                    , language : this.$el.find('#addnewuser #language').val()
+                },
+                success: function (response) {
+                    if (response.status == '-1') {
+                        self.$el.find('#addnewuser #registrationResult')
+                            .html(response.message)
+                            .show();
+                    } else if (response.status == '0') {
+                          self.$el.find('#addnewuser #registrationResult')
+                            .html('Registration success, new user id : ' + response.result.guid)
+                            .show();
+                            self.resetUserList();
+                            self.userList.collection.loadUser();
+                    }
+                }
+            });
+            return false;
+        },
+
+        siteSettingsUpdate: function() {
+            var options = {
+                success: this.refreshSitePicture
+                , url: App.resourceUrl
+                , dataType: 'json'
+                , data: {
+                    method: 'coffee.editSiteSettings'
+                    , auth_token: App.models.session.get('authToken')
+                    , language : this.$el.find('#siteSettingForm #language').val()
+                }
+            };
+            $("#siteSettingForm").ajaxSubmit(options);
+            return false;
+        },
+
+        refreshSitePicture: function (response) {
+            _.each(response.result, function (item,key) {
+                if (typeof item.background != 'undefined') {
+                    App.models.session.set('backgroundUrl',item.background);
+                    setBackground (item.background);
+                }
+                if (typeof item.logo != 'undefined') {
+                    App.models.session.set('logoUrl',item.logo);
+                    setLogo (item.logo);
+                }
+            });
+        },
+
+        manageUserNav: function(e) {
+            elm = $(e.currentTarget);
+            action = $(e.currentTarget).attr('id');
+            this.username = $(e.currentTarget).parent().parent().find('#username').val();
+            this.resetUserList();
+            switch (action) {
+                case 'next' :
+                    this.offset = this.offset + 10;
+                    this.userList.collection.loadUser(this.username,this.offset);
+                    break;
+                 case 'prev' :
+                    this.offset = this.offset - 10;
+                    this.userList.collection.loadUser(this.username,this.offset);
+                    break;
+                 case 'username' :
+                    this.userList.collection.loadUser(this.username,this.offset);
+                    break;
+            }
+            return false;
+        },
+
+        resetUserList: function () {
+            this.userList.collection.remove(this.userList.collection.models);
         }
 
     });
@@ -1938,15 +2220,16 @@
     /* !Router: WorkspaceRouter */
     var WorkspaceRouter = Backbone.Router.extend({
         routes: {
-            "login":				"login",
-            "feed":					"feed",
-            "profile":				"myProfile",
-            "profile/:user_id":		"profile",
-            "tv":           		"tv",
-            "welcome":           	"welcome",
-            "mobileComment":        "mobileComment",
-            "mobilePost":           "mobilePost",
-            "userSettings":         "userSettings"
+            "login":                    "login"
+            , "feed":					"feed"
+            , "profile":				"myProfile"
+            , "profile/:user_id":		"profile"
+            , "tv":                     "tv"
+            , "welcome":                "welcome"
+            , "mobileComment":          "mobileComment"
+            , "mobilePost":             "mobilePost"
+            , "userSettings":           "userSettings"
+            , "admin":                  "admin"
         },
 
 
@@ -2024,6 +2307,18 @@
             App.removeAllViews();
             if (App.models.session.authenticated()) {
                 App.views.userSettingsView = new userSettingsView();
+                App.views.menuView = new MenuView();
+                setBackground (App.models.session.get('backgroundUrl'));
+                setLogo (App.models.session.get('logoUrl'));
+            } else {
+                Backbone.history.navigate('login', true);
+            }
+        },
+
+        admin: function () {
+            App.removeAllViews();
+            if (App.models.session.authenticated() && App.models.session.get('isAdmin')) {
+                App.views.adminView = new adminView();
                 App.views.menuView = new MenuView();
                 setBackground (App.models.session.get('backgroundUrl'));
                 setLogo (App.models.session.get('logoUrl'));

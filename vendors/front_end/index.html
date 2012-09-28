@@ -16,8 +16,8 @@
         <link rel="apple-touch-icon" sizes="114x114" href="static/img/iphone4-icon.png" />
         <link rel="apple-touch-startup-image" href="static/img/iphone-startup.png">
 
-        <script src="static/js/vendor/libs.min.js"></script>
-        <!--<script src="static/js/vendor/json2.js"></script>
+        <!--<script src="static/js/vendor/libs.min.js"></script>-->
+        <script src="static/js/vendor/json2.js"></script>
         <script src="static/js/vendor/jquery.min.js"></script>
         <script src="static/js/vendor/underscore-min.js"></script>
         <script src="static/js/vendor/ICanHaz.min.js"></script>
@@ -25,7 +25,7 @@
         <script src="static/js/vendor/jquery.form.js"></script>
         <script src="static/js/vendor/jquery.events.input.js"></script>
         <script src="static/js/vendor/jquery.elastic.js"></script>
-        <script src="static/js/vendor/jquery.mentionsInput.js"></script>-->
+        <script src="static/js/vendor/jquery.mentionsInput.js"></script>
     </head>
     <body>
         <div id="container">
@@ -205,6 +205,7 @@
                     <li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:feedlist{{/translate}}" data-action="feed" data-placement="right"><i class="icon-home icon-white"></i></a></li>
                     <li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:profile{{/translate}}" data-action="profile" data-placement="right"><i class="icon-user icon-white"></i></a></li>
                     <li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:tvapp{{/translate}}" data-action="tv" data-placement="right"><i class="icon-tv icon-white"></i></a></li>
+                    {{#isAdmin}}<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:admin{{/translate}}" data-action="admin" data-placement="right"><i class="icon-wrench icon-white"></i></a></li>{{/isAdmin}}
                     <li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:logout{{/translate}}" data-action="logout" data-placement="right"><i class="icon-off icon-white"></i></a></li>
                 </ul>
             </div>
@@ -636,6 +637,130 @@
                     </div>
                 </div>
             </div>
+        </script>
+
+        <script type="text/html" id="adminTemplate">
+            <div id="content">
+                <div id="admin">
+                    <div class="content-module">
+                        <div class="alert">
+                            This is your coffeePoke Admin panel.
+                        </div>
+                        <div class="primary-content">
+                            <ul class="nav nav-tabs" id="adminMenu">
+                                <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Users <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                  <li><a href="#addnewuser" data-toggle="tab">Add new user</a></li>
+                                  <li><a href="#manageuser" data-toggle="tab">Manage user</a></li>
+                                </ul>
+                              </li>
+                              <li><a href="#settings" data-toggle="tab">Site settings</a></li>
+                            </ul>
+                            <div class="tab-content">
+                              <div class="tab-pane" id="users">Choose a menu</div>
+                              <div class="tab-pane" id="addnewuser">{{>addNewUserTemplate}}</div>
+                              <div class="tab-pane active" id="manageuser">{{>manageUserTemplate}}</div>
+                              <div class="tab-pane" id="settings">{{>siteSettingsTemplate}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </script>
+
+        <script type="text/html" id="addNewUserTemplate">
+            <form class="form-horizontal">
+               <legend>Add a user</legend>
+               <div class="alert hide" id="registrationResult"/>
+               <div class="form-item">
+                   <label for="displayName">Display name</label>
+                   <input type="text" class="input-large" id="displayName" />
+               </div>
+               <div class="form-item">
+                   <label for="email">Email</label>
+                   <input type="text" class="input-large" id="email" />
+               </div>
+               <div class="form-item">
+                   <label for="password">Password</label>
+                   <input type="password" class="input-large" id="password" />
+               </div>
+               <div class="form-item">
+                   <label for="password2">Password confirmation</label>
+                   <input type="password" class="input-large" id="password2" />
+               </div>
+               <div class="form-item">
+                   <label for="language">Language</label>
+                   <select class="input-large" id="language">
+                       <option value="en">English</option>
+                       <option value="fr">Français</option>
+                       <option value="es">Spanish</option>
+                   </select>
+               </div>
+               <div class="form-actions">
+                   <button class="btn btn-primary" id="addNewUser">Save</button>
+               </div>
+           </form>
+        </script>
+
+      <script type="text/html" id="siteSettingsTemplate">
+          <form class="form-horizontal" id="siteSettingForm" enctype="multipart/form-data" method="post">
+               <legend>Site settings</legend>
+               <div class="alert hide" id="registrationResult"/>
+               <div class="form-item">
+                   <label for="displayName">Logo</label>
+                   <input type="file" class="input-large" id="logo" name="logo"/>
+               </div>
+               <div class="form-item">
+                   <label for="email">Background</label>
+                   <input type="file" class="input-large" id="background" name="background"/>
+               </div>
+               <div class="form-item">
+                   <label for="language">Default language</label>
+                   <select class="input-large" id="language">
+                       <option value="en">English</option>
+                       <option value="fr">Français</option>
+                       <option value="es">Spanish</option>
+                   </select>
+               </div>
+               <div class="form-actions">
+                   <button class="btn btn-primary" id="siteSettingsUpdate">Save</button>
+               </div>
+           </form>
+        </script>
+
+        <script type="text/html" id="manageUserTemplate">
+            <div id="manageUser">
+                <div class="navbar">
+                    <div class="navbar-inner">
+                        <form class="navbar-search">
+                            <input type="text" id="username" class="search-query" placeholder="Search">
+                        </form>
+                        <ul class="nav" class="pull-right">
+                            <li class="divider-vertical"></li>
+                            <li id="prev"><a href="">&larr;</a></li>
+                            <li class="divider-vertical"></li>
+                            <li id="next"><a href="">&rarr;</a></li>
+                            <li class="divider-vertical"></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </script>
+
+        <script type="text/html" id="userVcardTemplate">
+                <div class="user-vcard-content-module" data-user-guid="{{id}}">
+                    <div class="vcard-info">
+                        <strong>{{name}}</strong><br>
+                        {{email}}<br>
+                        {{profile.location}}<br>
+                        <abbr title="Phone">P:</abbr> {{profile.cellphone}}
+                    </div>
+                    <img class="vcard-avatar" src="{{avatar}}">
+                    <ul class="update-actions">
+                        <li class="update-action update-action-remove"><a href="#" rel="tooltip" title="{{#translate}}coffee:feeditem:action:removecomment{{/translate}}" data-action="remove" data-placement="right"><i class="icon-trash"></i></a></li>
+                    </ul>
+                </div>
         </script>
 
         <script type="text/html" id="userSettingsTemplate">

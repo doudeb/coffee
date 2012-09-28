@@ -58,7 +58,7 @@ function coffee_api_set_site_id () {
  * Extend the public pages range
  *
  */
-function coffee_api_public_pages($hook, $handler, $return, $params){
+function coffee_api_public_pages($hook, $handler, $return, $params) {
 	$pages = array('userIcon/.*','dwl/.*','upl/.*', 'testApi','userCover/.*');
 	return array_merge($pages, $return);
 }
@@ -303,3 +303,4 @@ unset($CONFIG->menus['page'][16]);
 unset($CONFIG->menus['page'][17]);
 //setting default file permission mask
 umask(002);
+//lock site navigation

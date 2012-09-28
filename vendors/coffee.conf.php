@@ -305,4 +305,39 @@ $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
 
+$exposed[++$i]['method']            = "coffee.registerUser";
+$exposed[$i]['function']            = "ElggCoffee::register_user";
+$exposed[$i]['params']          	= array("display_name" => array('type' => 'string'
+                                                            , 'required' => true)
+                                            , "email" => array('type' => 'string'
+                                                            , 'required' => true)
+                                            , "password" => array('type' => 'string'
+                                                            , 'required' => true)
+                                            , "password2" => array('type' => 'string'
+                                                            , 'required' => true)
+                                            , "language" => array('type' => 'string'
+                                                            , 'required' => true));
+$exposed[$i]['comment']          	= 'Create a new user. Will return guid in case of success';
+$exposed[$i]['call_method']      	= 'POST';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
+
+$exposed[++$i]['method']            = "coffee.editSiteSettings";
+$exposed[$i]['function']            = "ElggCoffee::edit_site_settings";
+$exposed[$i]['params']          	= array("language" => array('type' => 'string'
+                                                            , 'required' => true));
+$exposed[$i]['comment']          	= 'Update site settings';
+$exposed[$i]['call_method']      	= 'POST';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
+
+$exposed[++$i]['method']            = "coffee.banUser";
+$exposed[$i]['function']            = "ElggCoffee::ban_user";
+$exposed[$i]['params']          	= array("guid" => array('type' => 'int'
+                                                            , 'required' => true));
+$exposed[$i]['comment']          	= 'Remove a user from the site';
+$exposed[$i]['call_method']      	= 'POST';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
+
 $GLOBALS['CONFIG']->exposed                    = $exposed;

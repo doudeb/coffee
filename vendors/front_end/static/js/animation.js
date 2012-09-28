@@ -20,6 +20,8 @@ function loadPost (isReload) {
             , limit: 10
         },
         success: function (response) {
+            objJson = [];
+            decalage = 0;
             objJson = response.result;
             if (response.status != -1) {
                 nb = objJson.length;

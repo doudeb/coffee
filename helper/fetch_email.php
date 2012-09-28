@@ -19,7 +19,7 @@ $_SERVER['HTTP_HOST'] = '/';
 
 include_once("../../../engine/start.php");
 global $CONFIG,$DATALIST_CACHE;
-
+elgg_unregister_event_handler('login', 'user','user_login');//remove login check...
 
 if (php_sapi_name() !== 'cli') exit("To be runned under commande line");
 

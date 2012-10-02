@@ -291,7 +291,7 @@ $exposed[$i]['require_user_auth']   = false;
 
 $exposed[++$i]['method']            = "coffee.getUserList";
 $exposed[$i]['function']            = "ElggCoffee::get_user_list";
-$exposed[$i]['params']          	= array("username" => array('type' => 'string'
+$exposed[$i]['params']          	= array("query" => array('type' => 'string'
                                                             , 'required' => false
                                                             , 'default' => false)
                                             , "offset" => array('type' => 'int'
@@ -337,6 +337,23 @@ $exposed[$i]['params']          	= array("guid" => array('type' => 'int'
                                                             , 'required' => true));
 $exposed[$i]['comment']          	= 'Remove a user from the site';
 $exposed[$i]['call_method']      	= 'POST';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
+
+
+$exposed[++$i]['method']            = "coffee.getTagList";
+$exposed[$i]['function']            = "ElggCoffee::get_tags";
+$exposed[$i]['params']          	= array("query" => array('type' => 'string'
+                                                            , 'required' => false
+                                                            , 'default' => false)
+                                            , "offset" => array('type' => 'int'
+                                                            , 'required' => false
+                                                            , 'default' => 0)
+                                            , "limit" => array('type' => 'int'
+                                                        , 'required' => false
+                                                        , 'default' => 10));
+$exposed[$i]['comment']          	= 'Search for tags';
+$exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
 

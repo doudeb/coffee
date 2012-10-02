@@ -16,14 +16,16 @@ class ElggCoffee {
      */
     public static function new_post($post, $attachment = false, $mentioned_user = false, $type = COFFEE_SUBTYPE) {
         if (strlen($post) > 0 || $attachment) {
-            $post = strip_tags($post,'<br><br/><em><strong>');
+            $post = prepare_message($post);
+            $message = $post['message'];
             if ($type === COFFEE_SUBTYPE_BROADCAST_MESSAGE && !elgg_is_admin_logged_in()) {
                 return false;
             }
             $new_post = new ElggObject();
             $new_post->subtype = $type;
             $new_post->access_id = COFFEE_DEFAULT_ACCESS_ID;
-            $new_post->title = $post;
+            $new_post->title = $message;
+            $new_post->tags  = $post['tags'];
             if (!$new_post->save()) {
                 return false;
             }
@@ -37,9 +39,9 @@ class ElggCoffee {
 
     public static function new_comment($guid, $comment, $mentioned_user) {
         $post = get_entity($guid);
-        $comment = strip_tags($comment,'<br><br/><em><strong>');
-        if ($post instanceof ElggObject && strlen($comment) > 0) {
-            $comment_id = $post->annotate(COFFEE_COMMENT_TYPE, $comment, COFFEE_DEFAULT_ACCESS_ID);
+        $message = prepare_message($comment);
+        if ($post instanceof ElggObject && strlen($message['message']) > 0) {
+            $comment_id = $post->annotate(COFFEE_COMMENT_TYPE, $message['message'], COFFEE_DEFAULT_ACCESS_ID);
             if ($comment_id) {
                 $post->time_updated = time();
                 $post->save();
@@ -120,6 +122,7 @@ class ElggCoffee {
                     $return[$key]['comment'] = ElggCoffee::get_comments ($post->guid, 0, 2);
                     $return[$key]['attachment'] = ElggCoffee::get_attachment ($post->guid);
                     $return[$key]['mentioned'] = ElggCoffee::get_mentioned ($post->guid);
+                    $return[$key]['tags'] = $post->tags;
                 }
             }
         }
@@ -577,9 +580,9 @@ class ElggCoffee {
         return true;
     }
 
-    public static function get_user_list ($username, $offset = 0, $limit = 10) {
+    public static function get_user_list ($query, $offset = 0, $limit = 10) {
         $return = array();
-        $results = elgg_trigger_plugin_hook('search','user',array('query' => $username, 'offset' => $offset, 'limit'=> $limit));
+        $results = elgg_trigger_plugin_hook('search','user',array('query' => $query, 'offset' => $offset, 'limit'=> $limit));
         $return['count'] = $results['count'];
         if ($return['count'] > 0) {
             $return['users'] = array();
@@ -671,6 +674,36 @@ class ElggCoffee {
         return false;
     }
 
+    public static function get_tags ($query=false, $offset=0, $limit=10) {
+
+        $db_prefix = elgg_get_config('dbprefix');
+        $tags_meta_id = get_metastring_id('tags')?get_metastring_id('tags'):0;
+        $query = sanitise_string($query);
+        if ($query) {
+            $where = "And tag_name.string Like '%$query%'";
+        }
+        $query = "Select  tag_name.string as tag
+                            , tag_name.id as tag_id
+                            , count(tag_used.id)
+                    From {$db_prefix}metadata tag_used
+                        Inner Join {$db_prefix}metastrings tag_name On tag_used.value_id = tag_name.id And tag_used.name_id = $tags_meta_id
+                        Inner Join {$db_prefix}entities ent On tag_used.entity_guid = ent.guid And ent.site_guid = " . $GLOBALS['CONFIG']->site_guid . "
+                    Where tag_name.string != ''
+                    $where
+                    Group By tag_name.string
+                    Order By count(tag_used.id)
+                    Limit $offset,$limit";
+       $result = get_data($query);
+       if ($result) {
+           foreach ($result as $tags) {
+               $return[] = array('id' => $tags->id
+                                    , 'name' => '#'. $tags->tag);
+           }
+           return $return;
+       }
+
+       return false;
+    }
 
     private static function _add_attachment ($guid_parent, $attachment) {
         if (!is_array($attachment)) return false;

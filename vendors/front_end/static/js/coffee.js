@@ -123,17 +123,19 @@
         initMention : function (elm) {
             $(elm).mentionsInput({
                 elastic : true
-                , onDataRequest:function (mode, query, callback) {
+                , triggerChar:['@','#']
+                , onDataRequest:function (mode, query, triggerChar,callback) {
                     $.ajax({
-                        type: 'GET',
-                        url: App.resourceUrl,
-                        dataType: 'json',
-                        data: {
-                            method: 'coffee.getUserList'
+                        type: 'GET'
+                        , url: App.resourceUrl
+                        , dataType: 'json'
+                        , data: {
+                            method: triggerChar=='@'?'coffee.getUserList':'coffee.getTagList'
                             , auth_token: App.models.session.get('authToken')
-                            , username: query
-                        },
-                        success: function (response) {
+                            , query: query
+                            , mode : triggerChar
+                        }
+                        , success: function (response) {
                             if (response.status != -1) {
                                 responseData = response.result;
                                 //responseData = _.filter(responseData, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
@@ -336,28 +338,21 @@
             var password = this.$el.find('#inputPassword').val();
 
             $.ajax({
-                type: 'POST',
-                data: {
-                    email: email,
-                    password: password,
-                    method: 'coffee.getTokenByEmail'
-                },
-                headers: {
-                    'Accept': 'application/json'
-                },
-                url: App.baseUrl + 'services/api/rest/json',
-                complete: function (xhr, statusText) {
-                    var response = $.parseJSON(xhr.responseText);
-
+                type: 'POST'
+                , url: App.resourceUrl
+                , dataType: 'json'
+                , data: {
+                    email: email
+                    , password: password
+                    , method: 'coffee.getTokenByEmail'
+                }
+                , success: function (response) {
                     if (response.status != -1) {
-                        self.session.set({
-                            authToken: response.result
-                        });
-
+                        self.session.set({ authToken: response.result });
                         self.session.start();
                     } else {
                         /* login failed */
-                        alert('Invalid user or password');
+                        alert(response.message);
                     }
                 }
             });
@@ -577,25 +572,46 @@
                 for (i=0; i < attributes.comment.total; i++) {
                     if (typeof attributes.comment.comments[i] != 'undefined') {
                         if (typeof attributes.comment.comments[i].mentioned != 'undefined' && attributes.comment.comments[i].mentioned.length>0) {
-                            attributes.comment.comments[i].text = this.replaceMentionedUsers(attributes.comment.comments[i].text,attributes.comment.comments[i].mentioned);
+                            attributes.comment.comments[i].text = this.replaceMentions(attributes.comment.comments[i].text,attributes.comment.comments[i].mentioned,'user');
                         }
                         if (attributes.comment.comments[i].owner_guid == App.models.session.get('userId') || (App.models.session.get('isAdmin') == 'true')) attributes.comment.comments[i].isCommentOwner = true;
                     }
                 }
             }
+            if (attributes.mentioned && attributes.mentioned.length>0) {
+                attributes.content.text = this.replaceMentions(attributes.content.text,attributes.mentioned, 'user');
+            }
 
-            if (attributes.mentioned.length>0) {
-                attributes.content.text = this.replaceMentionedUsers(attributes.content.text,attributes.mentioned);
+            if (attributes.tags && attributes.tags.length>0) {
+                var tagReplacement = new Array();
+                if (_.isArray(attributes.tags)) {
+                    _.each(attributes.tags, function (tag) {
+                        tagReplacement.push({'name':tag});
+                    });
+                } else {
+                    tagReplacement.push({'name':attributes.tags});
+                }
+                attributes.content.text = this.replaceMentions(attributes.content.text,tagReplacement, 'tag');
             }
 
             attributes.isBroadCastMessage = (attributes.content.type === 'coffee_broadcast_message') ? true : false;
             Backbone.Model.prototype.set.call(this, attributes, options);
         },
 
-        replaceMentionedUsers : function (text,mentionedUsers) {
-            _.each(mentionedUsers, function (user){
-                replacement = ich.mentionUserTemplate(user,true);
-                text = text.replace(user.name,replacement);
+        replaceMentions : function (text,mentions,type) {
+            var template;
+            switch (type) {
+                case 'user':
+                default:
+                    template = 'mentionUserTemplate';
+                    break;
+                case 'tag':
+                    template = 'mentionTagTemplate';
+                    break;
+            }
+            _.each(mentions, function (mention) {
+                replacement = eval('ich.'+ template+'(mention,true)');
+                text = text.replace(mention.name,replacement);
             });
             return text;
         }
@@ -1354,35 +1370,12 @@
             $('#microblogging .update-text').val('');
         },
 
-        initMention : function () {
-            alert("pouet");
-            $('textarea.mention').mentionsInput({
-                onDataRequest:function (mode, query, callback) {
-                    $.ajax({
-                        type: 'GET',
-                        url: App.resourceUrl,
-                        dataType: 'json',
-                        data: {
-                            method: 'coffee.getUserList',
-                            auth_token: App.models.session.get('authToken')
-                        },
-                        success: function (response) {
-                            if (response.status != -1) {
-                                responseData = response.result;
-                                //responseData = _.filter(responseData, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
-                                callback.call(this, responseData);
-                            }
-                        }
-                    });
-                }
-            });
-        },
-
         getMentions: function () {
             var mentionedUsers = new Array();
             $('#microblogging .update-text')
                 .mentionsInput('getMentions', function(data) {
                     _.each(data, function(user, key){
+                        console.log(user);
                         mentionedUsers[key] = user.id;
                     });
                 })

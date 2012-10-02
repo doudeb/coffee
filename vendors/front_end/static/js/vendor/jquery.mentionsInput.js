@@ -28,7 +28,7 @@
       autocompleteListItemAvatar : _.template('<img  src="<%= avatar %>" />'),
       autocompleteListItemIcon   : _.template('<div class="icon <%= icon %>"></div>'),
       mentionsOverlay            : _.template('<div class="mentions"><div></div></div>'),
-      mentionItemSyntax          : _.template('@[<%= value %>](<%= type %>:<%= id %>)'),
+      mentionItemSyntax          : _.template('<%= triggerChar %>[<%= value %>](<%= type %>:<%= id %>)'),
       mentionItemHighlight       : _.template('<strong><span><%= value %></span></strong>')
     }
   };
@@ -69,6 +69,7 @@
     var autocompleteItemCollection = {};
     var inputBuffer = [];
     var currentDataQuery;
+    var currentTriggerChar;
 
     settings = $.extend(true, {}, defaultSettings, settings );
 
@@ -129,7 +130,6 @@
 
       mentionText = mentionText.replace(/\n/g, '<br />');
       mentionText = mentionText.replace(/ {2}/g, '&nbsp; ');
-
       elmInputBox.data('messageText', syntaxMessage);
       elmMentionsOverlay.find('div').html(mentionText);
     }
@@ -152,7 +152,7 @@
       var currentMessage = getInputBoxValue();
 
       // Using a regex to figure out positions
-      var regex = new RegExp("\\" + settings.triggerChar + currentDataQuery, "gi");
+      var regex = new RegExp("\\" + mention.triggerChar + currentDataQuery, "gi");
       regex.exec(currentMessage);
 
       var startCaretPosition = regex.lastIndex - currentDataQuery.length - 1;
@@ -186,6 +186,8 @@
     function onAutoCompleteItemClick(e) {
       var elmTarget = $(this);
       var mention = autocompleteItemCollection[elmTarget.attr('data-uid')];
+      mention.triggerChar = currentTriggerChar
+
 
       addMention(mention);
 
@@ -205,14 +207,28 @@
       updateMentionsCollection();
       hideAutoComplete();
 
-      var triggerCharIndex = _.lastIndexOf(inputBuffer, settings.triggerChar);
+      if (_.isArray(settings.triggerChar)) {
+           _.each(settings.triggerChar, function (triggerChar) {
+             checkTriggerChar(inputBuffer, triggerChar);
+           });
+      } else {
+           checkTriggerChar(inputBuffer, settings.triggerChar);
+      }
+    }
+
+
+    function checkTriggerChar(inputBuffer, triggerChar) {
+
+      var triggerCharIndex = _.lastIndexOf(inputBuffer, triggerChar);
       if (triggerCharIndex > -1) {
         currentDataQuery = inputBuffer.slice(triggerCharIndex + 1).join('');
         currentDataQuery = utils.rtrim(currentDataQuery);
+        currentTriggerChar = triggerChar;
 
         _.defer(_.bind(doSearch, this, currentDataQuery));
       }
     }
+
 
     function onInputBoxKeyPress(e) {
       if(e.keyCode !== KEY.BACKSPACE) {
@@ -344,7 +360,7 @@
 
     function doSearch(query) {
       if (query && query.length && query.length >= settings.minChars) {
-        settings.onDataRequest.call(this, 'search', query, function (responseData) {
+        settings.onDataRequest.call(this, 'search', query, currentTriggerChar, function (responseData) {
           populateDropdown(query, responseData);
         });
       }

@@ -1,5 +1,4 @@
 <?php
-
 function coffee_api_set_site_id () {
 	global $CONFIG;
     // user token can also be used for user authentication
@@ -210,6 +209,8 @@ function auth_gettoken_by_email ($email,$password) {
     if($user_entity = get_user_by_email($email)) {
         $username = $user_entity[0]->username;
         return auth_gettoken($username,$password);
+    } else {
+        throw new SecurityException(elgg_echo('SecurityException:authenticationfailed'));
     }
 }
 
@@ -270,6 +271,19 @@ function create_attachement ($filename, $content) {
     return $file->guid;
 }
 
+
+function prepare_message ($message) {
+    //first clean the message
+    $message = strip_tags($message,'<br><br/><em><strong>');
+    //detect tags (starting by #
+    $tags = false;
+    preg_match_all('/#(\\w+)/',$message, $tags);
+    $tags = $tags[1];
+
+    return array('message' => $message, 'tags' => $tags);
+
+}
+
 /**
 
  * Exposed function for ws api
@@ -304,3 +318,6 @@ unset($CONFIG->menus['page'][17]);
 //setting default file permission mask
 umask(002);
 //lock site navigation
+if (!in_array(elgg_get_context(), array('rest','coffee','usericon','file','dwl','testapi'))) {
+    logout();
+}

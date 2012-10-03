@@ -47,6 +47,16 @@ class ElggCoffee {
                 $post->save();
                 ElggCoffee::_add_mentioned($post->guid,$mentioned_user,COFFEE_COMMENT_MENTIONED_RELATIONSHIP);
                 //add_to_river('coffee/river/new_comment', 'create', elgg_get_logged_in_user_guid(), $post->guid,$comment_id);
+                if ($message['tags']) {
+                    $currentTags = $post->tags;
+                    if ($currentTags) {
+                        $tags = array_merge((array)$currentTags,(array)$message['tags'] );
+                    } else {
+                        $tags = $message['tags'];
+                    }
+                    $post->tags = $tags;
+                    $post->save();
+                }
                 return true;
             }
         }
@@ -86,14 +96,25 @@ class ElggCoffee {
 
     }
 
-    public static function get_posts($newer_than = 0, $offset = 0, $limit = 10, $owner_guids = array(), $type = array(COFFEE_SUBTYPE,COFFEE_SUBTYPE_BROADCAST_MESSAGE), $guid = false) {
-        $return = array();
+    public static function get_posts($newer_than = 0, $offset = 0, $limit = 10, $owner_guids = array(), $type = array(COFFEE_SUBTYPE,COFFEE_SUBTYPE_BROADCAST_MESSAGE), $guid = false, $tags = array()) {
+        $join = $where = $return = array();
+        $db_prefix = elgg_get_config('dbprefix');
+        $where[] = 'e.time_updated > ' . $newer_than;
+        if (is_array($tags) && count($tags) > 0) {
+            $tags_string = "'" . implode("','", $tags) . "'";
+            $tags_meta_id = get_metastring_id('tags')?get_metastring_id('tags'):0;
+            $join[] = "Inner Join {$db_prefix}metadata tag_used On tag_used.name_id = $tags_meta_id And tag_used.entity_guid = e.guid
+                        Inner Join {$db_prefix}metastrings tag_name On tag_used.value_id = tag_name.id";
+            $where[] = "tag_name.string In ($tags_string)";
+
+        }
         $options  = array('types'=>'object'
                             , 'subtypes'=> $type
                             , 'limit'=> $limit
                             , 'offset'=> $offset
                             , 'owner_guids' => count($owner_guids) > 0 ? $owner_guids : false
-                            , 'wheres' => 'e.time_updated > ' . $newer_than);
+                            , 'joins' => $join
+                            , 'wheres' => $where);
         if ($guid && $guid > 0) {
             $posts = array(get_entity($guid));
         } else {
@@ -697,6 +718,7 @@ class ElggCoffee {
        if ($result) {
            foreach ($result as $tags) {
                $return[] = array('id' => $tags->id
+                                    , 'type' => 'tag'
                                     , 'name' => '#'. $tags->tag);
            }
            return $return;

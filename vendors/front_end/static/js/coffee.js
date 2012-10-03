@@ -151,16 +151,17 @@
     /* !Model: Session */
     var Session = Backbone.Model.extend({
         defaults: {
-            authToken: null,
-            userId: null,
-            siteName: null,
-            logoUrl: null,
-            backgroundUrl: null,
-            customCss: null,
-            translations: null,
-            isAdmin: null,
-            accountTime: null,
-            loginCount: null
+            authToken: null
+            , userId: null
+            , siteName: null
+            , logoUrl: null
+            , backgroundUrl: null
+            , customCss: null
+            , translations: null
+            , isAdmin: null
+            , accountTime: null
+            , loginCount: null
+            , searchCriteria: null
         },
 
         initialize: function () {
@@ -191,6 +192,7 @@
             localStorage.setItem('isAdmin', this.get('isAdmin'));
             localStorage.setItem('accountTime', this.get('accountTime'));
             localStorage.setItem('loginCount', this.get('loginCount'));
+            localStorage.setItem('searchCriteria', this.get('searchCriteria'));
 
             this.trigger('started');
         },
@@ -209,7 +211,8 @@
                 translations: localStorage.getItem('translations'),
                 isAdmin: localStorage.getItem('isAdmin'),
                 accountTime: localStorage.getItem('accountTime'),
-                loginCount: localStorage.getItem('loginCount')
+                loginCount: localStorage.getItem('loginCount'),
+                searchCriteria: localStorage.getItem('searchCriteria')
             });
         },
 
@@ -566,18 +569,7 @@
                     }
                 });
             }
-            if (attributes.comment.total > 0) {
-                attributes.comment.comments.reverse();
-                attributes.comment.showAllLink = (attributes.comment.total > attributes.comment.comments.length) ? true : false;
-                for (i=0; i < attributes.comment.total; i++) {
-                    if (typeof attributes.comment.comments[i] != 'undefined') {
-                        if (typeof attributes.comment.comments[i].mentioned != 'undefined' && attributes.comment.comments[i].mentioned.length>0) {
-                            attributes.comment.comments[i].text = this.replaceMentions(attributes.comment.comments[i].text,attributes.comment.comments[i].mentioned,'user');
-                        }
-                        if (attributes.comment.comments[i].owner_guid == App.models.session.get('userId') || (App.models.session.get('isAdmin') == 'true')) attributes.comment.comments[i].isCommentOwner = true;
-                    }
-                }
-            }
+
             if (attributes.mentioned && attributes.mentioned.length>0) {
                 attributes.content.text = this.replaceMentions(attributes.content.text,attributes.mentioned, 'user');
             }
@@ -594,6 +586,22 @@
                 attributes.content.text = this.replaceMentions(attributes.content.text,tagReplacement, 'tag');
             }
 
+            if (attributes.comment.total > 0) {
+                attributes.comment.comments.reverse();
+                attributes.comment.showAllLink = (attributes.comment.total > attributes.comment.comments.length) ? true : false;
+                for (i=0; i < attributes.comment.total; i++) {
+                    if (typeof attributes.comment.comments[i] != 'undefined') {
+                        if (attributes.comment.comments[i].mentioned && attributes.comment.comments[i].mentioned.length>0) {
+                            attributes.comment.comments[i].text = this.replaceMentions(attributes.comment.comments[i].text,attributes.comment.comments[i].mentioned,'user');
+                        }
+                        if (tagReplacement) {
+                            attributes.comment.comments[i].text = this.replaceMentions(attributes.comment.comments[i].text,tagReplacement,'tag');
+                        }
+                        if (attributes.comment.comments[i].owner_guid == App.models.session.get('userId') || (App.models.session.get('isAdmin') == 'true')) attributes.comment.comments[i].isCommentOwner = true;
+                    }
+                }
+            }
+
             attributes.isBroadCastMessage = (attributes.content.type === 'coffee_broadcast_message') ? true : false;
             Backbone.Model.prototype.set.call(this, attributes, options);
         },
@@ -604,13 +612,17 @@
                 case 'user':
                 default:
                     template = 'mentionUserTemplate';
+                    pattern = /mentioned user/;
                     break;
                 case 'tag':
                     template = 'mentionTagTemplate';
+                    pattern = /mentioned tag/;
                     break;
             }
+            if (pattern.test(text)) return text;
             _.each(mentions, function (mention) {
                 replacement = eval('ich.'+ template+'(mention,true)');
+                patern = '/(^|\s)' + mention.name + '($|\s|[^\w])/';
                 text = text.replace(mention.name,replacement);
             });
             return text;
@@ -624,7 +636,6 @@
         initialize: function () {
             _.bindAll(this);
             this.loadFeed();
-
         },
 
         loadFeed: function (offset,limit) {
@@ -638,6 +649,7 @@
                     , auth_token: App.models.session.get('authToken')
                     , offset: offset?offset:0
                     , limit: limit?limit:10
+                    , tags: this.getSearchCriteria('tags')
                 },
                 success: function (response) {
                     if (response.status != -1) {
@@ -692,13 +704,14 @@
                 return latest.attributes.content.time_updated;
             }).attributes.content.time_updated;
             $.ajax({
-                type: 'GET',
-                url: App.resourceUrl,
-                dataType: 'json',
-                data: {
-                    method: 'coffee.getPosts',
-                    auth_token: App.models.session.get('authToken'),
-                    newer_than: latestTimestamp
+                type: 'GET'
+                , url: App.resourceUrl
+                , dataType: 'json'
+                , data: {
+                    method: 'coffee.getPosts'
+                    , auth_token: App.models.session.get('authToken')
+                    , newer_than: latestTimestamp
+                    , tags: this.getSearchCriteria('tags')
                 },
                 success: function (response) {
                     if (response.status != -1) {
@@ -717,7 +730,7 @@
                                 }
                             }
                         }
-                        if (Backbone.history.fragment === 'feed') {
+                        if (Backbone.history.fragment.indexOf('feed') != -1) {
                             self.startCheckingForNewPosts();
                         }
                     } else if (response.message == 'pam_auth_userpass:failed') {
@@ -729,6 +742,18 @@
                     }
                 }
             });
+        },
+
+        getSearchCriteria: function(name) {
+            searchCriteria = App.models.session.get('searchCriteria');
+            if (typeof searchCriteria != 'object') return null;
+            try {
+                value = eval('searchCriteria.' + name);
+                if (typeof value != 'undefined') return value;
+            } catch (Exception) {
+                return null;
+            }
+            return null;
         }
     });
 
@@ -1436,6 +1461,7 @@
             if (action == 'logout') {
                 App.models.session.end();
             } else if (action == 'feed') {
+                App.models.session.set('searchCriteria',null);
                 Backbone.history.navigate('feed', true);
             } else if (action == 'profile') {
                 Backbone.history.navigate('profile', true);
@@ -2214,7 +2240,8 @@
     var WorkspaceRouter = Backbone.Router.extend({
         routes: {
             "login":                    "login"
-            , "feed":					"feed"
+            , "feed":                   "feed"
+            , "feed/:tag":              "feed"
             , "profile":				"myProfile"
             , "profile/:user_id":		"profile"
             , "tv":                     "tv"
@@ -2235,9 +2262,10 @@
             }
         },
 
-        feed: function () {
+        feed: function (tag) {
             App.removeAllViews();
             if (App.models.session.authenticated()) {
+                if (typeof tag != 'undefined') App.models.session.set('searchCriteria',{tags:new Array(tag)});
                 App.views.microbloggingView = new MicrobloggingView();
                 App.views.menuView = new MenuView();
                 setBackground (App.models.session.get('backgroundUrl'));

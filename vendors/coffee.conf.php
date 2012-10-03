@@ -92,7 +92,10 @@ $exposed[$i]['params']          	= array( "newer_than" => array('type' => 'int'
                                                             , 'default' => array(COFFEE_SUBTYPE,COFFEE_SUBTYPE_BROADCAST_MESSAGE))
                                             , "guid" => array('type' => 'int'
                                                             , 'required' => false
-                                                            , 'default' => false));
+                                                            , 'default' => false)
+                                            , "tags" => array('type' => 'array'
+                                                            , 'required' => false
+                                                            , 'default' => array()));
 $exposed[$i]['comment']          	= 'Get news feed items, ordered from newest to oldest';
 $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;

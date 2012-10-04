@@ -208,7 +208,8 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .user-vcard-content-module {width:200px;height: 60px;background-color:#ffffff;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 3px rgba(0, 0, 0, 0.4);-moz-box-shadow:0 1px 3px rgba(0, 0, 0, 0.4);box-shadow:0 1px 3px rgba(0, 0, 0, 0.4);position:relative;padding:15px;margin:5px;float:left}
 .user-vcard-content-module .update-actions {right: 0px;background-color:rgba(0, 0, 0, 0.7)}
 .vcard-info {float:left;width: 140px;}
-.vcard-info .headline{font-size: 10px;line-height:2px;}
+.vcard-info .headline{margin-top: 7px;font-size: 10px;line-height:11px;}
+.vcard-info .name{line-height:13px;font-weight: bold}
 .vcard-avatar {width: 60px;}
 .pull-right{float:right;}
 .pull-left{float:left;}

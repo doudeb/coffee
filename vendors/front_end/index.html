@@ -756,11 +756,9 @@
                 <div class="user-vcard-content-module" data-user-guid="{{id}}">
                     <div class="vcard-info">
                         <strong>{{name}}</strong><br>
-                        {{email}}<br>
-                        {{profile.location}}<br>
-                        <abbr title="Phone">P:</abbr> {{profile.cellphone}}
+                        <span class="headline">{{profile.headline}}</span>
                     </div>
-                    <img class="vcard-avatar" src="{{avatar}}">
+                    <img class="vcard-avatar radius3" src="{{avatar}}">
                     <ul class="update-actions">
                         <li class="update-action update-action-remove"><a href="#" rel="tooltip" title="{{#translate}}coffee:feeditem:action:removecomment{{/translate}}" data-action="remove" data-placement="right"><i class="icon-trash"></i></a></li>
                     </ul>

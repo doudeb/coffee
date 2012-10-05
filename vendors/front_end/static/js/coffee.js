@@ -13,7 +13,7 @@
             return navigator.userAgent.match(/IEMobile/i) ? true : false;
         },
         any: function() {
-            return 1 || (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
+            return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
         }
     };
 

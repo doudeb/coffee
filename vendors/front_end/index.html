@@ -44,7 +44,7 @@
             <a class="mentioned user" href="#profile/{{owner_guid}}">{{name}}</a>
         </script>
         <script type="text/html" id="mentionTagTemplate">
-            <a class="mentioned tag" href="#feed/{{name}}">{{name}}</a>
+            <a class="mentioned tag" href="#feed/{{tag}}">{{name}}</a>
         </script>
         <script type="text/html" id="loginTemplate">
             <div id="login">
@@ -694,6 +694,10 @@
                    <input type="password" class="input-large" id="password2" />
                </div>
                <div class="form-item">
+                   <label for="makeAdmin">Admin ?</label>
+                   <input type="checkbox" class="input-large" id="makeAdmin" name="makeAdmin" value="1"/>
+               </div>
+               <div class="form-item">
                    <label for="language">Language</label>
                    <select class="input-large" id="language">
                        <option value="en">English</option>
@@ -770,10 +774,7 @@
                 <div id="userSettings">
                     <div class="content-module">
                         <div class="primary-content">
-                            <div class="alert alert-success hide" id="settingUpdateSuccess">
-                                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                Settings successfuly updated
-                            </div>
+                            <div class="alert" id="settingUpdateResult" />
                             <form class="form-horizontal">
                                 <legend>User Settings</legend>
                                 <div class="form-item">
@@ -781,7 +782,7 @@
                                     <input type="text" class="input-large" id="inputName" value="{{userSetting.name}}"/>
                                 </div>
                                 <div class="form-item">
-                                    <label for="inputPassword">Old password</label>
+                                    <label for="inputPassword">Current password</label>
                                     <input type="password" class="input-large" id="inputCurrentPassword" />
                                 </div>
                                 <div class="form-item">

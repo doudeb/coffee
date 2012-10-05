@@ -58,7 +58,7 @@ function coffee_api_set_site_id () {
  *
  */
 function coffee_api_public_pages($hook, $handler, $return, $params) {
-	$pages = array('userIcon/.*','dwl/.*','upl/.*', 'testApi','userCover/.*');
+	$pages = array('userIcon/.*','dwl/.*','upl/.*', 'testApi','userCover/.*','thumbnail/*');
 	return array_merge($pages, $return);
 }
 
@@ -111,6 +111,17 @@ function coffee_page_handler($page,$handler) {
             if (!coffee_api_set_site_id ()) break;
             elgg_set_page_owner_guid($user_guid);
 			include_once elgg_get_plugins_path() . 'file/download.php';
+            exit();
+			break;
+ 		case "thumbnail":
+            $guid = $page[1];
+            $size = $page[2];
+            set_input('auth_token', $page[0]);
+            set_input('file_guid', $page[1]);
+            set_input('size', $page[2]);
+            if (!coffee_api_set_site_id ()) break;
+            elgg_set_page_owner_guid($user_guid);
+			render_thumbnail($guid,$size);
             exit();
 			break;
    		case "testApi":
@@ -284,6 +295,50 @@ function prepare_message ($message) {
 
 }
 
+
+function render_thumbnail ($guid, $size) {
+    $file = get_entity($guid);
+    if (!$file || $file->getSubtype() != "file") {
+        exit;
+    }
+    $simpletype = $file->simpletype;
+    if ($simpletype == "image") {
+
+        // Get file thumbnail
+        switch ($size) {
+            case "small":
+                $thumbfile = $file->thumbnail;
+                break;
+            case "medium":
+                $thumbfile = $file->smallthumb;
+                break;
+            case "large":
+            default:
+                $thumbfile = $file->largethumb;
+                break;
+        }
+
+        // Grab the file
+        if ($thumbfile && !empty($thumbfile)) {
+            $readfile = new ElggFile();
+            $readfile->owner_guid = $file->owner_guid;
+            $readfile->setFilename($thumbfile);
+            $mime = $file->getMimeType();
+            $contents = $readfile->grabFile();
+
+            // caching images for 10 days
+            header("Content-type: $mime");
+            header('Expires: ' . date('r',time() + 864000));
+            header("Pragma: public", true);
+            header("Cache-Control: public", true);
+            header("Content-Length: " . strlen($contents));
+
+            echo $contents;
+            exit;
+        }
+    }
+}
+
 /**
 
  * Exposed function for ws api
@@ -318,6 +373,6 @@ unset($CONFIG->menus['page'][17]);
 //setting default file permission mask
 umask(002);
 //lock site navigation
-if (!in_array(elgg_get_context(), array('rest','coffee','usericon','file','dwl','testapi'))) {
-    logout();
+if (!in_array(elgg_get_context(), array('rest','coffee','usericon','file','dwl','testapi','thumbnail'))) {
+    //logout();
 }

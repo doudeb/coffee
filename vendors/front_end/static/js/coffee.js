@@ -578,10 +578,12 @@
                 var tagReplacement = new Array();
                 if (_.isArray(attributes.tags)) {
                     _.each(attributes.tags, function (tag) {
-                        tagReplacement.push({'name':tag});
+                        tagReplacement.push({name:'#' + tag
+                                                , tag:tag});
                     });
                 } else {
-                    tagReplacement.push({'name':attributes.tags});
+                    tagReplacement.push({name:'#' + attributes.tags
+                                                , tag:attributes.tags});
                 }
                 attributes.content.text = this.replaceMentions(attributes.content.text,tagReplacement, 'tag');
             }
@@ -1400,7 +1402,6 @@
             $('#microblogging .update-text')
                 .mentionsInput('getMentions', function(data) {
                     _.each(data, function(user, key){
-                        console.log(user);
                         mentionedUsers[key] = user.id;
                     });
                 })
@@ -1940,6 +1941,7 @@
                     , email : this.$el.find('#addnewuser #email').val()
                     , password : this.$el.find('#addnewuser #password').val()
                     , password2 : this.$el.find('#addnewuser #password2').val()
+                    , make_admin : this.$el.find('#addnewuser #makeAdmin').val()
                     , language : this.$el.find('#addnewuser #language').val()
                 },
                 success: function (response) {
@@ -2218,17 +2220,25 @@
                 , language: $('#inputLanguage').val()
             };
             $.ajax({
-                type: 'POST',
-                url: App.resourceUrl,
-                dataType: 'json',
-                data: data,
-                success: function (response) {
-                    console.log(response);
+                type: 'POST'
+                , url: App.resourceUrl
+                , dataType: 'json'
+                , data: data
+                , success: function (response) {
                     if (response.status != -1) {
-                        $('#settingUpdateSuccess').fadeIn();
+                        $('#settingUpdateResult')
+                        .html('Settings successfuly updated!')
+                        .fadeIn();
+                        try {
+                            App.models.session.start();
+                        } catch (e) {
+                            alert(e);
+                        }
+                        setTimeout("window.location.reload(true)",1000);
                     } else {
-                        alert('There was an error posting the update.\n\
-                                Message : ' + response.message);
+                        $('#settingUpdateResult')
+                        .html(response.message)
+                        .fadeIn();
                     }
                 }
             });

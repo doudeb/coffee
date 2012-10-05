@@ -229,17 +229,29 @@ class ElggCoffee {
         }
         foreach ($attachment as $key => $attached) {
             $attached_ent = get_entity($attached->guid_two);
+            switch ($attached_ent->simpletype) {
+                case 'url':
+                    $thumbnail = $attached_ent->thumbnail;
+                    break;
+                case 'image':
+                    $thumbnail = static::_get_thumbnail_url($attached_ent->guid,'medium');
+                    break;
+                case 'document':
+                default:
+                    $thumbnail = $attached_ent->getIconURL();
+                    break;
+            }
             $return[] = array(
-                                                'guid' => $attached_ent->guid
-                                                , 'time_created' => $attached_ent->time_created
-                                                , 'friendly_time' => elgg_get_friendly_time($attached_ent->time_created)
-                                                , 'title' => $attached_ent->title
-                                                , 'description' => $attached_ent->description
-                                                , 'html' => $attached_ent->html
-                                                , 'type' => $attached_ent->simpletype
-                                                , 'mime' => $attached_ent->mimetype
-                                                , 'url' => $attached_ent->simpletype === 'url'?$attached_ent->url:static::_get_dwl_url($attached_ent->guid)
-                                                , 'thumbnail' => $attached_ent->simpletype === 'url'?$attached_ent->thumbnail:$attached_ent->getIconURL('medium')
+                                'guid' => $attached_ent->guid
+                                , 'time_created' => $attached_ent->time_created
+                                , 'friendly_time' => elgg_get_friendly_time($attached_ent->time_created)
+                                , 'title' => $attached_ent->title
+                                , 'description' => $attached_ent->description
+                                , 'html' => $attached_ent->html
+                                , 'type' => $attached_ent->simpletype
+                                , 'mime' => $attached_ent->mimetype
+                                , 'url' => $attached_ent->simpletype === 'url'?$attached_ent->url:static::_get_dwl_url($attached_ent->guid)
+                                , 'thumbnail' => $thumbnail
                 );
         }
         return $return;
@@ -396,29 +408,36 @@ class ElggCoffee {
         require_once elgg_get_plugins_path() . "coffee/vendors/link_data/Embedly.php";
         require_once elgg_get_plugins_path() . "coffee/vendors/link_data/EmbedUrl.php";
         $return = false;
-        try {
-            $api = new Embedly_API(array('user_agent' => 'Mozilla/5.0 (compatible; embedly/example-app; support@embed.ly)'));
-            $oembed = $api->oembed(array('url' => $url, 'maxwidth' => 530));
-            if (!isset($oembed[0]->error_code)) {
-                $return = array('title' => $oembed[0]->title
-                                , 'description' => $oembed[0]->description
-                                , 'thumbnail' => $oembed[0]->thumbnail_url
-                                , 'width' => $oembed[0]->width
-                                , 'height' => $oembed[0]->height
-                                , 'html' => $oembed[0]->html);
+        if (preg_match("/\.(bmp|jpeg|gif|png|jpg|pdf)$/i", $url)) {
+            $title = parse_url($url,PHP_URL_PATH);
+            $title = basename($title);
+            $return = array('title' => $title
+                                , 'thumbnail' => $url);
+        } else {
+            try {
+                $api = new Embedly_API(array('user_agent' => 'Mozilla/5.0 (compatible; embedly/example-app; support@embed.ly)'));
+                $oembed = $api->oembed(array('url' => $url, 'maxwidth' => 530));
+                if (!isset($oembed[0]->error_code)) {
+                    $return = array('title' => $oembed[0]->title
+                                    , 'description' => $oembed[0]->description
+                                    , 'thumbnail' => $oembed[0]->thumbnail_url
+                                    , 'width' => $oembed[0]->width
+                                    , 'height' => $oembed[0]->height
+                                    , 'html' => $oembed[0]->html);
+                }
+            } catch (Exception $e) {}
+            if (!is_array($return)) {
+                require_once elgg_get_plugins_path() . "coffee/vendors/Readability.inc.php";
+                $embedUrl = new Embed_url(array('url' => $url));
+                $embedUrl->embed();
+                //Readability
+                $readability = new Readability($embedUrl->html, $embedUrl->encoding);
+                $content = $readability->getContent();
+                $return = array('title' => $embedUrl->title
+                                        , 'description' => $embedUrl->description
+                                        , 'thumbnail' => $embedUrl->sortedImage[0]
+                                        , 'html' => $content['content']);
             }
-        } catch (Exception $e) {}
-        if (!is_array($return)) {
-            require_once elgg_get_plugins_path() . "coffee/vendors/Readability.inc.php";
-            $embedUrl = new Embed_url(array('url' => $url));
-            $embedUrl->embed();
-            //Readability
-            $readability = new Readability($embedUrl->html, $embedUrl->encoding);
-            $content = $readability->getContent();
-            $return = array('title' => $embedUrl->title
-                                    , 'description' => $embedUrl->description
-                                    , 'thumbnail' => $embedUrl->sortedImage[0]
-                                    , 'html' => $content['content']);
         }
         if (is_array($return)) {
             $link = new ElggObject();
@@ -595,8 +614,8 @@ class ElggCoffee {
         if ($password && $curent_password) {
             $return = elgg_set_user_password();
         }
-        if (!$return) {
-            throw new Exception (print_r($_SESSION['msg']['error'], true));
+        if (!$return && !is_null($return)) {
+            throw new Exception ($_SESSION['msg']['error'][0]);
         }
         return true;
     }
@@ -628,7 +647,7 @@ class ElggCoffee {
 
     }
 
-    public static function register_user ($displayname, $email, $password, $password2, $language) {
+    public static function register_user ($displayname, $email, $password, $password2, $language,$make_admin=false) {
         admin_gatekeeper();
         $username = str_replace(array("-","_",".","@"), '', $email);
         $guid = register_user(
@@ -641,6 +660,9 @@ class ElggCoffee {
             $user = get_user($guid);
             if ($user instanceof ElggUser) {
                 $user->language = $language;
+                if ($make_admin) {
+                    $user->makeAdmin();
+                }
                 $user->save();
             }
         }
@@ -756,6 +778,10 @@ class ElggCoffee {
 
     private static function _get_dwl_url ($guid) {
         return $GLOBALS['CONFIG']->url . 'dwl/' . $GLOBALS['CONFIG']->auth_token . '/' . $guid;
+    }
+
+    private static function _get_thumbnail_url ($guid,$size='medium') {
+        return $GLOBALS['CONFIG']->url . 'thumbnail/' . $GLOBALS['CONFIG']->auth_token . '/' . $guid . '/' . $size;
     }
 
     private static function _get_likes ($guid, $offset = 0, $limit = 3) {

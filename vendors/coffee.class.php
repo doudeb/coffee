@@ -660,7 +660,7 @@ class ElggCoffee {
             $user = get_user($guid);
             if ($user instanceof ElggUser) {
                 $user->language = $language;
-                if ($make_admin) {
+                if ($make_admin == '1') {
                     $user->makeAdmin();
                 }
                 $user->save();

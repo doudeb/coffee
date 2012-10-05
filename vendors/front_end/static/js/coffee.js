@@ -13,7 +13,7 @@
             return navigator.userAgent.match(/IEMobile/i) ? true : false;
         },
         any: function() {
-            return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
+            return 1 || (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
         }
     };
 
@@ -54,6 +54,11 @@
         $('.watermark').hide();
         if (logoUrl && logoUrl.length > 0) {
             $('#watermark').attr('src',logoUrl);
+            if (isMobile.any()) {
+                $('.watermark')
+                    .html('<h3>' + App.models.session.get('siteName') + '</h3>')
+                    .css('color','#FFF');
+            }
         } else {
             $('#watermark').attr('src','url(userpics/logo.png)');
         }
@@ -1177,6 +1182,7 @@
             data = {
                 icon_url: App.models.session.get('iconUrl')
                 , isAdmin: App.models.session.get('isAdmin')
+                , siteName: App.models.session.get('siteName')
                 , translate: function() {return function(text) {return t(text);}}
             };
 
@@ -1238,11 +1244,11 @@
 
                             if (response.status != -1) {
                                 var postGuid = response.result.guid;
-                                self.clear();
-                                self.feedItemsView.addNew(postGuid);
-
                                 if(isMobile.any()){
-                                    self.hideMobileCommentForm();
+                                    Backbone.history.navigate('feed', true);
+                                } else {
+                                    self.clear();
+                                    self.feedItemsView.addNew(postGuid);
                                 }
                             } else {
                                 alert('There was an error posting the update.');
@@ -1259,7 +1265,6 @@
             var self = this;
             var textarea = $(e.currentTarget);
             var value = textarea.val();
-
             if (value.length > (self.updateLength + 7)) {
                 if (self.isUrl(value)) {
                     var theUrl = value.substr(self.updateLength);
@@ -1399,15 +1404,19 @@
 
         getMentions: function () {
             var mentionedUsers = new Array();
-            $('#microblogging .update-text')
-                .mentionsInput('getMentions', function(data) {
-                    _.each(data, function(user, key){
-                        mentionedUsers[key] = user.id;
-                    });
-                })
-                .mentionsInput('reset')
-                .css('height','50px');
-            return mentionedUsers;
+            try {
+                $('#microblogging .update-text')
+                    .mentionsInput('getMentions', function(data) {
+                        _.each(data, function(user, key){
+                            mentionedUsers[key] = user.id;
+                        });
+                    })
+                    .mentionsInput('reset')
+                    .css('height','50px');
+                return mentionedUsers;
+            } catch (e) {
+                return [];
+            }
         }
 
     });
@@ -1941,8 +1950,8 @@
                     , email : this.$el.find('#addnewuser #email').val()
                     , password : this.$el.find('#addnewuser #password').val()
                     , password2 : this.$el.find('#addnewuser #password2').val()
-                    , make_admin : this.$el.find('#addnewuser #makeAdmin').val()
                     , language : this.$el.find('#addnewuser #language').val()
+                    , make_admin : this.$el.find('#addnewuser #makeAdmin').attr('checked')?1:0
                 },
                 success: function (response) {
                     if (response.status == '-1') {
@@ -2121,7 +2130,7 @@
     });
 
     /* !View: MobilePostView */
-    var MobilePostView = Backbone.View.extend({
+    var MobilePostView = MicrobloggingView.extend({
         initialize: function () {
             _.bindAll(this);
 
@@ -2140,14 +2149,17 @@
 
             var element = ich.mobileMicrobloggingTemplate(data);
             self.setElement(element);
-
+            App.initMention(element.find('textarea.update-text'));
             self.$el.prependTo('#container');
             $('#microblogging').show();
+            element.find('textarea.update-text').focus();
+
         },
 
         events: {
-            "click #postUpdate": "post",
-            "click #cancelPostUpdate": "back"
+            "click #postUpdate": "post"
+            , "click #cancelPostUpdate": "back"
+            , "keyup .update-text": "listenForLink"
         },
 
         back: function() {
@@ -2155,28 +2167,7 @@
         },
 
         post: function(e) {
-            var updateText = $('.update-text').val();
-
-            var data = {
-                method: 'coffee.createNewPost',
-                auth_token: App.models.session.get('authToken'),
-                post: updateText,
-                type: ''
-            };
-
-            $.ajax({
-                type: 'POST',
-                url: App.resourceUrl,
-                dataType: 'json',
-                data: data,
-                success: function (response) {
-                    if (response.status != -1) {
-                        Backbone.history.navigate('feed', true);
-                    } else {
-                        alert('There was an error posting the update.');
-                    }
-                }
-            });
+            this.postUpdate(e);
         }
     });
 

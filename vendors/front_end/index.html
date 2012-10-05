@@ -432,14 +432,15 @@
                     </div>
                     <div class="secondary-content">
                         <div class="interactions line">
-                            <ul class="comments unit size1of2">
+                            <ul class="comments unit size4of5">
                                 <li class="update-action update-action-comment update-action-comment-mobile"><a href="#" title="Add a comment" data-action="comment">Comment</a> | </li>
                                 {{^hasLiked}}<li class="update-action update-action-like"><a href="{{id}}" title="Like" data-action="like">Like</a></li>{{/hasLiked}}
                                 {{#hasLiked}}<li class="update-action update-action-unlike"><a href="#" title="Unlike" data-action="unlike">Unlike</a></li>{{/hasLiked}}
                             </ul>
-                            <ul class="counters comments size1of2 unit">
-                                <li class="comment">{{comment.total}} <i class="icon-comment"></i></li>
-                                <li class="like">{{likes.total}} <i class="icon-thumbs-up"></i></li>
+                            <ul class="counters comments unit lastUnit">
+                                <li class="comment update-action update-action-comment update-action-comment-mobile">{{comment.total}} <a href="#" title="Add a comment" data-action="comment"><i class="icon-comment"></i></a></li>
+                                {{^hasLiked}}<li class="like update-action update-action-like">{{likes.total}} <a href="{{id}}" title="Like" data-action="like"><i class="icon-thumbs-up"></i></a></li>{{/hasLiked}}
+                                {{#hasLiked}}<li class="like update-action update-action-unlike">{{likes.total}} <a href="#" title="Unlike" data-action="unlike"><i class="icon-thumbs-down"></i></a></li>{{/hasLiked}}
                             </ul>
                         </div>
                     </div>
@@ -450,8 +451,8 @@
         <script type="text/html" id="mobileMenuTemplate">
             <div id="menu">
                 <ul>
-                    <li><a href="" title="Profile" data-action="profile" class="profile"><i class="icon-user icon-white"></i></a></li>
-                    <li><a href="" title="Post feed" data-action="mobilePost" class="mobilePost"><i class="icon-pencil icon-white"></i></a></li>
+                    <li><a href="" title="Profile" data-action="profile" class="profile"><i class="icon-profile-mobile"></i></a></li>
+                    <li><a href="" title="Post feed" data-action="mobilePost" class="mobilePost"><i class="icon-post-mobile"></i></a></li>
                     <li><a href="" title="Home" data-action="feed" class="home">&nbsp;</a></li>
                 </ul>
             </div>
@@ -573,7 +574,7 @@
                 <div id="microblogging" class="content-module postForm">
                     <div class="primary-content">
                         <div class="update-content line">
-                            <textarea class="update-text" placeholder="{{#translate}}coffee:feed:share{{/translate}}"></textarea>
+                            <textarea class="update-text mention" placeholder="{{#translate}}coffee:feed:share{{/translate}}"></textarea>
                         </div>
                         <div class="update-actions">
                             <button id="cancelPostUpdate" class="btn btn-danger">{{#translate}}coffee:feed:cancel{{/translate}}</button>
@@ -695,7 +696,7 @@
                </div>
                <div class="form-item">
                    <label for="makeAdmin">Admin ?</label>
-                   <input type="checkbox" class="input-large" id="makeAdmin" name="makeAdmin" value="1"/>
+                   <input type="checkbox" class="input-large" id="makeAdmin" name="makeAdmin" />
                </div>
                <div class="form-item">
                    <label for="language">Language</label>

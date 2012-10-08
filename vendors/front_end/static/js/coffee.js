@@ -40,11 +40,11 @@
     var setBackground = function (backgroundUrl) {
         if (backgroundUrl && backgroundUrl.length > 0) {
             $('body')
-            .css('background','url(' + backgroundUrl + ')')
+            .css('background','url(' + backgroundUrl + '?' + new Date().getTime() +')')
             .css('background-repeat','no-repeat')
             .css('background-attachment','fixed')
-            .css('-moz-background-size','100%')
-            .css('background-size','100%');
+            .css('-moz-background-size','cover')
+            .css('background-size','cover');
         } else {
             $('body').css('background','url(userpics/client_bg.jpeg)');
         }
@@ -107,14 +107,11 @@
 
         $output[insertType]( newMsg );
       };
-
     var App = {
         models: {},
         collections: {},
         views: {},
-
-        baseUrl: "/",
-        resourceUrl: "/services/api/rest/json",
+        resourceUrl: location.host?"/services/api/rest/json":"http://api.coffeepoke.com/services/api/rest/json",
 
         isComposing: false,
 
@@ -1926,6 +1923,7 @@
             'click #addNewUser' : 'addNewUser'
             , 'click #siteSettingsUpdate' : 'siteSettingsUpdate'
             , 'click #manageUser .nav li' : 'manageUserNav'
+            , 'click #userSettings' : 'userSettings'
             , 'keyup #manageUser #username' : 'manageUserNav'
         },
 
@@ -2034,6 +2032,11 @@
 
         resetUserList: function () {
             this.userList.collection.remove(this.userList.collection.models);
+        },
+
+        userSettings: function () {
+            alert('pouet');
+            Backbone.history.navigate('userSettings', true);
         }
 
     });

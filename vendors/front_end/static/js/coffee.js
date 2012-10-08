@@ -13,7 +13,7 @@
             return navigator.userAgent.match(/IEMobile/i) ? true : false;
         },
         any: function() {
-            return  1 || (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
+            return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
         }
     };
 
@@ -424,6 +424,7 @@
         },
 
         removeUser: function () {
+            if (!confirm("Are you sure ?")) return false;
             var self = this;
             var guid = self.model.get('id');
             $.ajax({

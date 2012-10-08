@@ -43,53 +43,55 @@
         , 'coffee:menu:profile' => 'Profile'
         , 'coffee:menu:tvapp' => 'Launch TV App'
         , 'coffee:menu:logout' => 'Log out'
+        , 'coffee:menu:admin' => 'Administration'
+        , 'coffee:menu:settings' => 'Settings'
         /*welcome*/
-        , 'coffee:welcome:headline' => '<h3>Bienvenue !</h3>
-                        <p>Dans le monde professionnel, les bonnes idées arrivent souvent par accident, lors de discussions informelles dans un couloir ou à la machine à café.</p>
-                        <p>C\'est pour cette raison que nous avons développé Coffee Poke : un réseau social d\'entreprise innovant et convivial permettant des échanges informels avec l\'ensemble de vos collaborateurs.</p>
-                        <p>Où que vous soyez,</p>
+        , 'coffee:welcome:headline' => '<h3>Welcome on CoffeePoke!</h3>
+                        <p>In a professional environment, good ideas often rise up during informal discussions in a corridor or at the coffee machine.</p>
+                        <p>That\'s the reason why we have decided to develop Coffee Poke application: an innovative and friendly enterprise social network which allows informal exchanges across your whole company.</p>
+                        <p>Wherever you are:</p>
                         <ul>
-                            <li>Tenez vous informé(e) de l\'actualité de votre entreprise</li>
-                            <li>Partagez et commentez infos, réflexions ou bonnes idées</li>
-                            <li>Et n\'oubliez pas d\'inviter vos collaborateurs à partager un "vrai" café grâce au Coffee Poke</li>
+                            <li>Keep yourself up-to-date with your company’s news</li>
+                            <li>Share and comment on information and best practices</li>
+                            <li>And don\'t forget to invite your colleagues for a real coffee thanks to coffee poke</li>
                         </ul>
                         '
         , 'coffee:welcome:instructions' => '
-                            <h3>Quelques étapes à suivre pour bien démarrer...</h3>
+                            <h3>Follow those easy steps to get started</h3>
                             <div class="steps">
                                 <!--<span class="stepN">1.</span>-->
                                 <span class="instruction">
-                                    <a href="#profile">Personnalisez votre profil</a>
+                                    <a href="#profile">Customise your profile:</a>
                                     <br />
-                                    Renseignez vos hobbies, ajoutez votre photo et choisissez un fond d\'écran qui vous ressemble.
-                                    <br />
-                                </span>
-                            </div>
-                            <div class="steps">
-                                <span class="instruction">
-                                    <a href="#feed">Publiez un message</a>
-                                    <br />
-                                    Dites sur quoi vous travaillez, posez une question, demandez un conseil, partagez articles, photos et vidéos.
+                                    Share your hobbies, add your picture and choose a background
                                     <br />
                                 </span>
                             </div>
                             <div class="steps">
                                 <span class="instruction">
-                                    <a href="#feed">Soyez (ré)actif !</a>
+                                    <a href="#feed">Edit a message:</a>
                                     <br />
-                                    Réagissez au contenu publié et enrichissez le de vos expériences personnelles.
+                                    Let people know what you are working on, ask a question, seek advises, share articles, photos and videos
                                     <br />
                                 </span>
                             </div>
                             <div class="steps">
                                 <span class="instruction">
-                                    <a href="#feed">Accessibilité</a>
+                                    <a href="#feed">Be pro-active:</a>
                                     <br />
-                                    Coffee Poke est accessible partout et tout le temps, sur votre ordinateur, votre smartphone et dans les lieux de vie de votre entreprise grâce à l\'application TV
+                                    Like and comment posts based on your personal or professional experience
+                                    <br />
+                                </span>
+                            </div>
+                            <div class="steps">
+                                <span class="instruction">
+                                    <a href="#feed">Accessibility:</a>
+                                    <br />
+                                    Coffee poke is accessible from any computer or smartphone at any time. Also, you can enjoy our TV app in your office. A real tool that creates connections within your company. With the TV app, you can follow what is going on on CoffeePoke.
                                     <br />
                                 </span>
                             </div>
 
-                            <p><h3><a href="/static/doc/CoffeePoke_fr.pdf">Plus d\'infos</a> pour obtenir le meilleur de Coffe Poke.</h3></p>'
+                            <p><h3><a href="/static/doc/CoffeePoke_en.pdf">More information</a> to get the best from Coffee Poke</h3></p>'
 
     );

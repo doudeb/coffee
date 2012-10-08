@@ -13,7 +13,7 @@
             return navigator.userAgent.match(/IEMobile/i) ? true : false;
         },
         any: function() {
-            return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
+            return  1 || (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
         }
     };
 
@@ -1468,23 +1468,34 @@
             var target = $(e.currentTarget);
             var action = target.attr('data-action');
 
-            if (action == 'logout') {
-                App.models.session.end();
-            } else if (action == 'feed') {
-                App.models.session.set('searchCriteria',null);
-                Backbone.history.navigate('feed', true);
-            } else if (action == 'profile') {
-                Backbone.history.navigate('profile', true);
-            } else if (action == 'tv') {
-                Backbone.history.navigate('tv', true);
-            } else if (action == 'welcome') {
-                Backbone.history.navigate('welcome', true);
-            } else if (action == 'mobilePost') {
-                Backbone.history.navigate('mobilePost', true);
-            } else if (action == 'admin') {
-                Backbone.history.navigate('admin', true);
+            switch (action) {
+                case 'logout':
+                    App.models.session.end();
+                    break;
+                case 'feed':
+                default:
+                    App.models.session.set('searchCriteria',null);
+                    Backbone.history.navigate('feed', true);
+                    break;
+                case 'profile':
+                    Backbone.history.navigate('profile', true);
+                    break;
+                case 'tv':
+                    Backbone.history.navigate('tv', true);
+                    break;
+                case 'welcome':
+                    Backbone.history.navigate('welcome', true);
+                    break;
+                case 'mobilePost':
+                    Backbone.history.navigate('mobilePost', true);
+                    break;
+                case 'admin':
+                    Backbone.history.navigate('admin', true);
+                    break;
+                case 'settings':
+                    Backbone.history.navigate('userSettings', true);
+                    break;
             }
-
             return false;
         },
 
@@ -1502,6 +1513,7 @@
             var self = this;
             self.optionalInfo = ['hobbies', 'languages', 'socialmedia', 'headline', 'department', 'location', 'introduction', 'phone', 'cellphone'];
             self.optionalInfo = ['hobbies', 'headline', 'department', 'location', 'introduction', 'phone', 'cellphone'];
+            self.optionalInfo = ['hobbies', 'headline', 'location', 'introduction', 'phone', 'cellphone'];
 
             $.ajax({
                 type: 'GET',

@@ -288,7 +288,7 @@ function prepare_message ($message) {
     $message = strip_tags($message,'<br><br/><em><strong>');
     //detect tags (starting by #
     $tags = false;
-    preg_match_all('/#(\\w+)/',$message, $tags);
+    preg_match_all('/#(\\w+)/u',$message, $tags);
     $tags = $tags[1];
 
     return array('message' => $message, 'tags' => $tags);

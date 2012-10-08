@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"  xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+        <title>
+              Connexion à Gallery          </title>
+    <link rel="shortcut icon"
+          href="/lib/images/favicon.ico"
+          type="image/x-icon" />
+    <link rel="apple-touch-icon-precomposed"
+          href="/lib/images/apple-touch-icon.png" />
+    
+                            <script type="text/javascript">
+    var MSG_CANCEL = "Annuler";
+    </script>
+                
+        
+    
+
+
+
+
+                    							        				    <!--[if lte IE 8]>
+    <link rel="stylesheet" type="text/css" href="/themes/clean_canvas/css/fix-ie.css"
+          media="screen,print,projection" />
+    <![endif]-->
+
+    <!-- LOOKING FOR YOUR JAVASCRIPT? It's all been combined into the link below -->
+    <script type="text/javascript" src="/index.php/combined/javascript/319e97a2462ebd9cb2748322f05038f3"></script>
+
+    <!-- LOOKING FOR YOUR CSS? It's all been combined into the link below -->
+    <link rel="stylesheet" type="text/css" href="/index.php/combined/css/ebc20aff0447e978766c55ced4a345d1" media="screen,print,projection" />
+  </head>
+
+  <body >
+    	    <div id="doc3" class="yui-t5 g-view">
+	            <div id="g-header" class="ui-helper-clearfix">
+        <div id="g-banner">
+                    <a id="g-logo" class="g-left" href="/index.php/" title="Revenir à l&#039;accueil">
+            <img width="128" height="44" alt="Logo Gallery : vos photos sur votre site web" src="/themes/clean_canvas/images/canvaslogo.png" />
+          </a>
+                    <ul id='g-login-menu' class="g-inline ui-helper-clear-fix">
+    <li>
+  <a id='g-register-menu'     class="g-dialog-link "
+     href="/index.php/register"
+     title="S&#039;enregistrer">
+    S'enregistrer  </a>
+</li>
+  </ul>
+
+                    <div id="g-banner-languages">
+                                  </div>
+
+          <!-- hide the menu until after the page has loaded, to minimize menu flicker -->
+          <div id="g-site-menu" style="visibility: hidden">
+                      </div>
+          <script type="text/javascript"> $(document).ready(function() { $("#g-site-menu").css("visibility", "visible"); }) </script>
+                  </div>
+
+              </div>
+      <div id="bd">
+        <div id="yui-main">
+          <div class="yui-b">
+            <div id="g-content" class="yui-g">
+                            <script type="text/javascript">
+  $("#g-login-form").ready(function() {
+    $("#g-password-reset").click(function() {
+      $.ajax({
+        url: "/index.php/password/reset",
+        success: function(data) {
+          $("#g-login").html(data);
+          $("#ui-dialog-title-g-dialog").html("R\u00e9initialiser le mot de passe");
+          $(".submit").addClass("g-button ui-state-default ui-corner-all");
+          $(".submit").gallery_hover_init();
+          ajaxify_login_reset_form();
+
+          // See comment about IE7 below
+          setTimeout('$("#g-name").focus()', 100);
+        }
+      });
+    });
+
+    // Setting the focus here doesn't work on IE7, perhaps because the field is
+    // not ready yet?  So set a timeout and do it the next time we're idle
+    setTimeout('$("#g-username").focus()', 100);
+  });
+
+  function ajaxify_login_reset_form() {
+    $("#g-login form").ajaxForm({
+      dataType: "json",
+      success: function(data) {
+        if (data.form) {
+          $("#g-login form").replaceWith(data.form);
+          ajaxify_login_reset_form();
+        }
+        if (data.result == "success") {
+          $("#g-dialog").dialog("close");
+          window.location.reload();
+        }
+      }
+    });
+  };
+</script>
+<div id="g-login">
+  <ul>
+    <li id="g-login-form">
+      <form action="/index.php/login/auth_html" method="post" id="g-login-form" class="g-narrow">
+<input type="hidden" name="csrf" value="1a8cb14a7a8345ad87d1aadc902bc632"  /><input type="hidden" name="continue_url" value="http://galerie.youplaboum.fr/index.php/"  />  <fieldset>
+    <legend>Connexion</legend>
+    <ul>
+      <li>
+        <label for="name" >Nom d'utilisateur</label>
+        <input type="text" id="g-username" name="name" value="" class=""  />
+      </li>
+      <li>
+        <label for="password" >Mot de passe</label>
+        <input type="password" id="g-password" name="password" value="" class=""  />
+      </li>
+      <li>
+        <input type="submit" value="Connexion" class="submit"  />
+      </li>
+    </ul>
+  </fieldset>
+</form>    </li>
+        <li>
+      <a href="#" id="g-password-reset" class="g-right g-text-small">Mot de passe oublié ?</a>
+    </li>
+      </ul>
+</div>
+            </div>
+          </div>
+        </div>
+        			<style type="text/css">
+			/* No breadcrums, position adaption for sidebar needed */
+			#g-sidebar
+			{
+				top: 6px;
+			}
+			</style>		
+		        <div id="g-sidebar" class="yui-b">
+                  </div>
+      </div>
+      <div id="g-footer" class="ui-helper-clearfix">
+                
+                <ul id="g-credits" class="g-inline">
+          <li class="g-first">Fonctionne grâce à <a href="http://gallery.menalto.com"><bdo dir="ltr">Gallery 3.0.4 (Ricochet)</bdo></a></li>        </ul>
+              </div>
+    </div>
+    
+<script src="http://e.cooliris.com/slideshow/v/37732/go.js" type="text/javascript"></script>
+  </body>
+</html>

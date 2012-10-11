@@ -24,6 +24,7 @@
         <script src="static/js/vendor/ICanHaz.min.js"></script>
         <script src="static/js/vendor/backbone.js"></script>
         <script src="static/js/vendor/jquery.form.js"></script>
+        <script src="static/js/vendor/jquery.cookie.js"></script>
         <script src="static/js/vendor/jquery.events.input.js"></script>
         <script src="static/js/vendor/jquery.elastic.js"></script>
         <script src="static/js/vendor/jquery.mentionsInput.js"></script>
@@ -102,7 +103,7 @@
         </script>
         <script type="text/html" id="microbloggingAttachmentTemplate">
             <div class="attachment">
-                <img class="thumbnail" width="100" src="{{thumbnail}}" />
+               {{#thumbnail}}<img class="thumbnail" width="100" src="{{thumbnail}}" />{{/thumbnail}}
                 <div class="info">
                     <span class="title">{{title}}</span>
                     <span class="description">{{description}}</span>
@@ -130,7 +131,7 @@
                             <p class="time"><i class="icon-time"></i> {{content.friendly_time}}</p>
                             {{#attachment}}
                             <div class="attachment">
-                                <a class="thumbnail" href="#attachment{{guid}}" target="_blank" data-toggle="modal"><img width="100" src="{{thumbnail}}" /></a>
+                                {{#thumbnail}}<a class="thumbnail" href="#attachment{{guid}}" target="_blank" data-toggle="modal"><img width="100" src="{{thumbnail}}" /></a>{{/thumbnail}}
                                 <div class="info">
                                     <a href="#attachment{{guid}}" class="title" target="_blank" data-toggle="modal">{{title}}</a>
                                     <span class="description">{{description}}</span>
@@ -411,8 +412,8 @@
                 <div class="content-module">
                     <div class="primary-content">
                         <a class="avatar" href="#profile/{{user.guid}}"><img src="{{user.icon_url_small}}" title="{{user.name}}" width="40" height="40" /></a>
+                        <a class="name" href="#profile/{{user.guid}}">{{user.name}}</a>
                         <div class="update">
-                            <a class="name" href="#profile/{{user.guid}}">{{user.name}}</a>
                             <p class="text">{{{content.text}}}</p>
                             {{#isLong}}
                             <p class="text-orig">{{{content.textOrig}}}</p>
@@ -434,14 +435,13 @@
                     <div class="secondary-content">
                         <div class="interactions line">
                             <ul class="comments unit size4of5">
-                                <li class="update-action update-action-comment update-action-comment-mobile"><a href="#" title="Add a comment" data-action="comment">Comment</a> | </li>
+                                <li class="update-action update-action-comment update-action-comment-mobile"><a href="#" title="Add a comment" data-action="comment">Comment</a>&nbsp;|&nbsp;</li>
                                 {{^hasLiked}}<li class="update-action update-action-like"><a href="{{id}}" title="Like" data-action="like">Like</a></li>{{/hasLiked}}
                                 {{#hasLiked}}<li class="update-action update-action-unlike"><a href="#" title="Unlike" data-action="unlike">Unlike</a></li>{{/hasLiked}}
                             </ul>
                             <ul class="counters comments unit lastUnit">
                                 <li class="comment update-action update-action-comment update-action-comment-mobile">{{comment.total}} <a href="#" title="Add a comment" data-action="comment"><i class="icon-comment"></i></a></li>
-                                {{^hasLiked}}<li class="like update-action update-action-like">{{likes.total}} <a href="{{id}}" title="Like" data-action="like"><i class="icon-thumbs-up"></i></a></li>{{/hasLiked}}
-                                {{#hasLiked}}<li class="like update-action update-action-unlike">{{likes.total}} <a href="#" title="Unlike" data-action="unlike"><i class="icon-thumbs-down"></i></a></li>{{/hasLiked}}
+                                <li class="like update-action update-action-comment-mobile update-action-like">{{likes.total}} <a href="{{id}}" title="Like" data-action="comment"><i class="icon-thumbs-up"></i></a></li>
                             </ul>
                         </div>
                     </div>
@@ -452,9 +452,10 @@
         <script type="text/html" id="mobileMenuTemplate">
             <div id="menu">
                 <ul>
-                    <li><a href="" title="Profile" data-action="profile" class="profile"><i class="icon-profile-mobile"></i></a></li>
+                    <li><a href="" title="Profile" data-action="profile"><i class="icon-profile-mobile"></i></a></li>
                     <li><a href="" title="Post feed" data-action="mobilePost" class="mobilePost"><i class="icon-post-mobile"></i></a></li>
-                    <li><a href="" title="Home" data-action="feed" class="home">&nbsp;</a></li>
+                    <li><a href="" title="Home" data-action="feed" class="home"></a></li>
+
                 </ul>
             </div>
         </script>
@@ -578,7 +579,7 @@
                             <textarea class="update-text mention" placeholder="{{#translate}}coffee:feed:share{{/translate}}"></textarea>
                         </div>
                         <div class="update-actions">
-                            <button id="cancelPostUpdate" class="btn btn-danger">{{#translate}}coffee:feed:cancel{{/translate}}</button>
+                            <button id="cancelPostUpdate" class="btn btn-danger small">{{#translate}}coffee:feed:cancel{{/translate}}</button>
                             <button id="postUpdate" class="btn btn-primary">{{#translate}}coffee:feed:send{{/translate}}</button>
                             <img class="loader" src="static/img/loader.gif" width="16" height="16" />
                             {{#isAdmin}}
@@ -597,8 +598,8 @@
                 <div class="content-module postForm feed-item">
                     <div class="primary-content">
                         <a class="avatar" href="#profile/{{user.guid}}"><img src="{{user.icon_url_small}}" title="{{user.name}}" width="40" height="40" /></a>
+                        <a class="name" href="#profile/{{user.guid}}">{{user.name}}</a>
                         <div class="update">
-                            <a class="name" href="#profile/{{user.guid}}">{{user.name}}</a>
                             <p class="text">{{{content.text}}}</p>
                             {{#isLong}}
                             <p class="text-orig">{{{content.textOrig}}}</p>

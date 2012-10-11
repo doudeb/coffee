@@ -163,13 +163,14 @@ class ElggCoffee {
             if (is_array($extended)) {
                 $extended = static::get_user_extra_info($extended);
             }
-            return array('id'                  => $user_ent->guid
+            return array(   'id'               => $user_ent->guid
                             , 'username'       => $user_ent->username
                             , 'name'           => $user_ent->name
                             , 'email'          => $user_ent->email
                             , 'icon_url'       => ElggCoffee::_get_user_icon_url($user_ent)
                             , 'cover_url'      => ElggCoffee::_get_user_cover_url($user_ent)
                             , 'login_count'    => (int)$user_ent->getPrivateSetting('login_count')
+                            , 'language'       => $user_ent->language
                             , 'created'        => $user_ent->time_created
                             , 'extended'       => $extended
                     );
@@ -228,31 +229,7 @@ class ElggCoffee {
             return $return;
         }
         foreach ($attachment as $key => $attached) {
-            $attached_ent = get_entity($attached->guid_two);
-            switch ($attached_ent->simpletype) {
-                case 'url':
-                    $thumbnail = $attached_ent->thumbnail;
-                    break;
-                case 'image':
-                    $thumbnail = static::_get_thumbnail_url($attached_ent->guid,'medium');
-                    break;
-                case 'document':
-                default:
-                    $thumbnail = $attached_ent->getIconURL();
-                    break;
-            }
-            $return[] = array(
-                                'guid' => $attached_ent->guid
-                                , 'time_created' => $attached_ent->time_created
-                                , 'friendly_time' => elgg_get_friendly_time($attached_ent->time_created)
-                                , 'title' => $attached_ent->title
-                                , 'description' => $attached_ent->description
-                                , 'html' => $attached_ent->html
-                                , 'type' => $attached_ent->simpletype
-                                , 'mime' => $attached_ent->mimetype
-                                , 'url' => $attached_ent->simpletype === 'url'?$attached_ent->url:static::_get_dwl_url($attached_ent->guid)
-                                , 'thumbnail' => $thumbnail
-                );
+            $return[] = ElggCoffee::_get_file_details($attached->guid_two);
         }
         return $return;
     }
@@ -397,11 +374,7 @@ class ElggCoffee {
             }
         }
 
-        return array('guid' => $file->guid
-                        , 'url' => ElggCoffee::_get_dwl_url($file->guid)
-                        , 'title' => $file->title
-                        , 'thumbnail' => $file->getIconURL()
-                        , 'mime_type' => $mime_type);
+        return ElggCoffee::_get_file_details($file->guid);
     }
 
     public static function get_url_data ($url) {
@@ -822,5 +795,35 @@ class ElggCoffee {
             return true;
         }
         return false;
+    }
+
+    private static function _get_file_details ($guid) {
+        $attached_ent = get_entity($guid);
+        //if (!$attached_ent instanceof ElggFile) return false;
+        switch ($attached_ent->simpletype) {
+            case 'url':
+                $thumbnail = $attached_ent->thumbnail;
+                break;
+            case 'image':
+                $thumbnail = static::_get_thumbnail_url($attached_ent->guid,'medium');
+                break;
+            case 'document':
+            default:
+                $thumbnail = $attached_ent->getIconURL();
+                break;
+        }
+        $return = array(
+                            'guid' => $attached_ent->guid
+                            , 'time_created' => $attached_ent->time_created
+                            , 'friendly_time' => elgg_get_friendly_time($attached_ent->time_created)
+                            , 'title' => $attached_ent->title
+                            , 'description' => $attached_ent->description
+                            , 'html' => $attached_ent->html
+                            , 'type' => $attached_ent->simpletype
+                            , 'mime' => $attached_ent->mimetype
+                            , 'url' => $attached_ent->simpletype === 'url'?$attached_ent->url:static::_get_dwl_url($attached_ent->guid)
+                            , 'thumbnail' => $thumbnail
+            );
+       return $return;
     }
 }

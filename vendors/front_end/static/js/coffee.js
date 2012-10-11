@@ -40,7 +40,7 @@
     var setBackground = function (backgroundUrl) {
         if (backgroundUrl && backgroundUrl.length > 0) {
             $('body')
-            .css('background','url(' + backgroundUrl + '?' + new Date().getTime() +')')
+            .css('background','url(' + backgroundUrl +')')
             .css('background-repeat','no-repeat')
             .css('background-attachment','fixed')
             .css('-moz-background-size','cover')
@@ -66,8 +66,22 @@
     }
 
     var t = function (key) {
-        if (translations === null) translations = $.parseJSON(localStorage.getItem('translations'));
-        if (translations[key]) {
+        if (translations === null) {
+            $.ajax({
+                type: 'GET'
+                , url: location.host?"/ajax/view/js/languages":"http://api.coffeepoke.com/ajax/view/js/languages"
+                , cache: true
+                , async: false
+                , data: {
+                    language : App.models.session.get('language')?App.models.session.get('language'):'en'
+                }
+                , success: function (response) {
+                    translations = $.parseJSON(response);
+                }
+            });
+        }
+
+        if (translations != null && translations[key]) {
             return translations[key];
         }
         return key;
@@ -159,8 +173,8 @@
             , logoUrl: null
             , backgroundUrl: null
             , customCss: null
-            , translations: null
             , isAdmin: null
+            , language: null
             , accountTime: null
             , loginCount: null
             , searchCriteria: null
@@ -181,41 +195,56 @@
         },
 
         save: function () {
-            localStorage.setItem('userId', this.get('userId'));
-            localStorage.setItem('authToken', this.get('authToken'));
-            localStorage.setItem('siteName', this.get('siteName'));
-            localStorage.setItem('logoUrl', this.get('logoUrl'));
-            localStorage.setItem('backgroundUrl', this.get('backgroundUrl'));
-            localStorage.setItem('customCss', this.get('customCss'));
-            localStorage.setItem('name', this.get('name'));
-            localStorage.setItem('iconUrl', this.get('iconUrl'));
-            localStorage.setItem('coverUrl', this.get('coverUrl'));
-            localStorage.setItem('translations', this.get('translations'));
-            localStorage.setItem('isAdmin', this.get('isAdmin'));
-            localStorage.setItem('accountTime', this.get('accountTime'));
-            localStorage.setItem('loginCount', this.get('loginCount'));
-            localStorage.setItem('searchCriteria', this.get('searchCriteria'));
+            $.cookie('userId', this.get('userId'));
+            $.cookie('authToken', this.get('authToken'));
+            $.cookie('siteName', this.get('siteName'));
+            $.cookie('logoUrl', this.get('logoUrl'));
+            $.cookie('backgroundUrl', this.get('backgroundUrl'));
+            $.cookie('customCss', this.get('customCss'));
+            $.cookie('name', this.get('name'));
+            $.cookie('iconUrl', this.get('iconUrl'));
+            $.cookie('coverUrl', this.get('coverUrl'));
+            $.cookie('isAdmin', this.get('isAdmin'));
+            $.cookie('language', this.get('language'));
+            $.cookie('accountTime', this.get('accountTime'));
+            $.cookie('loginCount', this.get('loginCount'));
+            $.cookie('searchCriteria', this.get('searchCriteria'));
 
             this.trigger('started');
         },
 
+        /*set: function (attributes, options) {
+            if (typeof attributes === 'object') {
+                _.each(attributes, function(value,item) {
+                });
+            } else {
+                $.cookie(attributes, options);
+            }
+            Backbone.Model.prototype.set.call(this, attributes, options);
+        },*/
+
         load: function () {
             this.set({
-                userId: localStorage.getItem('userId'),
-                authToken: localStorage.getItem('authToken'),
-                siteName: localStorage.getItem('siteName'),
-                logoUrl: localStorage.getItem('logoUrl'),
-                backgroundUrl: localStorage.getItem('backgroundUrl'),
-                customCss: localStorage.getItem('custom_css'),
-                name: localStorage.getItem('name'),
-                iconUrl: localStorage.getItem('iconUrl'),
-                coverUrl: localStorage.getItem('coverUrl'),
-                translations: localStorage.getItem('translations'),
-                isAdmin: localStorage.getItem('isAdmin'),
-                accountTime: localStorage.getItem('accountTime'),
-                loginCount: localStorage.getItem('loginCount'),
-                searchCriteria: localStorage.getItem('searchCriteria')
+                userId: $.cookie('userId'),
+                authToken: $.cookie('authToken'),
+                siteName: $.cookie('siteName'),
+                logoUrl: $.cookie('logoUrl'),
+                backgroundUrl: $.cookie('backgroundUrl'),
+                customCss: $.cookie('custom_css'),
+                name: $.cookie('name'),
+                language: $.cookie('language'),
+                iconUrl: $.cookie('iconUrl'),
+                coverUrl: $.cookie('coverUrl'),
+                isAdmin: $.cookie('isAdmin'),
+                accountTime: $.cookie('accountTime'),
+                loginCount: $.cookie('loginCount'),
+                searchCriteria: $.cookie('searchCriteria')
             });
+        },
+
+        set: function (attributes, options) {
+            $.cookie(attributes, options);
+            Backbone.Model.prototype.set.call(this, attributes, options);
         },
 
         start: function () {
@@ -252,15 +281,14 @@
                             success: function (response) {
                                 if (response.status != -1) {
                                     var result = response.result;
-
                                     self.set({
                                         name: result.name,
                                         iconUrl: result.icon_url,
                                         coverUrl: result.cover_url,
                                         accountTime: result.created,
-                                        loginCount: result.login_count
+                                        loginCount: result.login_count,
+                                        language: result.language
                                     });
-
                                     self.save();
                                 } else if (response.message == 'pam_auth_userpass:failed') {
                                     localStorage.clear();
@@ -286,19 +314,18 @@
         end: function () {
             this.clear();
 
-            localStorage.removeItem('userId');
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('siteName');
-            localStorage.removeItem('logoUrl');
-            localStorage.removeItem('backgroundUrl');
-            localStorage.removeItem('backgroundPos');
-            localStorage.removeItem('name');
-            localStorage.removeItem('iconUrl');
-            localStorage.removeItem('coverUrl');
-            localStorage.removeItem('isAdmin');
-            localStorage.removeItem('translations');
-            localStorage.removeItem('accountTime');
-            localStorage.removeItem('loginCount');
+            $.cookie('userId',null);
+            $.cookie('authToken',null);
+            $.cookie('siteName',null);
+            $.cookie('logoUrl',null);
+            $.cookie('backgroundUrl',null);
+            $.cookie('backgroundPos',null);
+            $.cookie('name',null);
+            $.cookie('iconUrl',null);
+            $.cookie('coverUrl',null);
+            $.cookie('isAdmin',null);
+            $.cookie('accountTime',null);
+            $.cookie('loginCount',null);
 
             Backbone.history.navigate('login', true);
         }
@@ -750,8 +777,7 @@
         },
 
         getSearchCriteria: function(name) {
-            searchCriteria = App.models.session.get('searchCriteria');
-            if (typeof searchCriteria != 'object') return null;
+            searchCriteria = JSON.parse(App.models.session.get('searchCriteria'));
             try {
                 value = eval('searchCriteria.' + name);
                 if (typeof value != 'undefined') return value;
@@ -1083,8 +1109,8 @@
         },
 
         showMobileCommentForm: function(e) {
-            localStorage.setItem('postId', $(e.currentTarget).parents('.feed-item').attr('data-guid'));
-            Backbone.history.navigate('mobileComment', true);
+            guid = $(e.currentTarget).parents('.feed-item').attr('data-guid');
+            Backbone.history.navigate('mobileComment/' + guid, true);
         },
 
         getMentions: function () {
@@ -1439,6 +1465,7 @@
                 }
                 , displayWelcome : parseInt(App.models.session.get('accountTime')) + (60 * 60 * 24 * 30) > Math.round(new Date().getTime()) / 1000
                 , isAdmin : App.models.session.get('isAdmin')
+                , siteName : App.models.session.get('siteName')
             };
 
             if(isMobile.any()){
@@ -1546,7 +1573,6 @@
 
                                     self.set(attributes);
                                     self.trigger('ready');
-                                    console.log('prodile say ready');
                                 }
                             }
                         });
@@ -2070,7 +2096,7 @@
     var MobileCommentView = Backbone.View.extend({
         initialize: function () {
             _.bindAll(this);
-
+            this.guid = this.options.guid;
             this.render();
         },
 
@@ -2083,7 +2109,7 @@
                 data: {
                     method: 'coffee.getPost',
                     auth_token: App.models.session.get('authToken'),
-                    guid: localStorage.getItem('postId')
+                    guid: self.guid
                 },
                 success: function (response) {
                     if (response.status != -1) {
@@ -2119,7 +2145,7 @@
         },
 
         comment: function(e) {
-            var postGuid = localStorage.getItem('postId');
+            var postGuid = this.guid;
             var theComment = $('.new-comment-textarea').val();
 
             $.ajax({
@@ -2263,7 +2289,7 @@
             , "profile/:user_id":		"profile"
             , "tv":                     "tv"
             , "welcome":                "welcome"
-            , "mobileComment":          "mobileComment"
+            , "mobileComment/:guid":    "mobileComment"
             , "mobilePost":             "mobilePost"
             , "userSettings":           "userSettings"
             , "admin":                  "admin"
@@ -2282,7 +2308,10 @@
         feed: function (tag) {
             App.removeAllViews();
             if (App.models.session.authenticated()) {
-                if (typeof tag != 'undefined') App.models.session.set('searchCriteria',{tags:new Array(tag)});
+                if (typeof tag != 'undefined') {
+                    tags = JSON.stringify({tags:new Array(tag)});
+                    App.models.session.set('searchCriteria',tags);
+                }
                 App.views.microbloggingView = new MicrobloggingView();
                 App.views.menuView = new MenuView();
                 setBackground (App.models.session.get('backgroundUrl'));
@@ -2365,10 +2394,10 @@
             }
         },
 
-        mobileComment: function () {
+        mobileComment: function (guid) {
             App.removeAllViews();
             if (App.models.session.authenticated()) {
-                App.views.mobileCommentView = new MobileCommentView();
+                App.views.mobileCommentView = new MobileCommentView({guid:guid});
                 App.views.menuView = new MenuView();
                 setBackground (App.models.session.get('backgroundUrl'));
                 setLogo (App.models.session.get('logoUrl'));

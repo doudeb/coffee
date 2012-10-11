@@ -110,8 +110,7 @@ function coffee_page_handler($page,$handler) {
             set_input('file_guid', $page[1]);
             if (!coffee_api_set_site_id ()) break;
             elgg_set_page_owner_guid($user_guid);
-			include_once elgg_get_plugins_path() . 'file/download.php';
-            exit();
+            render_dwl($page[1]);
 			break;
  		case "thumbnail":
             $guid = $page[1];
@@ -339,6 +338,36 @@ function render_thumbnail ($guid, $size) {
     }
 }
 
+function render_dwl ($guid) {
+    $file = get_entity($guid);
+    if (!$file) {
+            register_error(elgg_echo("file:downloadfailed"));
+            forward();
+    }
+    $mime = $file->getMimeType();
+    if (!$mime) {
+            $mime = "application/octet-stream";
+    }
+
+    $filename = $file->originalfilename;
+
+    // fix for IE https issue
+    header("Pragma: public");
+
+    header("Content-type: $mime");
+    header('Expires: ' . date('r', strtotime("+6 months")), true);
+    if (strpos($mime, "image/") !== false || $mime == "application/pdf") {
+            header("Content-Disposition: inline; filename=\"$filename\"");
+    } else {
+            header("Content-Disposition: attachment; filename=\"$filename\"");
+    }
+
+    ob_clean();
+    flush();
+    readfile($file->getFilenameOnFilestore());
+    exit;
+}
+
 /**
 
  * Exposed function for ws api
@@ -374,5 +403,5 @@ unset($CONFIG->menus['page'][17]);
 umask(002);
 //lock site navigation
 if (!in_array(elgg_get_context(), array('rest','coffee','usericon','file','dwl','testapi','thumbnail'))) {
-    //logout();
+    logout();
 }

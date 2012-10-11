@@ -3,6 +3,16 @@ var nb = -1;
 var objJson;
 var couleur = new Array('#ff9c00','#ffd700','#3bd322','#419ac2','#f80077','#ff9c00','#ffd700','#3bd322','#419ac2','#f80077');
 
+var getSearchCriteria = function(name) {
+    searchCriteria = JSON.parse($.cookie('searchCriteria'));
+    try {
+        value = eval('searchCriteria.' + name);
+        if (typeof value != 'undefined') return value;
+    } catch (Exception) {
+        return null;
+    }
+    return null;
+}
 
 $(document).ready(function() {
     loadPost(false);
@@ -15,9 +25,10 @@ function loadPost (isReload) {
         dataType: 'json',
         data: {
             method: 'coffee.getPosts'
-            , auth_token: localStorage.getItem('authToken')
+            , auth_token: $.cookie('authToken')
             , offset: 0
             , limit: 10
+            , tags: getSearchCriteria('tags')
         },
         success: function (response) {
             objJson = [];

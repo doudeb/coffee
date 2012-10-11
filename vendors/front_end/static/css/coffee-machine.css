@@ -114,7 +114,7 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .feed-item .primary-content .update .attachment{margin-top:10px;background-color:#f0f0f0;padding:5px;*zoom:1;position:relative;}.feed-item .primary-content .update .attachment:before,.feed-item .primary-content .update .attachment:after{display:table;content:"";}
 .feed-item .primary-content .update .attachment:after{clear:both;}
 .feed-item .primary-content .update .attachment .thumbnail{float:left;padding:3px;background-color:#ffffff;}
-.feed-item .primary-content .update .attachment .info{float:left;margin-left:5px;font-size:12px;line-height:17px;}.feed-item .primary-content .update .attachment .info .title{display:block;font-weight:bold;margin-bottom:5px;}
+.feed-item .primary-content .update .attachment .info{float:left;margin-left:5px;font-size:12px;line-height:17px;width: 315px;}.feed-item .primary-content .update .attachment .info .title{display:block;font-weight:bold;margin-bottom:5px;}
 .feed-item .primary-content .update .attachment .info .description{color:#555555;}
 .feed-item .secondary-content .interactions{margin-left:50px;font-size:12px;}.feed-item .secondary-content .interactions .likes{margin:0;padding:0 0 5px 0;border-bottom:1px solid #d8d8d8;}
 .feed-item .secondary-content .interactions .comments{margin:0;padding:0;list-style-type:none;border-top:1px solid #ffffff;}.feed-item .secondary-content .interactions .comments .comment{padding:10px 0;*zoom:1;}.feed-item .secondary-content .interactions .comments .comment:before,.feed-item .secondary-content .interactions .comments .comment:after{display:table;content:"";}
@@ -255,6 +255,9 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .mobile { background-image: none !important; background-color: #494949 !important; }
 .mobile #login, .mobile #profile, .mobile #profile .primary-content .info, .mobile #profile .secondary-content .other .introduction, .mobile #welcome { width: auto; }
 .mobile .feed-item .primary-content .update .attachment .info {width:150px}
+.mobile .feed-item .primary-content .name{font-weight:bold;margin-left: 10px}
+.mobile .feed-item .secondary-content .interactions .comments .comment .comment-content{width: auto}
+.mobile #microblogging .attachment{margin: 0 0 10px 0px;}
 .mobile #login { margin: 100px 15px; }
 .mobile #login form legend { width: 94%; padding: 3% 3% 0; }
 .mobile #container .watermark { border-radius: 0; top: 0; left: 0; width: 100%; text-align: center; padding: 5px 0; background-color: rgba(73, 73, 73, 0.5);height: 48px; }
@@ -276,7 +279,7 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .mobile #container a:hover.home { text-decoration: none; }
 .mobile #microblogging { display: none; }
 .mobile { background-size: auto !important; }
-.mobile .content-module, .mobile .feed-item .primary-content .update, .mobile #microblogging { width: auto; margin: 0 10px; }
+.mobile .content-module, .mobile .feed-item .primary-content .update, .mobile #microblogging { width: 100%;}
 .mobile .feed-item .secondary-content .interactions { margin-left: 0; }
 .mobile .feed-item .secondary-content .interactions .comments { border-top: 0; }
 .mobile .feed-item .secondary-content .interactions .comments .new-comment .new-comment-textarea { width: 95%; }
@@ -300,7 +303,8 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .icon-post-mobile { background-position: 0px 0px;width: 35px; height: 35px; display: block; background-image:url("../img/post.png");}
 .mobile .watermark h3 {line-height: 10px}
 .mobile .update-action-comment-mobile {float: left;}
-body.mobile {padding-left: 0;padding-right: 0}
+.mobile .update-action-like {float: none;}
+body.mobile {padding-left: 5px;padding-right: 5px}
 
 .mentions-input-box {
   position: relative;

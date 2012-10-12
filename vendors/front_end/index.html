@@ -17,8 +17,8 @@
         <link rel="apple-touch-icon" sizes="114x114" href="static/img/iphone4-icon.png" />
         <link rel="apple-touch-startup-image" href="static/img/iphone-startup.png">
 
-        <!--<script src="static/js/vendor/libs.min.js"></script>-->
-        <script src="static/js/vendor/json2.js"></script>
+        <script src="static/js/vendor/libs.min.js"></script>
+        <!--<script src="static/js/vendor/json2.js"></script>
         <script src="static/js/vendor/jquery.min.js"></script>
         <script src="static/js/vendor/underscore-min.js"></script>
         <script src="static/js/vendor/ICanHaz.min.js"></script>
@@ -28,6 +28,8 @@
         <script src="static/js/vendor/jquery.events.input.js"></script>
         <script src="static/js/vendor/jquery.elastic.js"></script>
         <script src="static/js/vendor/jquery.mentionsInput.js"></script>
+        <script src="static/js/vendor/bootstrap.min.js"></script>-->
+
     </head>
     <body>
         <div id="container">
@@ -164,7 +166,7 @@
                         <div class="interactions">
                             {{#likes}}
                             {{#isOne}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{/likes.users}}{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isOne}}
-                            {{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{#first}}{{#translate}}coffee:feeditem:and{{/translate}}&nbsp;{{/first}}{{/likes.users}}&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isTwo}}
+                            {{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{#isFirst}} {{#translate}}coffee:feeditem:and{{/translate}} &nbsp; {{/isFirst}}{{/likes.users}}&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isTwo}}
                             {{#isMore}}<p class="likes">
                                 {{#likes.users}}
                                 {{#isFirst}}<a href="#profile/{{owner_guid}}">{{name}}</a>{{/isFirst}}
@@ -451,12 +453,9 @@
 
         <script type="text/html" id="mobileMenuTemplate">
             <div id="menu">
-                <ul>
-                    <li><a href="" title="Profile" data-action="profile"><i class="icon-profile-mobile"></i></a></li>
-                    <li><a href="" title="Post feed" data-action="mobilePost" class="mobilePost"><i class="icon-post-mobile"></i></a></li>
-                    <li><a href="" title="Home" data-action="feed" class="home"></a></li>
-
-                </ul>
+                <span class="profile"><a href="" title="Profile" data-action="profile"><i class="icon-profile-mobile"></i></a></span>
+                <span class="home"><a href="#feed" title="Home" data-action="feed"><h2> {{siteName}} </h2></a></span>
+                <span class="post"><a href="" title="Post feed" data-action="mobilePost"><i class="icon-post-mobile"></i></a></span>
             </div>
         </script>
 
@@ -815,7 +814,6 @@
             </script>
 
             <script src="static/js/coffee.js"></script>
-            <script src="static/js/vendor/bootstrap.min.js"></script>
             <script>
                 $('body').delegate('[rel*=tooltip]', 'mouseenter mouseleave mousedown', function(e) {
                     var element = $(this);

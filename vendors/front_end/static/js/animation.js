@@ -20,10 +20,10 @@ $(document).ready(function() {
 
 function loadPost (isReload) {
     $.ajax({
-        type: 'GET',
-        url: '/services/api/rest/json',
-        dataType: 'json',
-        data: {
+        type: 'GET'
+        , url: '/services/api/rest/json'
+        , dataType: 'json'
+        , data: {
             method: 'coffee.getPosts'
             , auth_token: $.cookie('authToken')
             , offset: 0

@@ -1,4 +1,4 @@
-(function($){
+(function($) {
     var isMobile = {
         Android: function() {
             return navigator.userAgent.match(/Android/i) ? true : false;
@@ -55,6 +55,7 @@
         if (logoUrl && logoUrl.length > 0) {
             $('#watermark').attr('src',logoUrl);
             if (isMobile.any()) {
+                return;
                 $('.watermark')
                     .html('<h3>' + App.models.session.get('siteName') + '</h3>')
                     .css('color','#FFF');
@@ -777,8 +778,8 @@
         },
 
         getSearchCriteria: function(name) {
-            searchCriteria = JSON.parse(App.models.session.get('searchCriteria'));
             try {
+                searchCriteria = JSON.parse(App.models.session.get('searchCriteria'));
                 value = eval('searchCriteria.' + name);
                 if (typeof value != 'undefined') return value;
             } catch (Exception) {
@@ -2205,7 +2206,7 @@
         },
 
         back: function() {
-            Backbone.history.navigate('feed', true);
+            Backbone.history.navigate(-1, true);
         },
 
         post: function(e) {

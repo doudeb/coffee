@@ -1351,7 +1351,7 @@
             , uploadForm = $('#uploadForm')
 
             upload
-            .trigger('mousedown')
+            .trigger('click')
             .change(function (){
                 toggleUploadSpinner();
                 self.isAttaching = true;

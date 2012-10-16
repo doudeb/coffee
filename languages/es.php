@@ -32,7 +32,7 @@ $spanish = array(
         , 'coffee:feed:send' => 'Enviar'
         , 'coffee:feeditem:showalltext' => 'Mostrar todo el texto'
         , 'coffee:feeditem:hidetext' => 'Esconder texto'
-        , 'coffee:feeditem:likesthis' => 'Me gusta'
+        , 'coffee:feeditem:likesthis' => 'les gusta esto'
         , 'coffee:feeditem:and' => 'y'
         , 'coffee:feeditem:others' => 'otros'
         , 'coffee:feeditem:showall' => 'Mostrar todo'
@@ -48,10 +48,10 @@ $spanish = array(
         , 'coffee:menu:welcome' => 'Bienvenido'
         , 'coffee:menu:feedlist' => 'Muro'
         , 'coffee:menu:profile' => 'Perfil'
-        , 'coffee:menu:tvapp' => 'Encender App TV'
+        , 'coffee:menu:tvapp' => 'Encender Coffee TV'
         , 'coffee:menu:logout' => 'Salir'
-        , 'coffee:menu:admin' => 'Administration'
-        , 'coffee:menu:settings' => 'Settings'
+        , 'coffee:menu:admin' => 'Administración'
+        , 'coffee:menu:settings' => 'Ajustes'
         /*welcome*/
         , 'coffee:welcome:headline' => '<h3>¡Bienvenido!</h3>
                         <p>En el mundo profesional, las buenas ideas llegan muchas veces por casualidad, durante discusiones informales, en un pasillo o alrededor de la maquina de café.</p>

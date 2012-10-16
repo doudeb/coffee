@@ -17,8 +17,7 @@
         <link rel="apple-touch-icon" sizes="114x114" href="static/img/iphone4-icon.png" />
         <link rel="apple-touch-startup-image" href="static/img/iphone-startup.png">
 
-        <script src="static/js/vendor/libs.min.js"></script>
-        <!--<script src="static/js/vendor/json2.js"></script>
+        <script src="static/js/vendor/json2.js"></script>
         <script src="static/js/vendor/jquery.min.js"></script>
         <script src="static/js/vendor/underscore-min.js"></script>
         <script src="static/js/vendor/ICanHaz.min.js"></script>
@@ -28,19 +27,16 @@
         <script src="static/js/vendor/jquery.events.input.js"></script>
         <script src="static/js/vendor/jquery.elastic.js"></script>
         <script src="static/js/vendor/jquery.mentionsInput.js"></script>
-        <script src="static/js/vendor/bootstrap.min.js"></script>-->
+        <script src="static/js/vendor/bootstrap.min.js"></script>
 
     </head>
     <body>
         <div id="container">
             <div class="watermark"><img src="static/img/logo.png" id="watermark" /></div>
         </div>
-        <div class="modal hide" id="uploadSpinner" tabindex="-1">
-            <div class="modal-body">
-                <div class="progress">
-                    <div><img class="loader" src="static/img/loader.gif" width="16" height="16" /></div >
-                    <div class="percent">0%</div >
-                </div>
+        <div class="" id="uploadProgress" tabindex="-1">
+            <div class="progress progress-striped">
+              <div class="bar"></div>
             </div>
         </div>
         <script type="text/html" id="mentionUserTemplate">
@@ -453,9 +449,10 @@
 
         <script type="text/html" id="mobileMenuTemplate">
             <div id="menu">
-                <span class="profile"><a href="" title="Profile" data-action="profile"><i class="icon-profile-mobile"></i></a></span>
                 <span class="home"><a href="#feed" title="Home" data-action="feed"><h2> {{siteName}} </h2></a></span>
+                <span class="profile"><a href="" title="Profile" data-action="profile"><i class="icon-profile-mobile"></i></a></span>
                 <span class="post"><a href="" title="Post feed" data-action="mobilePost"><i class="icon-post-mobile"></i></a></span>
+
             </div>
         </script>
 
@@ -611,7 +608,7 @@
                                 <a class="thumbnail" href="{{url}}" target="_blank"><img width="100" src="{{thumbnail}}" /></a>
                                 <div class="info">
                                     <a href="{{url}}" class="title" target="_blank">{{title}}</a>
-                                    <span class="description">{{description}}</span>
+                                    <span class="description">{{{description}}}</span>
                                 </div>
                             </div>
                             {{/attachment}}
@@ -619,6 +616,16 @@
                     </div>
                     <div class="secondary-content line">
                         <div class="interactions">
+                            {{#likes}}
+                            {{#isOne}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{/likes.users}}{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isOne}}
+                            {{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{#isFirst}} {{#translate}}coffee:feeditem:and{{/translate}} &nbsp; {{/isFirst}}{{/likes.users}}&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isTwo}}
+                            {{#isMore}}<p class="likes">
+                                {{#likes.users}}
+                                {{#isFirst}}<a href="#profile/{{owner_guid}}">{{name}}</a>{{/isFirst}}
+                                {{/likes.users}}
+                                {{#translate}}coffee:feeditem:and{{/translate}}&nbsp;<a href="#" rel="tooltip" title="{{#likes.others}}{{name}}<br />{{/likes.others}}" data-placement="bottom">{{likes.totaltoDisplay}}&nbsp;{{#translate}}coffee:feeditem:others{{/translate}}</a>&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>
+                            {{/isMore}}
+                            {{/likes}}
                             <ul class="comments">
                                 {{#comment.comments}}
                                 <li class="comment">
@@ -626,7 +633,7 @@
                                     <div class="comment-content">
                                         <a href="#profile/{{owner_guid}}" class="name">{{name}}</a>
                                         {{#isCommentOwner}}<span class="pull-right remove-comment" data-id="{{id}}"><a href="javascript:void(0)" rel="tooltip" title="{{#translate}}coffee:feeditem:action:removecomment{{/translate}}" data-placement="right"><i class="icon-trash"></i></a></span>{{/isCommentOwner}}
-                                        <p class="text">{{text}}</p>
+                                        <p class="text">{{{text}}}</p>
                                         <p class="time">{{friendly_time}}</p>
                                     </div>
                                 </li>
@@ -634,7 +641,7 @@
                             </ul>
                         </div>
                         <div class="update-content line">
-                            <textarea class="update-text new-comment-textarea" placeholder="{{#translate}}coffee:feeditem:action:addcomment{{/translate}}"></textarea>
+                            <textarea class="update-text new-comment-textarea mention" placeholder="{{#translate}}coffee:feeditem:action:addcomment{{/translate}}"></textarea>
                         </div>
                         <div class="">
                             <button id="cancelCommentUpdate" class="btn btn-danger">{{#translate}}coffee:feed:cancel{{/translate}}</button>
@@ -830,7 +837,6 @@
                     $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange',function () {
                         $('#menu').toggle();
                     });
-
             </script>
     </body>
 </html>

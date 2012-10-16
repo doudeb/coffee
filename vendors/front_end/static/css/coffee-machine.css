@@ -223,6 +223,8 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .imageLarge.document {display: none}
 .mentioned {color: #999999;cursor:pointer}
 
+#uploadProgress {display: none;width: 100%; height: 100%; background-color: #000; opacity: 0.8; z-index: 1000; position: fixed;bottom: 0px;left: 0px;right: 0px;top: 0px;text-align: center;padding: 25% 0 0 40%}
+#uploadProgress .progress {width : 20%}
 [class^="icon-"],[class*=" icon-"]{margin-top: -2px;}
 .icon-fullscreen{background-position:-456px -144px;}
 .icon-phone{background-position:0px -160px;}
@@ -258,6 +260,7 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .mobile .feed-item .primary-content .name{font-weight:bold;margin-left: 10px}
 .mobile #watermark {display: none}
 .mobile .feed-item .secondary-content .interactions .comments .comment .comment-content{width: auto}
+.mobile .feed-item .secondary-content .interactions .comments .comment .comment-content .text{min-width: 180px;}
 .mobile #microblogging .attachment{margin: 0 0 10px 0px;}
 .mobile #login { margin: 100px 15px; }
 .mobile #login form legend { width: 94%; padding: 3% 3% 0; }
@@ -273,10 +276,10 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .mobile #container #content { margin: 35px 0 0 0; }
 .mobile #container #menu {width:100%;height: 33px; top: 0; z-index: 2; background-color: rgba(73, 73, 73, 0.5); -webkit-border-bottom-right-radius: 3px;-webkit-border-bottom-left-radius: 3px;-moz-border-radius-bottomright: 3px;-moz-border-radius-bottomleft: 3px;border-bottom-right-radius: 3px;border-bottom-left-radius: 3px;}
 .mobile #container #menu span {width:35px;position:absolute}
-.mobile #container #menu span.home {width: 100%; text-align: center;margin-top: 10px;}
-.mobile #container #menu span.home h2 {font-size: 22px; color: #fff;line-height: 0px;}
+.mobile #container #menu span.home {width: 100%; text-align: center;overflow: hidden}
+.mobile #container #menu span.home h2 {font-size: 22px; color: #fff;line-height: 5px;}
 .mobile #container #menu span.post {right:9px}
-.mobile #container #menu span.profile {text-align: right}
+.mobile #container #menu span.profile {text-align: right;}
 
 .mobile #container a:hover.home { text-decoration: none; }
 .mobile #microblogging { display: none; }

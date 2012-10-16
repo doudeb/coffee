@@ -119,7 +119,17 @@ And log in with these user credentials:
 Username: %4$s
 Password: %5$s
 
-Enjoy coffeePoke!!',
+Enjoy coffeePoke!!'
+			//DATES
+			,'friendlytime:justnow' => "à l'instant"
+			,'friendlytime:minutes' => "il y a %s minutes"
+			,'friendlytime:minutes:singular' => "il y a une minute"
+			,'friendlytime:hours' => "il y a %s heures"
+			,'friendlytime:hours:singular' => "il y a une heure"
+			,'friendlytime:days' => "il y a %s jours"
+			,'friendlytime:days:singular' => "hier"
+			,'friendlytime:date_format' => 'j F Y à H:i'
+
 
 );
 

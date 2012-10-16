@@ -1,4 +1,7 @@
 (function($) {
+    /* Vars */
+    var translations = null;
+    /* Tools */
     var isMobile = {
         Android: function() {
             return navigator.userAgent.match(/Android/i) ? true : false;
@@ -15,29 +18,25 @@
         any: function() {
             return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Windows());
         }
-    };
+    },
 
-    /* Vars */
-    var translations = null;
-
-    /* Tools */
-    var stripslashes = function (str) {
+    stripslashes = function (str) {
         str=str.replace(/\\'/g,'\'');
         str=str.replace(/\\"/g,'"');
         str=str.replace(/\\0/g,'\0');
         str=str.replace(/\\\\/g,'\\');
         return str;
-    };
+    },
 
-    var capitaliseFirstLetter = function (str)	{
+    capitaliseFirstLetter = function (str)	{
         return str.charAt(0).toUpperCase() + str.slice(1);
-    };
+    },
 
-    var nl2br = function (str) {
+    nl2br = function (str) {
         return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br />$2');
-    }
+    },
 
-    var setBackground = function (backgroundUrl) {
+    setBackground = function (backgroundUrl) {
         if (backgroundUrl && backgroundUrl.length > 0) {
             $('body')
             .css('background','url(' + backgroundUrl +')')
@@ -48,9 +47,9 @@
         } else {
             $('body').css('background','url(userpics/client_bg.jpeg)');
         }
-    }
+    },
 
-    var setLogo = function (logoUrl) {
+    setLogo = function (logoUrl) {
         $('.watermark').hide();
         if (logoUrl && logoUrl.length > 0) {
             $('#watermark').attr('src',logoUrl);
@@ -64,9 +63,9 @@
             $('#watermark').attr('src','url(userpics/logo.png)');
         }
         $('.watermark').show();
-    }
+    },
 
-    var t = function (key) {
+    t = function (key) {
         if (translations === null) {
             $.ajax({
                 type: 'GET'
@@ -86,42 +85,20 @@
             return translations[key];
         }
         return key;
-    }
+    },
 
-    $.print = function( message, insertType ) {
-        insertType = insertType || "append";
-        if ( typeof(message) == "object" ) {
-          var string = "{<br>",
-              values = [],
-              counter = 0;
-          $.each( message, function( key, value ) {
-            if ( value && value.nodeName ) {
-              var domnode = "&lt;" + value.nodeName.toLowerCase();
-              domnode += value.className ? " class='" + value.className + "'" : "";
-              domnode += value.id ? " id='" + value.id + "'" : "";
-              domnode += "&gt;";
-              value = domnode;
-            }
-            values[counter++] = key + ": " + value;
-          });
-          string += values.join( ",<br>" );
-          string += "<br>}";
-          message = string;
-        }
+    toggleUploadSpinner = function  () {
+        spinner = $('#uploadProgress');
+        spinner.toggle()
+                .find('.bar').css('0%');
+    },
 
-        var $output = $( "#print-output" );
+    uploadProgress = function(percentComplete) {
+            var percentVal = percentComplete + '%'
+                , bar = $('#uploadProgress div.bar');
+            bar.css('width', percentVal);
+    };
 
-        if ( !$output.length ) {
-          $output = $( "<div id='print-output' />" ).prependTo( "body" );
-        }
-
-        var newMsg = $('<div />', {
-          "class": "print-output-line",
-          html: message
-        });
-
-        $output[insertType]( newMsg );
-      };
     var App = {
         models: {},
         collections: {},
@@ -636,6 +613,7 @@
             }
 
             attributes.isBroadCastMessage = (attributes.content.type === 'coffee_broadcast_message') ? true : false;
+            console.log(attributes);
             Backbone.Model.prototype.set.call(this, attributes, options);
         },
 
@@ -846,7 +824,6 @@
                 success: function (response) {
                     if (response.status != -1) {
                         var update = self.model.toJSON();
-
                         update.comment = response.result;
                         self.model.set(update);
                     }
@@ -1037,23 +1014,27 @@
                 },
                 success: function (response) {
                     if (response.status != -1) {
-                        var update = self.model.toJSON();
+                        if(isMobile.any()){
+                            Backbone.history.navigate('feed', true);
+                        } else {
+                            var update = self.model.toJSON();
 
-                        if (!update.comment.comments) update.comment.comments = [];
-                        update.comment.comments.reverse();
+                            if (!update.comment.comments) update.comment.comments = [];
+                            update.comment.comments.reverse();
 
-                        update.comment.comments.unshift({
-                            friendly_time: "Just now",
-                            icon_url: App.models.session.get('iconUrl'),
-                            name: App.models.session.get('name'),
-                            owner_guid: App.models.session.get('userId'),
-                            text: comment,
-                            time_created: new Date().getTime()
-                        });
+                            update.comment.comments.unshift({
+                                friendly_time: "Just now",
+                                icon_url: App.models.session.get('iconUrl'),
+                                name: App.models.session.get('name'),
+                                owner_guid: App.models.session.get('userId'),
+                                text: comment,
+                                time_created: new Date().getTime()
+                            });
 
-                        self.model.set(update);
-                        self.model.attributes.isComposing = false;
-                        self.render();
+                            self.model.set(update);
+                            self.model.attributes.isComposing = false;
+                            self.render();
+                        }
                     } else if (response.message == 'pam_auth_userpass:failed') {
                         localStorage.clear();
                         App.models.session.end();
@@ -1333,7 +1314,7 @@
                     },
                     success: function (response) {
                         if (response.status != -1) {
-                            var result = response.result;
+                            result = response.result;
                             self.attachmentGuid = result.guid;
                             self.attachmentElement = ich.microbloggingAttachmentTemplate(result);
                             self.attachmentElement
@@ -1350,12 +1331,12 @@
 
         removeAttachment: function () {
             var self = this;
-
             if (self.attachmentGuid != false) {
                 self.attachmentElement.remove();
                 self.attachmentGuid = false;
+                self.$el.find('.attachment').remove();
+                self.$el.find('.add-media').show();
             }
-
             return false;
         },
 
@@ -1368,48 +1349,42 @@
             var self = this
             , upload = $('#upload')
             , uploadForm = $('#uploadForm')
-            , percent = $('.percent');
 
             upload
-            .trigger('click')
+            .trigger('mousedown')
             .change(function (){
-                //$('#uploadSpinner').modal('show');
-                self.$el.addClass('microblogging-loading');
+                toggleUploadSpinner();
                 self.isAttaching = true;
                 elm = $(this);
                 var options = {
                     success:       self.updateAttachement
-                    /*, uploadProgress: function(event, position, total, percentComplete) {
-                        var percentVal = percentComplete + '%';
-                        percent.html(percentVal);
-                    }*/
                     , url: App.resourceUrl
                     , dataType: 'json'
+                    , uploadProgress : function(event, position, total, percentComplete) {uploadProgress(percentComplete)}
                     , data: {
                         method: 'coffee.uploadData'
                         , auth_token: App.models.session.get('authToken')
                     }
                 };
                 uploadForm.ajaxSubmit(options);
+                uploadForm.resetForm();
             });
         },
 
         updateAttachement: function (response) {
-            var self = this
-            ,percent = $('.percent');
+            var self = this;
             if (response.status != -1) {
-                var result = response.result;
+                result = response.result;
                 self.attachmentGuid = result.guid;
                 self.attachmentElement = ich.microbloggingAttachmentTemplate(result);
                 self.attachmentElement
                 .insertBefore(self.$el.find('.update-actions').eq(0));
-                self.$el.removeClass('microblogging-loading');
                 self.isAttaching = false;
-                $('#uploadSpinner').modal('hide');
-                percent.html('0%');
+                self.$el.find('.add-media').hide();
             } else {
             /* Error */
             }
+            toggleUploadSpinner();
         },
 
         toggleBroadcastMessage : function (e) {
@@ -1815,10 +1790,12 @@
             .change(function (){
                 elm = $(this);
                 if (self.isPicture(elm.val())) {
+                    toggleUploadSpinner();
                     var options = {
                         success: self.updateAvatar
                         , url: App.resourceUrl
                         , dataType: 'json'
+                        , uploadProgress : function(event, position, total, percentComplete) {uploadProgress(percentComplete)}
                         , data: {
                             method: 'coffee.uploadUserAvatar',
                             auth_token: App.models.session.get('authToken')
@@ -1840,10 +1817,12 @@
             .change(function (){
                 elm = $(this);
                 if (self.isPicture(elm.val())) {
+                    toggleUploadSpinner();
                     var options = {
                         success: self.updateCover
                         , url: App.resourceUrl
                         , dataType: 'json'
+                        , uploadProgress : function(event, position, total, percentComplete) {uploadProgress(percentComplete)}
                         , data: {
                             method: 'coffee.uploadUserCover',
                             auth_token: App.models.session.get('authToken')
@@ -1865,6 +1844,7 @@
             if (response.status != -1) {
                 self.model.set('icon_url', response.result);
                 self.render();
+                toggleUploadSpinner();
             }
         },
 
@@ -1873,6 +1853,7 @@
             if (response.status != -1) {
                 self.model.set('cover_url', response.result);
                 self.render();
+                toggleUploadSpinner();
             }
         },
 
@@ -2009,10 +1990,12 @@
         },
 
         siteSettingsUpdate: function() {
+            toggleUploadSpinner();
             var options = {
                 success: this.refreshSitePicture
                 , url: App.resourceUrl
                 , dataType: 'json'
+                , uploadProgress : function(event, position, total, percentComplete) {uploadProgress(percentComplete)}
                 , data: {
                     method: 'coffee.editSiteSettings'
                     , auth_token: App.models.session.get('authToken')
@@ -2034,6 +2017,7 @@
                     setLogo (item.logo);
                 }
             });
+            toggleUploadSpinner();
         },
 
         manageUserNav: function(e) {
@@ -2094,7 +2078,7 @@
     });
 
     /* !View: MobileCommentView */
-    var MobileCommentView = Backbone.View.extend({
+    var MobileCommentView = FeedItemView.extend({
         initialize: function () {
             _.bindAll(this);
             this.guid = this.options.guid;
@@ -2108,23 +2092,23 @@
                 url: App.resourceUrl,
                 dataType: 'json',
                 data: {
-                    method: 'coffee.getPost',
-                    auth_token: App.models.session.get('authToken'),
-                    guid: self.guid
+                    method: 'coffee.getPost'
+                    , auth_token: App.models.session.get('authToken')
+                    , guid: self.guid
                 },
                 success: function (response) {
                     if (response.status != -1) {
-                        data = response.result[0];
+                        self.model = new FeedItem (response.result[0]);
+                        data = self.model.toJSON();
                         data.translate = function() {
                             return function(text) {
                                 return t(text);
                             }
                         };
-
                         var element = ich.mobileCommentTemplate(data);
                         self.setElement(element);
-
                         self.$el.prependTo('#container');
+                        App.initMention(element.find('textarea.mention'));
                     } else if (response.message == 'pam_auth_userpass:failed') {
                         localStorage.clear();
                         App.models.session.end();
@@ -2137,38 +2121,17 @@
         },
 
         events: {
-            "click #commentUpdate": "comment",
-            "click #cancelCommentUpdate": "back"
+            "click #commentUpdate": "mobileComment"
+            , "click #cancelCommentUpdate": "back"
         },
 
         back: function() {
             Backbone.history.navigate('feed', true);
         },
 
-        comment: function(e) {
-            var postGuid = this.guid;
-            var theComment = $('.new-comment-textarea').val();
-
-            $.ajax({
-                type: 'POST',
-                url: App.resourceUrl,
-                dataType: 'json',
-                data: {
-                    method: 'coffee.comment',
-                    auth_token: App.models.session.get('authToken'),
-                    guid: postGuid,
-                    comment: theComment
-                },
-                success: function (response) {
-                    if (response.message == 'pam_auth_userpass:failed') {
-                        localStorage.clear();
-                        App.models.session.end();
-                        Backbone.history.navigate('login', true);
-                    } else {
-                        Backbone.history.navigate('feed', true);
-                    }
-                }
-            });
+        mobileComment: function(e) {
+            var comment = $('.new-comment-textarea').val();
+            this.comment(comment);
         }
     });
 

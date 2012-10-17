@@ -173,20 +173,20 @@
         },
 
         save: function () {
-            $.cookie('userId', this.get('userId'));
-            $.cookie('authToken', this.get('authToken'));
-            $.cookie('siteName', this.get('siteName'));
-            $.cookie('logoUrl', this.get('logoUrl'));
-            $.cookie('backgroundUrl', this.get('backgroundUrl'));
-            $.cookie('customCss', this.get('customCss'));
-            $.cookie('name', this.get('name'));
-            $.cookie('iconUrl', this.get('iconUrl'));
-            $.cookie('coverUrl', this.get('coverUrl'));
-            $.cookie('isAdmin', this.get('isAdmin'));
-            $.cookie('language', this.get('language'));
-            $.cookie('accountTime', this.get('accountTime'));
-            $.cookie('loginCount', this.get('loginCount'));
-            $.cookie('searchCriteria', this.get('searchCriteria'));
+            $.cookie('userId', this.get('userId'), { expires: 365 });
+            $.cookie('authToken', this.get('authToken'), { expires: 365 });
+            $.cookie('siteName', this.get('siteName'), { expires: 365 });
+            $.cookie('logoUrl', this.get('logoUrl'), { expires: 365 });
+            $.cookie('backgroundUrl', this.get('backgroundUrl'), { expires: 365 });
+            $.cookie('customCss', this.get('customCss'), { expires: 365 });
+            $.cookie('name', this.get('name'), { expires: 365 });
+            $.cookie('iconUrl', this.get('iconUrl'), { expires: 365 });
+            $.cookie('coverUrl', this.get('coverUrl'), { expires: 365 });
+            $.cookie('isAdmin', this.get('isAdmin'), { expires: 365 });
+            $.cookie('language', this.get('language'), { expires: 365 });
+            $.cookie('accountTime', this.get('accountTime'), { expires: 365 });
+            $.cookie('loginCount', this.get('loginCount'), { expires: 365 });
+            $.cookie('searchCriteria', this.get('searchCriteria'), { expires: 365 });
 
             this.trigger('started');
         },
@@ -344,7 +344,6 @@
         doLogin: function () {
             var self = this;
             self.$el.addClass('loading');
-            console.log(self.$el);
             var email = self.$el.find('#inputEmail').val();
             var password = self.$el.find('#inputPassword').val();
 
@@ -709,7 +708,6 @@
 
         checkForNewPosts: function () {
             var self = this;
-            console.log(App.views.microbloggingView.isAttaching);
             if (App.views.microbloggingView.isAttaching) {
                 self.startCheckingForNewPosts();
                 return false;
@@ -1360,7 +1358,8 @@
                 self.isAttaching = true;
                 elm = $(this);
                 var options = {
-                    success:       self.updateAttachement
+                    success: self.updateAttachement
+                    , error: self.updateAttachement
                     , url: App.resourceUrl
                     , dataType: 'json'
                     , uploadProgress : function(event, position, total, percentComplete) {uploadProgress(percentComplete)}

@@ -153,8 +153,9 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 #microblogging .update-actions .add-media{font-size:12px;}
 #microblogging .update-actions .btn,#microblogging .update-actions .loader, #microblogging .update-actions .broadcastMessage {float:right;}
 #microblogging .update-actions .broadcastMessage {margin:3px 5px 0 5px;cursor: pointer}
-#microblogging .update-actions .loader{margin:6px 10px 0 0;display:none;}
-.microblogging-loading .update-actions .loader{display:block !important;}
+#microblogging .update-actions .loader, #login .loader{margin:6px 10px 0 0;display:none;}
+.microblogging-loading .update-actions .loader, .loading .loader{display:block !important;}
+.loading .btn-primary {display: none}
 #login{background-color:#ffffff;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 3px rgba(0, 0, 0, 0.4);-moz-box-shadow:0 1px 3px rgba(0, 0, 0, 0.4);box-shadow:0 1px 3px rgba(0, 0, 0, 0.4);width:500px;margin:100px auto;}#login form legend{width:470px;padding:15px 15px 0 15px;}
 #login form .form-actions{-webkit-border-radius:0 0 3px 3px;-moz-border-radius:0 0 3px 3px;border-radius:0 0 3px 3px;}
 #profile{padding-top:15px;width:520px;}

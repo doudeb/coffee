@@ -35,7 +35,7 @@
             <div class="watermark"><img src="static/img/logo.png" id="watermark" /></div>
         </div>
         <div class="" id="uploadProgress" tabindex="-1">
-            <div class="progress progress-striped">
+            <div class="progress progress-striped active">
               <div class="bar"></div>
             </div>
         </div>
@@ -63,6 +63,7 @@
                     </div>
                     <div class="form-actions">
                         <button class="btn btn-primary" id="doLogin">Login</button>
+                        <img class="loader" src="static/img/loader.gif" width="16" height="16" />
                     </div>
                 </form>
             </div>
@@ -81,7 +82,7 @@
                         </div>
 
                         <div class="update-actions">
-                            <span class="add-media"><a href="#">{{#translate}}coffee:feed:upload{{/translate}}</a></span>
+                            <span class="add-media"><a href="#feed">{{#translate}}coffee:feed:upload{{/translate}}</a></span>
                             <form action="" method="post" enctype="multipart/form-data" class="out" id="uploadForm">
                                 <input type="file" name="upload" id="upload">
                             </form>

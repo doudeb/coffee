@@ -27,7 +27,7 @@ $translation = array(
         , 'coffee:poke:subject' => 'Une pause café ?'
         , 'coffee:profile:incomplete' => '<strong>Ceci est votre profil.</strong><br />Tous vos collègues y ont accès et peuvent le consulter. Faites donc bien attention à bien le personnaliser et à le mettre à jour!'
         /*feed*/
-        , 'coffee:feed:share' => 'Partagez une information avec mess collègues'
+        , 'coffee:feed:share' => 'Partagez une information avec mes collègues'
         , 'coffee:feed:upload' => 'Ajouter une pièce jointe...'
         , 'coffee:feed:send' => 'Envoyer'
         , 'coffee:feed:cancel' => 'Annuler'

@@ -343,9 +343,10 @@
 
         doLogin: function () {
             var self = this;
-
-            var email = this.$el.find('#inputEmail').val();
-            var password = this.$el.find('#inputPassword').val();
+            self.$el.addClass('loading');
+            console.log(self.$el);
+            var email = self.$el.find('#inputEmail').val();
+            var password = self.$el.find('#inputPassword').val();
 
             $.ajax({
                 type: 'POST'
@@ -364,9 +365,9 @@
                         /* login failed */
                         alert(response.message);
                     }
+                    self.$el.removeClass('loading');
                 }
             });
-
             return false;
         },
 
@@ -398,7 +399,6 @@
 
         render: function () {
             data = this.model.toJSON();
-            console.log(data);
 
             element = ich.userVcardTemplate(data);
             $(this.el).replaceWith(element);
@@ -494,7 +494,6 @@
         removeList: function () {
             var self = this;
             _.each(this.models, function (item, key) {
-                console.log(item);
                 //item.remove();
                 self.remove();
             });
@@ -613,7 +612,6 @@
             }
 
             attributes.isBroadCastMessage = (attributes.content.type === 'coffee_broadcast_message') ? true : false;
-            console.log(attributes);
             Backbone.Model.prototype.set.call(this, attributes, options);
         },
 
@@ -711,6 +709,11 @@
 
         checkForNewPosts: function () {
             var self = this;
+            console.log(App.views.microbloggingView.isAttaching);
+            if (App.views.microbloggingView.isAttaching) {
+                self.startCheckingForNewPosts();
+                return false;
+            }
             var latestTimestamp = _.max(self.models, function(latest){
                 return latest.attributes.content.time_updated;
             }).attributes.content.time_updated;
@@ -1369,6 +1372,7 @@
                 uploadForm.ajaxSubmit(options);
                 uploadForm.resetForm();
             });
+            return false;
         },
 
         updateAttachement: function (response) {
@@ -1379,11 +1383,11 @@
                 self.attachmentElement = ich.microbloggingAttachmentTemplate(result);
                 self.attachmentElement
                 .insertBefore(self.$el.find('.update-actions').eq(0));
-                self.isAttaching = false;
                 self.$el.find('.add-media').hide();
             } else {
             /* Error */
             }
+            self.isAttaching = false;
             toggleUploadSpinner();
         },
 

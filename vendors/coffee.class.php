@@ -235,6 +235,7 @@ class ElggCoffee {
     }
 
     public static function get_mentioned ($guid, $type = COFFEE_POST_MENTIONED_RELATIONSHIP,$offset = 0, $limit = 3) {
+        $return = array();
         $mentioned = coffee_get_relationships($guid, $type);
         if (is_array($mentioned)) {
             foreach ($mentioned as $mention) {
@@ -373,8 +374,10 @@ class ElggCoffee {
                 unset($thumblarge);
             }
         }
-
-        return ElggCoffee::_get_file_details($file->guid);
+        $file->save();
+        $guid = $file->guid;
+        unset($file,$thumb);
+        return ElggCoffee::_get_file_details($guid);
     }
 
     public static function get_url_data ($url) {
@@ -432,7 +435,6 @@ class ElggCoffee {
         if (strpos($username, '@') !== false && ($users = get_user_by_email($username))) {
             $username = $users[0]->username;
         }
-
         $user = get_user_by_username($username);
         if ($user) {
             if (send_new_password_request($user->guid)) {

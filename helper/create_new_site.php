@@ -21,7 +21,7 @@ $password   =  cli_prompt("\nSite admin password (min " . $CONFIG->min_password_
 //$url        =  cli_prompt("\nSite url (including trailling slash), must be http://something.api.coffepoke.com/ : ");
 $url        = "http://" . $sitename . ".api.coffeepoke.com/";
 //$username   =  cli_prompt("\nSite admin username : ");
-$username   = str_replace(array('@','-','_'), '', $email);
+$username   = str_replace(array('@','-','_','+'), '', $email);
 
 
 if (in_array('', array($sitename,$url,$username,$password,$email,$displayname))) {

@@ -16,12 +16,13 @@ function coffee_api_set_site_id () {
                 return false;
             }
         }
-		if (elgg_authenticate($username, $password)) {
+        $login_result = elgg_authenticate($username, $password);
+		if ($login_result === true) {
 			$user_ent = get_user_by_username($username);
             $login_count = (int)$user_ent->getPrivateSetting('login_count') +1;
             $user_ent->setPrivateSetting('login_count', $login_count);
 		} else {
-			return false;
+			return $login_result;
 		}
 	} elseif (!empty($token)) {
         $time = time();
@@ -225,6 +226,7 @@ function auth_gettoken_by_email ($email,$password) {
 }
 
 function create_attachement ($filename, $content) {
+    umask(002);
     $prefix             = "file/";
     $file               = new FilePluginFile();
 	$file->subtype      = "file";
@@ -356,6 +358,7 @@ function render_dwl ($guid) {
 
     header("Content-type: $mime");
     header('Expires: ' . date('r', strtotime("+6 months")), true);
+    header('Cache-Control: max-age=28800');
     if (strpos($mime, "image/") !== false || $mime == "application/pdf") {
             header("Content-Disposition: inline; filename=\"$filename\"");
     } else {

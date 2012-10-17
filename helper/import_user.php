@@ -1,7 +1,8 @@
 <?php
+$sitename = 'sojeans';
 $_SERVER['REQUEST_URI'] = '/';
 $_SERVER['SERVER_PORT'] = '443';
-$_SERVER['HTTP_HOST'] = 'api.coffee.enlightn.doudeb';
+$_SERVER['HTTP_HOST'] = $sitename . 'api.coffeepoke.com';
 
 include_once(dirname(dirname(dirname(dirname(__FILE__)))) . "/engine/start.php");
 
@@ -47,14 +48,14 @@ foreach($users as $key=>$user) {
         $email = 'edouard@coffeepoke.com';
         $message = "
 Hello $displayname,\n<br />
-You have been invited to join the playsoft community on CoffeePoke.\n<br />
+You have been invited to join the $sitename community on CoffeePoke.\n<br />
 \n<br />
 To access your community, please click on the following link:\n\n<br /><br />
-http://playsoft.coffeepoke.com/\n<br />
+http://$sitename.coffeepoke.com/\n<br />
 Login: $email\n<br />
 Password: $password\n<br />
     \n<br />
-Enjoy...";
+Enjoy ;-)";
         mail($email, $title, $message, $headers);
     }
 }

@@ -45,6 +45,9 @@
         <script type="text/html" id="mentionTagTemplate">
             <a class="mentioned tag" href="#feed/{{tag}}">{{name}}</a>
         </script>
+        <script type="text/html" id="tagTemplate">
+            <span class="label {{css}}" data-id="{{id}}" data-name="{{name}}">{{name}}{{#del}}<span class="del">&times;</span>{{/del}}</span>
+        </script>
         <script type="text/html" id="loginTemplate">
             <div id="login">
                 <form class="form-horizontal">
@@ -330,8 +333,48 @@
                 </div>
             </div>
         </script>
-
+        <script type="text/html" id="tvAppConfigTemplate">
+            <div id="tvAppConfig">
+                <div class="content-module">
+                    <div class="primary-content">
+                        <h1>Hello {{name}} !</h1>
+                        <p>What would you like to see on your Coffee TV ? <button class="btn btn-primary" id="doTvAppConfig">Reply</button></p>
+                    </div>
+                    <div class="secondary-content hide">
+                        <div class="avatar">
+                            <img class="radius3" src="https://api.coffee.enlightn.doudeb/userIcon/a6b8ed8a9dfc1e057a27080c77a5c524/46/medium?icontime=1350389703" title="Bardet Edouard" width="40" height="40"/>
+                        </div>
+                        <div>
+                            <p>I'd love to see the 10 last posts</p>
+                            <label for="fromUsers">From</label>
+                            <select class="input-large" id="fromUsersSelect">
+                                <option value="@all">Everybody</option>
+                                <option value="select">The following users</option>
+                            </select>
+                        </div>
+                        <div class="input-prepend users hide">
+                            <span class="add-on">@</span><input class="span2" id="users" size="16" type="text" placeholder="Username">
+                        </div>
+                        <div id="usersSelected" />
+                        <p>But only those with the following hashtags : </p>
+                        <div class="input-prepend hashtags ">
+                            <span class="add-on">#</span><input class="span2" id="tags" size="16" type="text" placeholder="Hashtag">
+                        </div>
+                        <div id="hashtagsSelected">
+                            {{#tags}}
+                                {{>tagTemplate}}
+                            {{/tags}}
+                        </div>
+                    </div>
+                    <div class="update-action hide">
+                        <button class="btn btn-primary btn-large" id="saveConfig">Thanks</button>
+                        <a href="#tv" class="cancel">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </script>
         <script type="text/html" id="tvAppTemplate">
+            {{>tvAppConfigTemplate}}
             <link href="static/css/style.css" rel="stylesheet" type="text/css">
             {{{scripts}}}
             <div id="cadre">
@@ -837,6 +880,7 @@
                     });
                     $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange',function () {
                         $('#menu').toggle();
+                        $('#tvAppConfig').toggle();
                     });
             </script>
     </body>

@@ -17,7 +17,7 @@ html, body { background:#262626; }
 .roue {width: 120px; background:#fff; opacity:0;  margin-left:100px; margin-top:180px; z-index:40; }
 .roue span { color:#494949; white-space: nowrap }
 .roue span, #usernameBlanc { position:absolute;padding-left:20px; display:block; clear:both; -webkit-transform-origin:0 6px;-moz-transform-origin:0% 6px;-o-transform-origin:0 6px;transform-origin:0 6px;text-transform:uppercase; font-size:90%; }
-.roue span:nth-child(1) { padding-left:20px -webkit-transform-origin:0% 0%;-moz-transform-origin:0px 0px;-o-transform-origin:0% 0%;transform-origin:0% 0%; }
+.roue span:nth-child(1) { padding-left:20px; -webkit-transform-origin:0% 0%;-moz-transform-origin:0px 0px;-o-transform-origin:0% 0%;transform-origin:0% 0%; }
 .roue span:nth-child(2) { -webkit-transform: rotate(36deg);-moz-transform: rotate(36deg);-ms-transform: rotate(36deg);-o-transform: rotate(36deg);transform: rotate(36deg); }
 .roue span:nth-child(3) { -webkit-transform: rotate(72deg);-moz-transform: rotate(72deg);-ms-transform: rotate(72deg);-o-transform: rotate(72deg);transform: rotate(72deg); }
 .roue span:nth-child(4) { -webkit-transform: rotate(108deg);-moz-transform: rotate(108deg);-ms-transform: rotate(108deg);-o-transform: rotate(108deg);transform: rotate(108deg); }
@@ -31,8 +31,9 @@ html, body { background:#262626; }
 @keyframes boucle{0%{transform:scale(1) rotate(0deg);}100%{transform:scale(1) rotate(720deg);}}
 @-webkit-keyframes boucle{0%{-webkit-transform:scale(1) rotate(0deg);}100%{-webkit-transform:scale(1) rotate(720deg);}}
 @-moz-keyframes boucle{0%{-moz-transform:scale(1) rotate(0deg);}100%{-moz-transform:scale(1) rotate(720deg);}}
+@-o-keyframes boucle{0%{-o-transform:scale(1) rotate(0deg);}100%{-o-transform:scale(1) rotate(720deg);}}
 
-.tournerRoue {animation:boucle 5s ease-in-out 1;-moz-animation:boucle 5s ease-in-out 1;-webkit-animation:boucle 5s ease-in-out 1; -webkit-transform-origin:0 6px;-moz-transform-origin:0 6px;-o-transform-origin:0 6px;transform-origin:0 6px;}
+.tournerRoue {animation:boucle 5s ease-in-out 1;-moz-animation:boucle 5s ease-in-out 1;-webkit-animation:boucle 5s ease-in-out 1;-o-animation:boucle 5s ease-in-out 1; -webkit-transform-origin:0 6px;-moz-transform-origin:0 6px;-o-transform-origin:0 6px;transform-origin:0 6px;}
 
 .post { top:130px; position:absolute; left:45px; width:890px; }
 

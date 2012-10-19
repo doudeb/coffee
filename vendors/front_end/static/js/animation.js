@@ -29,6 +29,7 @@ function loadPost (isReload) {
             , offset: 0
             , limit: 10
             , tags: getSearchCriteria('tags')
+            , owner_guids: getSearchCriteria('users')
         },
         success: function (response) {
             objJson = [];

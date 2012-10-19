@@ -139,6 +139,17 @@
                     });
                 }
             });
+        },
+
+        getSearchCriteria: function(name) {
+            try {
+                searchCriteria = JSON.parse(App.models.session.get('searchCriteria'));
+                value = eval('searchCriteria.' + name);
+                if (typeof value != 'undefined') return value;
+            } catch (Exception) {
+                return null;
+            }
+            return null;
         }
     };
 
@@ -361,10 +372,10 @@
                         self.session.set({ authToken: response.result });
                         self.session.start();
                     } else {
+                        self.$el.removeClass('loading');
                         /* login failed */
                         alert(response.message);
                     }
-                    self.$el.removeClass('loading');
                 }
             });
             return false;
@@ -657,7 +668,7 @@
                     , auth_token: App.models.session.get('authToken')
                     , offset: offset?offset:0
                     , limit: limit?limit:10
-                    , tags: this.getSearchCriteria('tags')
+                    , tags: App.getSearchCriteria('tags')
                 },
                 success: function (response) {
                     if (response.status != -1) {
@@ -723,7 +734,7 @@
                     method: 'coffee.getPosts'
                     , auth_token: App.models.session.get('authToken')
                     , newer_than: latestTimestamp
-                    , tags: this.getSearchCriteria('tags')
+                    , tags: App.getSearchCriteria('tags')
                 },
                 success: function (response) {
                     if (response.status != -1) {
@@ -754,17 +765,6 @@
                     }
                 }
             });
-        },
-
-        getSearchCriteria: function(name) {
-            try {
-                searchCriteria = JSON.parse(App.models.session.get('searchCriteria'));
-                value = eval('searchCriteria.' + name);
-                if (typeof value != 'undefined') return value;
-            } catch (Exception) {
-                return null;
-            }
-            return null;
         }
     });
 
@@ -1904,17 +1904,133 @@
             /*this.collection = new FeedItemList();
 			this.collection.bind('add', this.addItem);
             console.log(this.collection);*/
+            this.tags = this.prepareTags(App.getSearchCriteria('tags'));
             this.render();
+        },
+
+        events: {
+            'click span.del' : 'removeTag'
+            , 'click #doTvAppConfig' : 'doTvAppConfig'
+            , 'change #fromUsersSelect' : 'showUserInput'
+            , 'click a.cancel' : 'doTvAppConfig'
+            , 'click #saveConfig' : 'saveConfig'
         },
 
         render: function () {
             data =  {
                 scripts : '<script src="static/js/jquery.color.js"></script><script src="static/js/animation.js"></script>'
+                , name : App.models.session.get('name')
+                , users : App.getSearchCriteria('users')
+                , tags : this.tags
             };
-            var element = ich.tvAppTemplate(data);
-            this.setElement(element);
-            this.$el.prependTo('#container');
+            var self = this
+                , element = ich.tvAppTemplate(data);
+            self.setElement(element);
+            self.$el.prependTo('#container');
+            $('#users').typeahead({
+                minLength: 2
+                , source: function (query, process) {
+                    var results = []
+                        users = [];
+                    return $.getJSON(App.resourceUrl, {method:'coffee.getUserList',auth_token: App.models.session.get('authToken'), query: query}, function (response) {
+                         if (response.status != '-1') {
+                             _.each(response.result, function(item) {
+                                 results.push(item.name);
+                                 users[item.name] = item.id;
+                             });
+                             return process(results);
+                         }
+                    });
+                }
+                , updater: function (item) {
+                    data = {name:item
+                            , id:users[item]
+                            , css:'label-info user'
+                            , del:true};
+                    elm = ich.tagTemplate(data);
+                    self.$el.find('#usersSelected').append(elm);
+                }
+
+            });
+            $('#tags').typeahead({
+                minLength: 2
+                , source: function (query, process) {
+                    var results = []
+                        users = [];
+                    return $.getJSON(App.resourceUrl, {method:'coffee.getTagList',auth_token: App.models.session.get('authToken'), query: query}, function (response) {
+                         if (response.status != '-1') {
+                             _.each(response.result, function(item) {
+                                 results.push(item.name);
+                                 users[item.name] = item.id;
+                             });
+                             return process(results);
+                         }
+                    });
+                }
+                , updater: function (item) {
+                    data = {name:item
+                            , id:users[item]
+                            , css:'tag'
+                            , del:true};
+                    elm = ich.tagTemplate(data);
+                    self.$el.find('#hashtagsSelected').append(elm);
+                }
+
+            });
             return this;
+        },
+
+        removeTag: function (e) {
+            elm = $(e.currentTarget);
+            id = elm.attr('id');
+            elm.parent().remove();
+        },
+
+        doTvAppConfig: function (e) {
+            var self = this
+            , elm = $(e.currentTarget);
+            self.$el.find('.secondary-content').toggle();
+            self.$el.find('.update-action').toggle();
+            self.$el.find('#doTvAppConfig').toggle();
+            _.each(self.$el.find('span.label.user'), function (item, key) {$(item).remove();});
+            _.each(self.$el.find('span.label.tag'), function (item, key) {$(item).remove();});
+            return false;
+        },
+
+        showUserInput: function (e) {
+            var self = this
+            , elm = $(e.currentTarget);
+            _.each(self.$el.find('span.label.user'), function (item, key) {$(item).remove();});
+            self.$el.find('.users').toggle();
+        },
+
+        saveConfig: function (e) {
+            self = this
+                , users = []
+                , tags = []
+                , criteria = [];
+            _.each(self.$el.find('span.label.user'), function (item, key) {
+                users[key] = $(item).attr('data-id');
+            });
+            
+            _.each(self.$el.find('span.label.tag'), function (item, key) {
+                tags[key] = $(item).attr('data-name').replace('#','');
+            });
+
+            criteria = {tags:tags,users:users};
+            criteria = JSON.stringify(criteria);
+
+            App.models.session.set('searchCriteria',criteria);
+            this.doTvAppConfig(e);
+        },
+
+        prepareTags: function (tagsToFormat) {
+            var tags = new Array();
+            _.each(tagsToFormat, function (item, key) {
+                tags.push({name:'#' + item
+                            , del:true});
+            });
+            return tags;
         }
 
     });

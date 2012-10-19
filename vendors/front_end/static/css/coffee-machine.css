@@ -158,11 +158,11 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .loading .btn-primary {display: none}
 #login{background-color:#ffffff;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 3px rgba(0, 0, 0, 0.4);-moz-box-shadow:0 1px 3px rgba(0, 0, 0, 0.4);box-shadow:0 1px 3px rgba(0, 0, 0, 0.4);width:500px;margin:100px auto;}#login form legend{width:470px;padding:15px 15px 0 15px;}
 #login form .form-actions{-webkit-border-radius:0 0 3px 3px;-moz-border-radius:0 0 3px 3px;border-radius:0 0 3px 3px;}
-#profile{padding-top:15px;width:520px;}
+#profile {padding-top:15px;width:520px;}
 #profile .primary-content{*zoom:1;}
 #profile .primary-content:before,#profile .primary-content:after{display:table;content:"";}
 #profile .primary-content:after{clear:both;}
-#profile .primary-content .avatar,#profile .primary-content .info,#profile .primary-content .sm-links{float:left;}
+#profile .primary-content .avatar,#profile .primary-content .info,#profile .primary-content .sm-links, #tvAppConfig .secondary-content .avatar {float:left;}
 #profile .primary-content .avatar{position:relative;}#profile .primary-content .avatar img{display:block;}
 #profile .primary-content .avatar .edit{position:absolute;top:5px;right:5px;}
 #profile .primary-content .info{margin-left:15px;width:344px;margin-top: -8px}#profile .primary-content .info .name,#profile .primary-content .info .headline,#profile .primary-content .info .department,#profile .primary-content .info .location{display:block;line-height:1.3;position:relative;}
@@ -233,6 +233,15 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .icon-coffeepoke{background-position:-49px -161px;}
 .icon-tv{background-position: -72px -160px;}
 .icon-reply { background-position: -72px -24px;}
+
+.label .del {font-size:109%;margin-left: 2px}
+.label .del:hover {color:#000;cursor:pointer;font-weight:bold;}
+
+#tvAppConfig{padding:15px 0 0 73px;width:520px;z-index: 2;position: absolute;}
+#tvAppConfig .secondary-content .avatar {margin-right: 10px;}
+#tvAppConfig .secondary-content label { float: left;margin: 5px 5px 5px 0;}
+#tvAppConfig .update-action {text-align: right;padding: 10px 5px 10px 0}
+#tvAppConfig .label {margin: 2px 2px}
 
 @media screen and (max-width: 640px){
 

@@ -342,25 +342,31 @@
                     </div>
                     <div class="secondary-content hide">
                         <div class="avatar">
-                            <img class="radius3" src="https://api.coffee.enlightn.doudeb/userIcon/a6b8ed8a9dfc1e057a27080c77a5c524/46/medium?icontime=1350389703" title="Bardet Edouard" width="40" height="40"/>
+                            <img class="radius3" src="{{iconUrl}}" title="{{name}}" width="40" height="40"/>
                         </div>
                         <div>
                             <p>I'd love to see the 10 last posts</p>
                             <label for="fromUsers">From</label>
                             <select class="input-large" id="fromUsersSelect">
-                                <option value="@all">Everybody</option>
-                                <option value="select">The following users</option>
+                                <option value="@all" {{^users}}selected{{/users}}>Everybody</option>
+                                <option value="select" {{#users}}selected {{/users}}>The following users</option>
                             </select>
                         </div>
-                        <div class="input-prepend users hide">
+                        <div class="input-prepend users {{^users}}hide{{/users}}">
                             <span class="add-on">@</span><input class="span2" id="users" size="16" type="text" placeholder="Username">
                         </div>
-                        <div id="usersSelected" />
+                        <div id="usersSelected">
+                            Users :
+                            {{#users}}
+                                {{>tagTemplate}}
+                            {{/users}}
+                        </div>
                         <p>But only those with the following hashtags : </p>
                         <div class="input-prepend hashtags ">
                             <span class="add-on">#</span><input class="span2" id="tags" size="16" type="text" placeholder="Hashtag">
                         </div>
                         <div id="hashtagsSelected">
+                            Tags :
                             {{#tags}}
                                 {{>tagTemplate}}
                             {{/tags}}

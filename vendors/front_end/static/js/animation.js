@@ -19,6 +19,7 @@ $(document).ready(function() {
 });
 
 function loadPost (isReload) {
+    $('.roue').find('span').html('').attr('data-guid',null).attr('data-user',null);
     $.ajax({
         type: 'GET'
         , url: '/services/api/rest/json'
@@ -83,8 +84,8 @@ function animationTxt(id) {
 // Animation du post
 
 function animerPost(id) {
+    if (typeof objJson[id] == 'undefined') arreterRoue ();
 	var post = objJson[id];
-
 	$('#logo').animate({ opacity:1},1000, function() {
 		$('#icon_url').attr('src',post.user.icon_url);
 		$('#fond_icon_url').attr('src',post.user.cover_url);

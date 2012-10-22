@@ -1,7 +1,7 @@
 body{margin:0;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:13px;line-height:18px;color:#494949;background-color:#e5e5e5;background-repeat:no-repeat;background-attachment:fixed;}
 body.modal-open {overflow: hidden;}
 a{color:#0088cc;text-decoration:none;}
-a:hover{color:#005580;text-decoration:underline;}
+a:hover{color:#005580;text-decoration:none;}
 #container #menu{position:fixed;height:100%;width:50px;background-color:rgba(255, 255, 255, 0.7);-webkit-box-shadow:3px 0 0 0 rgba(0, 0, 0, 0.2);-moz-box-shadow:3px 0 0 0 rgba(0, 0, 0, 0.2);box-shadow:3px 0 0 0 rgba(0, 0, 0, 0.2);*zoom:1;}#container #menu:before,#container #menu:after{display:table;content:"";}
 #container #menu:after{clear:both;}
 #container #menu ul#navigation{list-style-type:none;padding:0;float:left;margin-left:12px;}#container #menu ul#navigation li{display:block;margin-bottom:3px;}#container #menu ul#navigation li a{display:block;padding:5px 5px 0px 5px;background-color:rgba(0, 0, 0, 0.2);}#container #menu ul#navigation li a i{opacity:0.45;filter:alpha(opacity=45);}
@@ -237,10 +237,11 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .label .del {font-size:109%;margin-left: 2px}
 .label .del:hover {color:#000;cursor:pointer;font-weight:bold;}
 
-#tvAppConfig{padding:15px 0 0 73px;width:520px;z-index: 2;position: absolute;}
+#tvAppConfig{margin:15px 0 0 73px;width:520px;z-index: 2;position: absolute;}
 #tvAppConfig .secondary-content .avatar {margin-right: 10px;}
 #tvAppConfig .secondary-content label { float: left;margin: 5px 5px 5px 0;}
 #tvAppConfig .update-action {text-align: right;padding: 10px 5px 10px 0}
+#tvAppConfig .label {margin: 2px 2px}
 #tvAppConfig .label {margin: 2px 2px}
 
 @media screen and (max-width: 640px){

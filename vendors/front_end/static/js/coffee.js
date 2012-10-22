@@ -395,6 +395,28 @@
     var UserItem = Backbone.Model.extend({
         initialize: function () {
             _.bindAll(this);
+        },
+
+        getUserById: function (guid) {
+            var self = this;
+            self.guid = guid;
+            $.ajax({
+                type: 'GET'
+                , url: App.resourceUrl
+                , dataType: 'json'
+                , async: false
+                , data: {
+                    method: 'coffee.getUserData',
+                    auth_token: App.models.session.get('authToken'),
+                    guid: self.guid
+                },
+                success: function (response) {
+                    if (response.status != -1) {
+                        var result = response.result;
+                        self.set(result);
+                    }
+                }
+            });
         }
     });
 
@@ -1905,6 +1927,8 @@
 			this.collection.bind('add', this.addItem);
             console.log(this.collection);*/
             this.tags = this.prepareTags(App.getSearchCriteria('tags'));
+            this.users = this.prepareUsers(App.getSearchCriteria('users'));
+            //console.log(this.tags,this.users);
             this.render();
         },
 
@@ -1917,10 +1941,12 @@
         },
 
         render: function () {
+             $(this.el).remove();
             data =  {
                 scripts : '<script src="static/js/jquery.color.js"></script><script src="static/js/animation.js"></script>'
+                , iconUrl : App.models.session.get('iconUrl')
                 , name : App.models.session.get('name')
-                , users : App.getSearchCriteria('users')
+                , users : this.users
                 , tags : this.tags
             };
             var self = this
@@ -1989,11 +2015,11 @@
         doTvAppConfig: function (e) {
             var self = this
             , elm = $(e.currentTarget);
-            self.$el.find('.secondary-content').toggle();
-            self.$el.find('.update-action').toggle();
-            self.$el.find('#doTvAppConfig').toggle();
-            _.each(self.$el.find('span.label.user'), function (item, key) {$(item).remove();});
-            _.each(self.$el.find('span.label.tag'), function (item, key) {$(item).remove();});
+            self.$el.find('.secondary-content').fadeToggle();
+            self.$el.find('.update-action').fadeToggle();
+            self.$el.find('#doTvAppConfig').fadeToggle();
+            //_.each(self.$el.find('span.label.user'), function (item, key) {$(item).remove();});
+            //_.each(self.$el.find('span.label.tag'), function (item, key) {$(item).remove();});
             return false;
         },
 
@@ -2001,7 +2027,7 @@
             var self = this
             , elm = $(e.currentTarget);
             _.each(self.$el.find('span.label.user'), function (item, key) {$(item).remove();});
-            self.$el.find('.users').toggle();
+            self.$el.find('.users').fadeToggle();
         },
 
         saveConfig: function (e) {
@@ -2012,7 +2038,7 @@
             _.each(self.$el.find('span.label.user'), function (item, key) {
                 users[key] = $(item).attr('data-id');
             });
-            
+
             _.each(self.$el.find('span.label.tag'), function (item, key) {
                 tags[key] = $(item).attr('data-name').replace('#','');
             });
@@ -2022,16 +2048,32 @@
 
             App.models.session.set('searchCriteria',criteria);
             this.doTvAppConfig(e);
+            loadPost(true);
         },
 
         prepareTags: function (tagsToFormat) {
             var tags = new Array();
             _.each(tagsToFormat, function (item, key) {
                 tags.push({name:'#' + item
+                            , css: 'tag'
                             , del:true});
             });
             return tags;
+        },
+
+        prepareUsers: function (usersToFormat) {
+            var users = new Array();
+            _.each(usersToFormat, function (item, key) {
+                user = new UserItem();
+                user.getUserById(item);
+                users.push({id:item
+                            , name:user.attributes.name
+                            , css:'label-info user'
+                            , del:true});
+            });
+            return users;
         }
+
 
     });
 

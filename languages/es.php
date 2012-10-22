@@ -100,7 +100,15 @@ $spanish = array(
                             </div>
 
                             <p><h3><a href="/static/doc/CoffeePoke_es.pdf" target="_blank">Más info</a> para obtener el mejor de CoffeePoke.</h3></p>'
-
+                    //DATES
+                    ,'friendlytime:justnow' => "ahora"
+                    ,'friendlytime:minutes' => "hace %s minutos"
+                    ,'friendlytime:minutes:singular' => "hace un minuto"
+                    ,'friendlytime:hours' => "hace %s horas"
+                    ,'friendlytime:hours:singular' => "hace una hora"
+                    ,'friendlytime:days' => "hace %s días"
+                    ,'friendlytime:days:singular' => "ayer"
+                    ,'friendlytime:date_format' => 'j F Y à H:i'
 /**
  * User add
  */

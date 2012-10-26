@@ -44,6 +44,7 @@ $english = array(
         , 'coffee:feeditem:action:like' => 'Like'
         , 'coffee:feeditem:action:unlike' => 'Unlike'
         , 'coffee:feeditem:action:removecomment' => 'Remove comment'
+        , 'coffee:feeditem:action:openlinkconfirm' => 'To see the atachment, You will be redirected'
         /*menu*/
         , 'coffee:menu:welcome' => 'Welcome !!'
         , 'coffee:menu:feedlist' => 'News Feed'

@@ -1,6 +1,8 @@
 @font-face {font-family: 'exo';src: url('fonts/Exo-Bold.otf') format('truetype');font-weight: normal;font-style: normal;}
-* { font-family:'exo'; }
-html, body { background:#262626; }
+#cadre { font-family:'exo'; }
+@media screen and (max-width: 1500px){
+html, body {zoom:133%;}
+}
 #cadre { background:#f80077; width:980px; height:660px; margin-top:-330px; margin-left:-490px; display:block; overflow:hidden; position:absolute; z-index:1; top:50%; left:50%; }
 #logo { display:block; position:absolute; bottom:20px; right:20px; opacity:.7; -webkit-transition: -webkit-transform 1s;-moz-transition: -moz-transform 1s;-o-transition: -o-transform 1s;transition: transform 1s;-webkit-transform-style: preserve-3d;-moz-transform-style: preserve-3d;-o-transform-style: preserve-3d;transform-style: preserve-3d;}
 .flip { -webkit-transform: rotateY( 360deg );-moz-transform: rotateY( 360deg );-o-transform: rotateY( 360deg );transform: rotateY( 360deg );}
@@ -22,7 +24,7 @@ html, body { background:#262626; }
 .roue span:nth-child(3) { -webkit-transform: rotate(72deg);-moz-transform: rotate(72deg);-ms-transform: rotate(72deg);-o-transform: rotate(72deg);transform: rotate(72deg); }
 .roue span:nth-child(4) { -webkit-transform: rotate(108deg);-moz-transform: rotate(108deg);-ms-transform: rotate(108deg);-o-transform: rotate(108deg);transform: rotate(108deg); }
 .roue span:nth-child(5) { -webkit-transform: rotate(144deg);-moz-transform: rotate(144deg);-ms-transform: rotate(144deg);-o-transform: rotate(144deg);transform: rotate(144deg); }
-.roue span:nth-child(6) { -webkit-transform: rotate(180deg);-moz-transform: rotate(180deg);-ms-transform: rotate(180deg);-o-transform: rotate(180deg);transform: rotate(180deg); }
+.roue span:nth-child(6) { -webkit-transform: rotate(180deg);-moz-transform: rotate(180deg);-ms-transform: rotate(180deg);-o-transform: rotate(181deg);transform: rotate(180deg); }
 .roue span:nth-child(7) { -webkit-transform: rotate(216deg);-moz-transform: rotate(216deg);-ms-transform: rotate(216deg);-o-transform: rotate(216deg);transform: rotate(216deg); }
 .roue span:nth-child(8) { -webkit-transform: rotate(252deg);-moz-transform: rotate(252deg);-ms-transform: rotate(252deg);-o-transform: rotate(252deg);transform: rotate(252deg); }
 .roue span:nth-child(9) { -webkit-transform: rotate(288deg);-moz-transform: rotate(288deg);-ms-transform: rotate(288deg);-o-transform: rotate(288deg);transform: rotate(288deg); }

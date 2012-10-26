@@ -237,7 +237,7 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .label .del {font-size:109%;margin-left: 2px}
 .label .del:hover {color:#000;cursor:pointer;font-weight:bold;}
 
-#tvAppConfig{margin:15px 0 0 73px;width:520px;z-index: 2;position: absolute;}
+#tvAppConfig{margin:15px 0 0 73px;width:520px;z-index: 2;position: absolute;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;}
 #tvAppConfig .secondary-content .avatar {margin-right: 10px;}
 #tvAppConfig .secondary-content label { float: left;margin: 5px 5px 5px 0;}
 #tvAppConfig .update-action {text-align: right;padding: 10px 5px 10px 0}
@@ -289,7 +289,7 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .mobile #container #menu span {width:35px;position:absolute}
 .mobile #container #menu span.home {width: 100%; text-align: center;overflow: hidden}
 .mobile #container #menu span.home h2 {font-size: 22px; color: #fff;line-height: 5px;}
-.mobile #container #menu span.post {right:9px}
+.mobile #container #menu span.post {right:1px}
 .mobile #container #menu span.profile {text-align: right;}
 
 .mobile #container a:hover.home { text-decoration: none; }

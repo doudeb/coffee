@@ -43,8 +43,7 @@ $translation = array(
         , 'coffee:feeditem:action:like' => 'J\'aime'
         , 'coffee:feeditem:action:unlike' => 'Je n\'aime plus'
         , 'coffee:feeditem:action:removecomment' => 'Supprimer le commentaire'
-        , 'coffee:feeditem:action:addcomment' => 'Ajouter un commentaire...'
-        , 'coffee:feeditem:action:addcomment' => 'Ajouter un commentaire...'
+        , 'coffee:feeditem:action:openlinkconfirm' => 'Attachment will open on a new page.'
         /*menu*/
         , 'coffee:menu:welcome' => 'Bienvenue!'
         , 'coffee:menu:feedlist' => 'Coffee Wall'

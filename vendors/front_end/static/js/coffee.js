@@ -798,15 +798,17 @@
         },
 
         events: {
-            'click .show-all-link': 'showAllComments',
-            'keydown .new-comment-textarea': 'textareaKeydown',
-            'keypress .new-comment-textarea': 'textareaKeypress',
-            'click .update-action a': 'updateAction',
-            'focus .new-comment-textarea': 'changeComposingFlag',
-            'blur .new-comment-textarea': 'changeComposingFlag',
-            'click .remove-comment': 'removeComment',
-            'click .show-all-text': 'toggleAllText',
-            'click .update-action-comment-mobile a': 'showMobileCommentForm'
+            'click .show-all-link': 'showAllComments'
+           , 'keydown .new-comment-textarea': 'textareaKeydown'
+           , 'keypress .new-comment-textarea': 'textareaKeypress'
+           , 'click .update-action a': 'updateAction'
+           , 'focus .new-comment-textarea': 'changeComposingFlag'
+           , 'blur .new-comment-textarea': 'changeComposingFlag'
+           , 'click .remove-comment': 'removeComment'
+           , 'click .show-all-text': 'toggleAllText'
+           , 'click .update-action-comment-mobile a': 'showMobileCommentForm'
+           , 'click .thumbnail': 'openMobileLink'
+           , 'click .title': 'openMobileLink'
         },
 
         render: function () {
@@ -1131,6 +1133,14 @@
                 .mentionsInput('reset')
                 .css('height','35px');
             return mentionedUsers;
+        },
+
+        openMobileLink: function (e) {
+            openLink = true;
+            if(isMobile.any()){
+                openLink = confirm(t('coffee:feeditem:action:openlinkconfirm'));
+            }
+            return openLink;
         }
     });
 
@@ -2413,6 +2423,7 @@
             , "profile":				"myProfile"
             , "profile/:user_id":		"profile"
             , "tv":                     "tv"
+            , "tv/:authToken":          "tv"
             , "welcome":                "welcome"
             , "mobileComment/:guid":    "mobileComment"
             , "mobilePost":             "mobilePost"
@@ -2472,12 +2483,22 @@
             }
         },
 
-        tv: function () {
+        tv: function (authToken) {
             App.removeAllViews();
+            if (authToken) {
+                App.models.session.set('authToken', authToken);
+                App.models.session.start();
+            }
             if (App.models.session.authenticated()) {
                 App.views.tvAppView = new TvAppView();
-                App.views.menuView = new MenuView();
                 $('.watermark').hide();
+                setBackground (App.models.session.get('backgroundUrl'));
+                if (authToken) {
+                    $('#tvAppConfig').toggle();
+                    $('#fullscreen').toggle();
+                } else {
+                    App.views.menuView = new MenuView();
+                }
             } else {
                 Backbone.history.navigate('login', true);
             }

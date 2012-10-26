@@ -16,6 +16,11 @@ var getSearchCriteria = function(name) {
 
 $(document).ready(function() {
     loadPost(false);
+    document.addEventListener("keydown", function(e) {
+      if (e.keyCode == 122) {
+        pleinEcran();
+      }
+    }, false);
 });
 
 function loadPost (isReload) {
@@ -65,6 +70,7 @@ function startRoue()
 // Rotation du logo
 
 function flip() {
+    return;
 	$('#logo').toggleClass('flip');
 	setTimeout("flip()",5000);
 }
@@ -166,14 +172,23 @@ function decalerSpan() {
 
 // Plein écran
 function pleinEcran() {
-	element = document.body;
-    var requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
-    if (requestMethod) {
-        requestMethod.call(element);
-    } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
-        var wscript = new ActiveXObject("WScript.Shell");
-        if (wscript !== null) {
-            wscript.SendKeys("{F11}");
-        }
+
+if ((document.fullScreenElement && document.fullScreenElement !== null) ||    // alternative standard method
+      (!document.mozFullScreenElement && !document.webkitFullScreenElement)) {  // current working methods
+    if (document.documentElement.requestFullScreen) {
+      document.documentElement.requestFullScreen();
+    } else if (document.documentElement.mozRequestFullScreen) {
+      document.documentElement.mozRequestFullScreen();
+    } else if (document.documentElement.webkitRequestFullScreen) {
+      document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
     }
+  } else {
+    if (document.cancelFullScreen) {
+      document.cancelFullScreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitCancelFullScreen) {
+      document.webkitCancelFullScreen();
+    }
+  }
 }

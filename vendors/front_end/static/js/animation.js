@@ -104,7 +104,7 @@ function animerPost(id) {
 				$('#text').html(post.content.text.replace(/<br \/>/g," ").substr(0,140) + ' ...').show('blind');
 			else
 				$('#text').html(post.content.text.replace(/<br \/>/g," ")).show('blind');
-			$('#fond_icon_url').show('blind');
+			$('#fond_icon_url').fadeIn();
 			$('#friendly_time').html(post.content.friendly_time).show('blind');
 			if(post.attachment != false) {
 				$('#marges').removeClass('link image video');
@@ -129,7 +129,7 @@ function animerPost(id) {
 					}
                     setTimeout("arreterRoue()",seconds);
 				}
-				$('#attachment').show('blind');
+				$('#attachment').fadeIn();
 			} else {
 				$('#attachment').hide('blind');
 				setTimeout("arreterRoue()",seconds);

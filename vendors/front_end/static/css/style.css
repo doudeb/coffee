@@ -1,6 +1,6 @@
 @font-face {font-family: 'exo';src: url('fonts/Exo-Bold.otf') format('truetype');font-weight: normal;font-style: normal;}
 #cadre { font-family:'exo'; }
-@media screen and (max-width: 1500px){
+@media screen and (min-width: 1500px){
     html, body {zoom:133%;}
 }
 #cadre { background:#f80077; width:980px; height:660px; margin-top:-330px; margin-left:-490px; display:block; overflow:hidden; position:absolute; z-index:1; top:50%; left:50%; }

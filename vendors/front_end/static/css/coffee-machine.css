@@ -114,7 +114,7 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .feed-item .primary-content .update .attachment{margin-top:10px;background-color:#f0f0f0;padding:5px;*zoom:1;position:relative;}.feed-item .primary-content .update .attachment:before,.feed-item .primary-content .update .attachment:after{display:table;content:"";}
 .feed-item .primary-content .update .attachment:after{clear:both;}
 .feed-item .primary-content .update .attachment .thumbnail{float:left;padding:3px;background-color:#ffffff;}
-.feed-item .primary-content .update .attachment .info{float:left;margin-left:5px;font-size:12px;line-height:17px;width: 315px;}.feed-item .primary-content .update .attachment .info .title{display:block;font-weight:bold;margin-bottom:5px;}
+.feed-item .primary-content .update .attachment .info{float:left;margin-left:5px;font-size:12px;line-height:17px;width: 315px;}.feed-item .primary-content .update .attachment .info .title{display:block;font-weight:bold;margin-bottom:5px;word-wrap: break-word;}
 .feed-item .primary-content .update .attachment .info .description{color:#555555;}
 .feed-item .secondary-content .interactions{margin-left:50px;font-size:12px;}.feed-item .secondary-content .interactions .likes{margin:0;padding:0 0 5px 0;border-bottom:1px solid #d8d8d8;}
 .feed-item .secondary-content .interactions .comments{margin:0;padding:0;list-style-type:none;border-top:1px solid #ffffff;}.feed-item .secondary-content .interactions .comments .comment{padding:10px 0;*zoom:1;}.feed-item .secondary-content .interactions .comments .comment:before,.feed-item .secondary-content .interactions .comments .comment:after{display:table;content:"";}
@@ -305,7 +305,7 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .mobile .feed-item .primary-content .update .time i { height: 15px; }
 .mobile .content-module .secondary-content { padding: 0 15px; }
 .mobile #profile .secondary-content .other .introduction { height: auto; float: none; border: 0 none; }
-.mobile #profile .secondary-content .other .languages, #profile .secondary-content .other .info { margin-left: 0; }
+.mobile #profile .secondary-content .other .languages, #profile .secondary-content .other .info { margin-left: 280px;word-wrap: break-word;}
 .mobile #profile .logout { margin: 10px 0 0 10px; }
 .mobile #profile .primary-content .info .name, .mobile #profile .primary-content .info .headline, .mobile #profile .primary-content .info .department, .mobile #profile .primary-content .info .location { display: inline; }
 .mobile #profile .primary-content .info { float: none; }
@@ -320,7 +320,7 @@ legend+.control-group{margin-top:18px;-webkit-margin-top-collapse:separate;}
 .mobile .watermark h3 {line-height: 10px}
 .mobile .update-action-comment-mobile {float: left;}
 .mobile .update-action-like {float: none;}
-body.mobile {padding-left: 0px;padding-right: 0px}
+body.mobile {padding-left: 0px;padding-right: 0px;overflow:hidden;width:100%;}
 
 .mentions-input-box {
   position: relative;

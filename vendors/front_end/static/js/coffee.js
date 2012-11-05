@@ -97,6 +97,23 @@
             var percentVal = percentComplete + '%'
                 , bar = $('#uploadProgress div.bar');
             bar.css('width', percentVal);
+    },
+
+    replaceUrl = function(inputText) {
+       var replaceText, replacePattern1, replacePattern2, replacePattern3;
+       //URLs starting with http://, https://, or ftp://
+       replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+       replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
+
+       //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+       replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+       replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
+
+       //Change email addresses to mailto:: links.
+       replacePattern3 = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/gim;
+       replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
+
+       return replacedText;
     };
 
     var App = {
@@ -613,6 +630,20 @@
                 attributes.content.text = this.replaceMentions(attributes.content.text,attributes.mentioned, 'user');
             }
 
+            if (attributes.attachment && attributes.attachment.length>0) {
+                for (i=0;i<attributes.attachment.length;i++) {
+                    attributes.attachment[i].noModal = false;
+                    if (attributes.attachment[i].type == 'url') {
+                        if ((attributes.attachment[i].html.indexOf('edouard[at]coffeepoke.com') > -1 || attributes.attachment[i].html == "")) {
+                            attributes.attachment[i].noModal = true;
+                        }
+                        if (attributes.attachment[i].title == '') {
+                            attributes.attachment[i].title = attributes.attachment[i].url;
+                        }
+                    }
+                }
+            }
+
             if (attributes.tags && attributes.tags.length>0) {
                 var tagReplacement = new Array();
                 if (_.isArray(attributes.tags)) {
@@ -642,6 +673,8 @@
                     }
                 }
             }
+
+            attributes.content.text = replaceUrl(attributes.content.text);
 
             attributes.isBroadCastMessage = (attributes.content.type === 'coffee_broadcast_message') ? true : false;
             Backbone.Model.prototype.set.call(this, attributes, options);
@@ -1211,6 +1244,7 @@
         events: {
             'click #postUpdate': 'postUpdate',
             'keyup .update-text': 'listenForLink',
+            'paste .update-text': 'detectPaste',
             'click .attachment .remove': 'removeAttachment',
             'click .add-media': 'uploadMedia',
             'click .broadcastMessage': 'toggleBroadcastMessage',
@@ -1304,6 +1338,19 @@
             var self = this;
             var textarea = $(e.currentTarget);
             var value = textarea.val();
+            if (e.ctrlKey && _.contains([86,16], e.keyCode)) {
+                textarea.val(textarea.val() + ' ');
+            }
+            if(self.isUrl(value)) {
+                var splitValue = value.split(/(\s|\n|\r)/);
+                splitValue[splitValue.length-1] = "";
+                _.each(splitValue, function(item, key) {
+                    if(self.isUrl(item)) {
+                        self.attachLink(item, textarea);
+                    }
+                });
+            }
+            /*
             if (value.length > (self.updateLength + 7)) {
                 if (self.isUrl(value)) {
                     var theUrl = value.substr(self.updateLength);
@@ -1321,7 +1368,7 @@
                 }
             }
 
-            self.updateLength = value.length;
+            self.updateLength = value.length;*/
         },
 
         isUrl: function (s) {
@@ -1329,7 +1376,11 @@
             return regexp.test(s);
         },
 
-        attachLink: function (url) {
+        detectPaste : function (e) {
+            alert(paste);
+        },
+
+        attachLink: function (url, textarea) {
             var self = this;
 
             if (! self.attachmentGuid && ! self.isAttaching) {
@@ -1337,25 +1388,27 @@
                 self.isAttaching = true;
 
                 $.ajax({
-                    type: 'GET',
-                    url: App.resourceUrl,
-                    dataType: 'json',
-                    data: {
-                        method: 'coffee.getUrlData',
-                        auth_token: App.models.session.get('authToken'),
-                        url: url
-                    },
-                    success: function (response) {
+                    type: 'GET'
+                    , url: App.resourceUrl
+                    , dataType: 'json'
+                    , timeout: '25000'
+                    , data: {
+                        method: 'coffee.getUrlData'
+                        , auth_token: App.models.session.get('authToken')
+                        , url: url
+                    }, success: function (response) {
                         if (response.status != -1) {
                             result = response.result;
                             self.attachmentGuid = result.guid;
                             self.attachmentElement = ich.microbloggingAttachmentTemplate(result);
                             self.attachmentElement
                             .insertBefore(self.$el.find('.update-actions').eq(0));
-                        } else {
-                        /* Error */
+                            textarea.val(textarea.val().replace(url, ''));
                         }
                         self.isAttaching = false;
+                        self.$el.removeClass('microblogging-loading');
+                    }, error: function () {
+                        self.attachmentGuid = self.isAttaching = false;
                         self.$el.removeClass('microblogging-loading');
                     }
                 });
@@ -2142,6 +2195,7 @@
                     , password2 : this.$el.find('#addnewuser #password2').val()
                     , language : this.$el.find('#addnewuser #language').val()
                     , make_admin : this.$el.find('#addnewuser #makeAdmin').attr('checked')?1:0
+                    , send_email : this.$el.find('#addnewuser #sendEmail').attr('checked')?1:0
                 },
                 success: function (response) {
                     if (response.status == '-1') {

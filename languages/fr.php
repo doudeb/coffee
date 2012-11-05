@@ -3,7 +3,7 @@
  * Core English Language
  *
  * @package Elgg.Core
- * @subpackage Languages.English
+ * @subpackage Languages.French
  */
 
 $translation = array(
@@ -131,5 +131,4 @@ Enjoy coffeePoke!!'
 
 
 );
-
 add_translation("fr",$translation);

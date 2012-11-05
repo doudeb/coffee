@@ -388,9 +388,6 @@ if (is_array($exposed)) {
     }
 }
 
-add_translation("fr",array());
-add_translation("es",array());
-
 global $CONFIG;
 
 unset($CONFIG->menus['page'][0]);

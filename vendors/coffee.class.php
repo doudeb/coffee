@@ -622,9 +622,10 @@ class ElggCoffee {
 
     }
 
-    public static function register_user ($displayname, $email, $password, $password2, $language,$make_admin=false) {
+    public static function register_user ($displayname, $email, $password, $password2, $language, $make_admin=false, $send_email=false) {
         admin_gatekeeper();
-        $username = str_replace(array("-","_",".","@"), '', $email);
+        $logged_in_user = elgg_get_logged_in_user_entity();
+        $username = str_replace(array("-","_",".","@","+"), '', $email);
         $guid = register_user(
                     $username,
                     $password,
@@ -639,6 +640,19 @@ class ElggCoffee {
                     $user->makeAdmin();
                 }
                 $user->save();
+                if ($send_email) {
+                    $subject = elgg_echo('useradd:subject', array($displayname),$language);
+                    $body = elgg_echo('useradd:body', array(
+                        $displayname,
+                        elgg_get_site_entity()->name,
+                        elgg_get_site_entity()->name,
+                        $email,
+                        $password,
+                        $logged_in_user->name,
+                    ),$language);
+
+                    notify_user($user->guid, elgg_get_site_entity()->guid, $subject, $body);
+                }
             }
         }
 

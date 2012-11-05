@@ -41,6 +41,7 @@ function loadPost (isReload) {
             objJson = [];
             decalage = 0;
             objJson = response.result;
+            console.log(objJson);
             if (response.status != -1) {
                 nb = objJson.length;
                 $.each(objJson, function(i,item) {

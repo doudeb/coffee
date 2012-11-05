@@ -1,7 +1,7 @@
 @font-face {font-family: 'exo';src: url('fonts/Exo-Bold.otf') format('truetype');font-weight: normal;font-style: normal;}
 #cadre { font-family:'exo'; }
 @media screen and (min-width: 1500px){
-    html, body {zoom:133%;}
+    html, body {zoom:120%;}
 }
 #cadre { background:#f80077; width:980px; height:660px; margin-top:-330px; margin-left:-490px; display:block; overflow:hidden; position:absolute; z-index:1; top:50%; left:50%; }
 #logo { display:block; position:absolute; bottom:20px; right:20px; opacity:.7; -webkit-transition: -webkit-transform 1s;-moz-transition: -moz-transform 1s;-o-transition: -o-transform 1s;transition: transform 1s;-webkit-transform-style: preserve-3d;-moz-transform-style: preserve-3d;-o-transform-style: preserve-3d;transform-style: preserve-3d;}

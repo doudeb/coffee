@@ -322,7 +322,10 @@ $exposed[$i]['params']          	= array("display_name" => array('type' => 'stri
                                                             , 'required' => true)
                                             , "make_admin" => array('type' => 'string'
                                                             , 'required' => true
-                                                            , 'default'=>false));
+                                                            , 'default'=>false)
+                                            , "send_email" => array('type' => 'string'
+                                                            , 'required' => true
+                                                            , 'default'=>true));
 $exposed[$i]['comment']          	= 'Create a new user. Will return guid in case of success';
 $exposed[$i]['call_method']      	= 'POST';
 $exposed[$i]['require_api_auth']    = false;

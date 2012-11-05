@@ -3,10 +3,10 @@
  * Core English Language
  *
  * @package Elgg.Core
- * @subpackage Languages.English
+ * @subpackage Languages.spain
  */
 
-$spanish = array(
+$spain = array(
         /*profile */
         'coffee:profile:add:hobbiesandinterest' => 'Añadir un hobby o interés'
         , 'coffee:profile:hobbiesandinterest' => 'Hobby o interés'
@@ -109,25 +109,31 @@ $spanish = array(
                     ,'friendlytime:days' => "hace %s días"
                     ,'friendlytime:days:singular' => "ayer"
                     ,'friendlytime:date_format' => 'j F Y à H:i'
-/**
- * User add
- */
+                    /**
+                    * User add
+                    */
 
-	,'useradd:subject' => 'User account created'
-	,'useradd:body' => '
-%1$s,
+                    ,'useradd:subject' => '%1$s, bienvenido a CoffeePoke'
+                    ,'useradd:body' => '
+                Hola %1$s,
 
-A user account has been created for you at %2$s. To log in, visit:
+                %6$s te invito a participar a la comunidad %2$s en CoffeePoke.
 
-http://%2$s.coffeepoke.com/
+                Para acceder a la comunidad, haz click en el link de abajo y completa tu acceso:
+                http://%2$s.coffeepoke.com/
 
-And log in with these user credentials:
+                Usuario: %4$s
+                Contraseña: %5$s
 
-Username: %4$s
-Password: %5$s
+                No esperes más para personalizar tu perfil y publicar en el muro !
 
-Enjoy coffeePoke!!',
+                La herramienta Coffee TV (cuarta pestaña situada en la barra de menú) esta diseñada para difundir continuamente los últimos mensajes publicados en pantallas idealmente situadas en los lugares de vida de la empresa.
+                Esas pantallas permiten favorecer la difusión de información y hacer que la comunicación sea increíblemente más interactiva e inmediata.
+
+                Saludos,
+
+                Renaud',
 
 );
 
-add_translation("es",$spanish);
+add_translation("es",$spain);

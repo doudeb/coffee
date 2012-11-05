@@ -25,7 +25,9 @@ class Readability {
     const DOM_DEFAULT_CHARSET = "utf-8";
 
     // 当判定失败时显示的内容
-    const MESSAGE_CAN_NOT_GET = null;
+    const MESSAGE_CAN_NOT_GET = "Sorry, we are unable to parse this page for content.  \n
+            If you feel like it should have been able to,
+            please send an email to edouard[at]coffeepoke.com";
 
     // DOM 解析类（PHP5 已内置）
     protected $DOM = null;
@@ -180,7 +182,7 @@ class Readability {
             array_push($this->parentNodes, $parentNode);
         }
 
-        $topBox = null;
+        $topBox = $this->DOM->createElement('div', Readability::MESSAGE_CAN_NOT_GET);
         // Assignment from index for performance.
         //     See http://www.peachpit.com/articles/article.aspx?p=31567&seqNum=5
         for ($i = 0, $len = sizeof($this->parentNodes); $i < $len; $i++) {

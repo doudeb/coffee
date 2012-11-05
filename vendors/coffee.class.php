@@ -89,7 +89,6 @@ class ElggCoffee {
                     , 'logo_url' => ElggCoffee::_get_dwl_url($site_logo[0]->guid)
                     , 'background_url' => ElggCoffee::_get_dwl_url($site_background[0]->guid)
                     , 'custom_css' => $custom_css
-                    , 'translations' => json_encode(_get_translation_table($user_ent->language))
             );
 
         }
@@ -736,6 +735,10 @@ class ElggCoffee {
        }
 
        return false;
+    }
+
+    public static function get_translation_table ($locale) {
+        return $GLOBALS['CONFIG']->translations[$locale];
     }
 
     private static function _add_attachment ($guid_parent, $attachment) {

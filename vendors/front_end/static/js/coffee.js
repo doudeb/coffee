@@ -69,14 +69,14 @@
         if (translations === null) {
             $.ajax({
                 type: 'GET'
-                , url: location.host?"/ajax/view/js/languages":"http://api.coffeepoke.com/ajax/view/js/languages"
+                , url: location.host?"services/api/rest/json?method=coffee.getTranslationTable":"http://api.coffeepoke.com/services/api/rest/json?method=coffee.getTranslationTable"
                 , cache: true
                 , async: false
                 , data: {
-                    language : App.models.session.get('language')?App.models.session.get('language'):'en'
+                    locale : App.models.session.get('language')?App.models.session.get('language'):'en'
                 }
                 , success: function (response) {
-                    translations = $.parseJSON(response);
+                    translations = response.result;
                 }
             });
         }
@@ -634,7 +634,7 @@
                 for (i=0;i<attributes.attachment.length;i++) {
                     attributes.attachment[i].noModal = false;
                     if (attributes.attachment[i].type == 'url') {
-                        if ((attributes.attachment[i].html.indexOf('edouard[at]coffeepoke.com') > -1 || attributes.attachment[i].html == "")) {
+                        if ((attributes.attachment[i].html != null && (attributes.attachment[i].html.indexOf('edouard[at]coffeepoke.com') > -1 || attributes.attachment[i].html == ""))) {
                             attributes.attachment[i].noModal = true;
                         }
                         if (attributes.attachment[i].title == '') {
@@ -1391,7 +1391,7 @@
                     type: 'GET'
                     , url: App.resourceUrl
                     , dataType: 'json'
-                    , timeout: '25000'
+                    , timeout: '45000'
                     , data: {
                         method: 'coffee.getUrlData'
                         , auth_token: App.models.session.get('authToken')

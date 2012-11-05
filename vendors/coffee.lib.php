@@ -21,6 +21,7 @@ function coffee_api_set_site_id () {
 			$user_ent = get_user_by_username($username);
             $login_count = (int)$user_ent->getPrivateSetting('login_count') +1;
             $user_ent->setPrivateSetting('login_count', $login_count);
+            $CONFIG->language = $user_ent->language;
 		} else {
 			return $login_result;
 		}
@@ -28,13 +29,14 @@ function coffee_api_set_site_id () {
         $time = time();
 		$user_session = get_data_row("SELECT * from {$CONFIG->dbprefix}users_apisessions where token='$token' and $time < expires");
 		$user_guid = validate_user_token($token, $user_session->site_guid);
-		$user_ent = get_entity($user_guid);
+		$user_ent = get_user($user_guid);
         if (!$user_ent instanceof ElggUser) {
             return false;
         }
         elgg_unregister_event_handler('login', 'user','user_login');
         login($user_ent);
         $CONFIG->auth_token = $token;
+        $CONFIG->language = $user_ent->language;
         $time_refresh = $time + (60*60*24*30);
         update_data("Update {$CONFIG->dbprefix}users_apisessions Set expires = $time_refresh Where id = " . $user_session->id);
 	} elseif (elgg_is_logged_in()) {

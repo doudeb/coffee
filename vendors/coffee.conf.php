@@ -366,4 +366,14 @@ $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
 
+$exposed[++$i]['method']            = "coffee.getTranslationTable";
+$exposed[$i]['function']            = "ElggCoffee::get_translation_table";
+$exposed[$i]['params']          	= array("locale" => array('type' => 'string'
+                                                            , 'required' => true
+                                                            , 'default' => 'en'));
+$exposed[$i]['comment']          	= 'Search for tags';
+$exposed[$i]['call_method']      	= 'GET';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = false;
+
 $GLOBALS['CONFIG']->exposed                    = $exposed;

@@ -24,7 +24,6 @@ $(document).ready(function() {
 });
 
 function loadPost (isReload) {
-    $('.roue').find('span').html('').attr('data-guid',null).attr('data-user',null);
     $.ajax({
         type: 'GET'
         , url: '/services/api/rest/json'
@@ -38,14 +37,14 @@ function loadPost (isReload) {
             , owner_guids: getSearchCriteria('users')
         },
         success: function (response) {
+            $('.roue').find('span').html('').attr('data-guid',null).attr('data-user',null);
             objJson = [];
             decalage = 0;
             objJson = response.result;
-            console.log(objJson);
             if (response.status != -1) {
-                nb = objJson.length;
+                nb = objJson.length-1;
                 $.each(objJson, function(i,item) {
-                    $('.roue span:eq('+i+')').html(item.user.name).attr('data-guid',item.guid).attr('data-user',item.user.name);
+                    $('.roue span:eq('+i+')').html(' ' + item.user.name).attr('data-guid',item.guid).attr('data-user',item.user.name);
                 });
                 if (!isReload)
                     startRoue();
@@ -91,7 +90,8 @@ function animationTxt(id) {
 // Animation du post
 
 function animerPost(id) {
-    if (typeof objJson[id] == 'undefined') arreterRoue ();
+    //if (typeof objJson[id] == 'undefined') arreterRoue ();
+    console.log('id : ' + id);
 	var post = objJson[id];
 	$('#logo').animate({ opacity:1},1000, function() {
 		$('#icon_url').attr('src',post.user.icon_url);
@@ -135,9 +135,6 @@ function animerPost(id) {
 				$('#attachment').hide('blind');
 				setTimeout("arreterRoue()",seconds);
 			}
-            if (id==9) {
-                loadPost(true);
-            }
 			});
 		});
 }
@@ -164,11 +161,12 @@ function decalerSpan() {
 	$('.roue').animate({ opacity:1 },300, function() { $('#usernameBlanc').html(''); $('.roue').addClass('tournerRoue');});
 	decalage++;
 	$('.roue span:first').appendTo('.roue');
-	if(decalage >= nb)
-	{
+	if(decalage > nb) {
 		decalage = 0;
+        loadPost(true);
 	}
-	setTimeout('animationTxt('+decalage+')',6000);
+    //console.log('decalage : ' + decalage + '/ nb : ' + nb);
+	setTimeout('animationTxt(' + decalage + ')',6000);
 }
 
 // Plein écran

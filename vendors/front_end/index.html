@@ -28,6 +28,10 @@
         <script src="static/js/vendor/jquery.elastic.js"></script>
         <script src="static/js/vendor/jquery.mentionsInput.js"></script>
         <script src="static/js/vendor/bootstrap.min.js"></script>
+        <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+          <link href="static/css/coffee-machineIE.css" rel="stylesheet" />
+        <![endif]-->
 
     </head>
     <body>
@@ -47,6 +51,9 @@
         </script>
         <script type="text/html" id="tagTemplate">
             <span class="label {{css}}" data-id="{{id}}" data-name="{{name}}">{{name}}{{#del}}<span class="del">&times;</span>{{/del}}</span>
+        </script>
+        <script type="text/html" id="listHashtagsTemplate">
+            <li class="{{type}}"><a href="#feed/{{name}}">#{{name}}</a></li>
         </script>
         <script type="text/html" id="loginTemplate">
             <div id="login">
@@ -78,16 +85,14 @@
                     <div class="primary-content">
                         <div class="update-content" style="background-image: url({{icon_url}})">
                             <div class="new-post">
-                                    <textarea class="update-text mention" placeholder="{{#translate}}coffee:feed:share{{/translate}}"></textarea>
+                                <textarea class="update-text mention" placeholder="{{#translate}}coffee:feed:share{{/translate}}"></textarea>
                             </div>
-                            <!--<div class="avatar"><img src="{{icon_url}}" /></div>
-                            <textarea class="update-text input-xlarge mention" placeholder="{{#translate}}coffee:feed:share{{/translate}}"></textarea>-->
                         </div>
-
                         <div class="update-actions">
                             <span class="add-media"><a href="#feed">{{#translate}}coffee:feed:upload{{/translate}}</a></span>
                             <form action="" method="post" enctype="multipart/form-data" class="out" id="uploadForm">
                                 <input type="file" name="upload" id="upload">
+                                <input type="submit" name="doUpload" id="doUpload" value="{{#translate}}upload{{/translate}}" class="btn btn-primary">
                             </form>
                             <button id="postUpdate" class="btn btn-primary">{{#translate}}coffee:feed:send{{/translate}}</button>
                             <img class="loader" src="static/img/loader.gif" width="16" height="16" />
@@ -99,13 +104,26 @@
                         </div>
                     </div>
                 </div>
+                <div id="search" class="content-module">
+                    <div class="input-append">
+                        <input class="span4" id="searchInput" name="searchInput" type="text" placeholder="{{#translate}}search{{/translate}}" value="{{#tags}}{{.}}{{/tags}}" />
+                        <div class="btn-group">
+                            <button class="btn dropdown-toggle" data-toggle="dropdown">HashTags <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li class="header-item" id="corporateHashtags">Corporate Tags</li>
+                                <li class="header-item" id="mostUsedHashTags">Most Used</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="hashtagsSelected" />
+                </div>
                 <div id="feed-items">
                 </div>
             </div>
         </script>
         <script type="text/html" id="microbloggingAttachmentTemplate">
-            <div class="attachment">
-               {{#thumbnail}}<img class="thumbnail" width="100" src="{{thumbnail}}" />{{/thumbnail}}
+            <div id="attachmentPreview" class="attachment">
+               {{#thumbnail}}<img class="thumbnail" width="100px" src="{{thumbnail}}" />{{/thumbnail}}
                 <div class="info">
                     <span class="title">{{title}}</span>
                     <span class="description">{{description}}</span>
@@ -134,7 +152,7 @@
                             {{#attachment}}
                             <div class="attachment">
                                 {{#thumbnail}}
-                                    <a class="thumbnail" href="{{#noModal}}{{url}}{{/noModal}}#attachment{{guid}}" target="_blank"{{^noModal}} data-toggle="modal"{{/noModal}}><img width="100" src="{{thumbnail}}" /></a>
+                                    <a class="thumbnail" href="{{#noModal}}{{url}}{{/noModal}}#attachment{{guid}}" target="_blank"{{^noModal}} data-toggle="modal"{{/noModal}}><img width="100px" src="{{thumbnail}}" /></a>
                                 {{/thumbnail}}
                                 <div class="info">
                                     <a href="{{#noModal}}{{url}}{{/noModal}}#attachment{{guid}}" class="title" target="_blank"{{^noModal}} data-toggle="modal"{{/noModal}}>{{title}}</a>
@@ -234,9 +252,6 @@
                             </ul>
                             <div class="avatar">
                                 <img src="{{icon_url}}" width="100" height="100" />
-                                <form action="" method="post" enctype="multipart/form-data" class="out" id="avatarUpload">
-                                    <input type="file" name="avatar" id="avatar">
-                                </form>
                                 {{#isOwnProfile}}<button class="btn btn-mini edit" rel="profile-edit tooltip" title="{{#translate}}coffee:profile:button:changeavatar{{/translate}}" data-edit="avatar"><i class="icon-edit"></i></button>{{/isOwnProfile}}
                             </div>
                             <div class="info">
@@ -249,9 +264,6 @@
                                 {{^hasLocation}}{{#isOwnProfile}}<span class="location"><span class="editable editable-hover" data-name="location">coffee:profile:addlocation</span></span>{{/isOwnProfile}}{{/hasLocation}}
                                 {{#isOwnProfile}}
                                 <span class="pull-right"><button class="btn btn-small" rel="profile-edit tooltip" title="{{#translate}}coffee:profile:title:changecoverpic{{/translate}}" data-edit="userCover" id="cover-edit"><i class="icon-picture"></i> {{#translate}}coffee:profile:button:background{{/translate}}</button></span>
-                                <form action="" method="post" enctype="multipart/form-data" class="out" id="coverUpload">
-                                    <input type="file" name="cover" id="cover">
-                                </form>
                                 {{/isOwnProfile}}
                             </div>
                             <!--<ul class="sm-links">
@@ -284,6 +296,14 @@
                                 </div>
                             </div>
                         </div>
+                        <form action="" method="post" enctype="multipart/form-data" class="out" id="avatarUpload">
+                            <input type="file" name="avatar" id="avatar">
+                            <input type="submit" name="doUpload" id="doUpload" value="{{#translate}}upload{{/translate}}" class="btn btn-primary">
+                        </form>
+                        <form action="" method="post" enctype="multipart/form-data" class="out" id="coverUpload">
+                            <input type="file" name="cover" id="cover">
+                            <input type="submit" name="doUpload" id="doUpload" value="{{#translate}}upload{{/translate}}" class="btn btn-primary">
+                        </form>
                         <div class="secondary-content">
                             <div class="other">
                                 <div class="introduction">
@@ -715,19 +735,26 @@
                         <div class="primary-content">
                             <ul class="nav nav-tabs" id="adminMenu">
                                 <li class="dropdown active">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Users <b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                  <li><a href="#addnewuser" data-toggle="tab">Add new user</a></li>
-                                  <li><a href="#manageuser" data-toggle="tab">Manage user</a></li>
-                                </ul>
-                              </li>
-                              <li><a href="#settings" data-toggle="tab">Site settings</a></li>
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Users <b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                      <li><a href="#addnewuser" data-toggle="tab">Add new user</a></li>
+                                      <li><a href="#manageuser" data-toggle="tab">Manage user</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                      <li><a href="#settings" data-toggle="tab">Site settings</a></li>
+                                      <li><a href="#hashtags" data-toggle="tab">Corporate Hashtags</a></li>
+                                    </ul>
+                                </li>
                             </ul>
                             <div class="tab-content">
                               <div class="tab-pane" id="users">Choose a menu</div>
                               <div class="tab-pane" id="addnewuser">{{>addNewUserTemplate}}</div>
                               <div class="tab-pane active" id="manageuser">{{>manageUserTemplate}}</div>
                               <div class="tab-pane" id="settings">{{>siteSettingsTemplate}}</div>
+                              <div class="tab-pane" id="hashtags">{{>siteHashtagsTemplate}}</div>
                             </div>
                         </div>
                     </div>
@@ -875,6 +902,21 @@
                     </div>
                 </div>
             </script>
+            <script type="text/html" id="siteHashtagsTemplate">
+                <div class="alert" id="updateResult" />
+                <legend>Corporate Hashtags</legend>
+                <div class="input-prepend hashtags ">
+                    <span class="add-on">#</span><input class="span2" id="corporateHashtags" size="16" type="text" placeholder="Hashtag">
+                </div>
+                <div id="hashtagsSelected">
+                    Tags :
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary" id="saveCorporateHashtags">Save</button>
+                </div>
+            </script>
+
+
 
             <script src="static/js/coffee.js"></script>
             <script>

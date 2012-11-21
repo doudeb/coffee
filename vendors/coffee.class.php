@@ -32,6 +32,7 @@ class ElggCoffee {
             //add_to_river('coffee/river/new_post', 'create', elgg_get_logged_in_user_guid(), $new_post->guid);
             ElggCoffee::_add_attachment($new_post->guid,$attachment);
             ElggCoffee::_add_mentioned($new_post->guid,$mentioned_user);
+            ElggCoffee::update_site_trigger(COFFEE_SITE_FEED_UPDATE);
             return array('guid' => $new_post->guid);
         }
         return false;
@@ -57,6 +58,7 @@ class ElggCoffee {
                     $post->tags = $tags;
                     $post->save();
                 }
+                ElggCoffee::update_site_trigger(COFFEE_SITE_FEED_UPDATE);
                 return true;
             }
         }
@@ -71,7 +73,8 @@ class ElggCoffee {
     }
 
     public static function get_site_data () {
-        $site           = elgg_get_site_entity();
+        $site_guid      = $GLOBALS['CONFIG']->site_guid;
+        $site           = get_entity($site_guid);
         $user_ent       = elgg_get_logged_in_user_entity();
         if ($site instanceof ElggSite) {
             $options  = array('types'=>'object','subtypes'=>'file','limit'=>1);
@@ -89,6 +92,8 @@ class ElggCoffee {
                     , 'logo_url' => ElggCoffee::_get_dwl_url($site_logo[0]->guid)
                     , 'background_url' => ElggCoffee::_get_dwl_url($site_background[0]->guid)
                     , 'custom_css' => $custom_css
+                    , 'system_update' => datalist_get('simplecache_lastupdate_default')
+                    , 'corporate_tags' => ElggCoffee::get_corporate_tags()
             );
 
         }
@@ -263,6 +268,7 @@ class ElggCoffee {
                     $post->time_updated = time();
                     $post->save();
                 }
+                ElggCoffee::update_site_trigger(COFFEE_SITE_FEED_UPDATE);
                 return true;
             } elseif (!$return) {
                 $return = check_entity_relationship($guid_parent, $type, $guid_child);
@@ -282,7 +288,8 @@ class ElggCoffee {
             $return = remove_entity_relationship($guid_parent, $type, $guid_child);
             if ($return) {
                 //add_to_river('coffee/river/' . $type, 'remove', $guid_parent, $guid_child);
-
+                ElggCoffee::update_entity_time($guid_child);
+                ElggCoffee::update_site_trigger(COFFEE_SITE_FEED_UPDATE);
                 return true;
             } elseif (!$return) {
                 $return = check_entity_relationship($guid_parent, $type, $guid_child);
@@ -299,6 +306,7 @@ class ElggCoffee {
         if ($ent instanceof ElggObject
                 && (elgg_is_admin_logged_in() || $ent->owner_guid == elgg_get_logged_in_user_guid())) {
             if ($ent->disable()) {
+                ElggCoffee::update_site_trigger(COFFEE_SITE_FEED_UPDATE);
                 return true;
                 //find a solution to trigger a refresh for other opened session
             }
@@ -312,6 +320,7 @@ class ElggCoffee {
                 && (elgg_is_admin_logged_in() || $annotation->owner_guid == elgg_get_logged_in_user_guid())) {
             if ($annotation->disable()) {
                 static::update_entity_time($annotation->entity_guid);
+                ElggCoffee::update_site_trigger(COFFEE_SITE_FEED_UPDATE);
                 return true;
             }
         }
@@ -376,7 +385,8 @@ class ElggCoffee {
         $file->save();
         $guid = $file->guid;
         unset($file,$thumb);
-        return ElggCoffee::_get_file_details($guid);
+        echo json_encode(array('status' => 1, 'result' => ElggCoffee::_get_file_details($guid)));
+        exit();
     }
 
     public static function get_url_data ($url) {
@@ -388,7 +398,7 @@ class ElggCoffee {
             $title = basename($title);
             $return = array('title' => $title
                                 , 'thumbnail' => $url);
-        } else {
+        } elseif (preg_match("/(dailymotion|vimeo|youtu|slide|scrib)/", $url)) {
             try {
                 $api = new Embedly_API(array('user_agent' => 'Mozilla/5.0 (compatible; embedly/example-app; support@embed.ly)'));
                 $oembed = $api->oembed(array('url' => $url, 'maxwidth' => 530));
@@ -401,18 +411,18 @@ class ElggCoffee {
                                     , 'html' => $oembed[0]->html);
                 }
             } catch (Exception $e) {}
-            if (!is_array($return)) {
-                require_once elgg_get_plugins_path() . "coffee/vendors/Readability.inc.php";
-                $embedUrl = new Embed_url(array('url' => $url));
-                $embedUrl->embed();
-                //Readability
-                $readability = new Readability($embedUrl->html, $embedUrl->encoding);
-                $content = $readability->getContent();
-                $return = array('title' => $embedUrl->title
-                                        , 'description' => $embedUrl->description
-                                        , 'thumbnail' => $embedUrl->sortedImage[0]
-                                        , 'html' => $content['content']);
-            }
+        }
+        if (!is_array($return)) {
+            require_once elgg_get_plugins_path() . "coffee/vendors/Readability.inc.php";
+            $embedUrl = new Embed_url(array('url' => $url));
+            $embedUrl->embed();
+            //Readability
+            $readability = new Readability($embedUrl->html, $embedUrl->encoding);
+            $content = $readability->getContent();
+            $return = array('title' => $embedUrl->title
+                                    , 'description' => $embedUrl->description
+                                    , 'thumbnail' => $embedUrl->sortedImage[0]
+                                    , 'html' => $content['content']);
         }
         if (is_array($return)) {
             $link = new ElggObject();
@@ -518,12 +528,10 @@ class ElggCoffee {
             $owner->y1 = $square['y1'];
             $owner->y2 = $square['y2'];
 
-            system_message(elgg_echo('avatar:crop:success'));
-            $view = 'river/user/default/profileiconupdate';
-            //elgg_delete_river(array('subject_guid' => $owner->guid, 'view' => $view));
-            //add_to_river($view, 'update', $owner->guid, $owner->guid);
         }
-        return static::_get_user_icon_url($owner);
+
+        echo json_encode(array('status' => 1, 'result' => ElggCoffee::_get_user_icon_url($owner)));
+        exit();
     }
 
     public static function upload_user_cover() {
@@ -539,7 +547,8 @@ class ElggCoffee {
         $owner->covertime = time();
         $owner->save();
         move_uploaded_file($_FILES['cover']['tmp_name'], $file->getFilenameOnFilestore());
-        return static::_get_user_cover_url($owner);
+        echo json_encode(array('status' => 1, 'result' => ElggCoffee::_get_user_cover_url($owner)));
+        exit();
     }
 
     public static function set_user_extra_info ($name, $value) {
@@ -640,17 +649,19 @@ class ElggCoffee {
                 }
                 $user->save();
                 if ($send_email) {
+                    $site_guid = $GLOBALS['CONFIG']->site_guid;
+                    $site_ent = get_entity($site_guid);
                     $subject = elgg_echo('useradd:subject', array($displayname),$language);
                     $body = elgg_echo('useradd:body', array(
                         $displayname,
-                        elgg_get_site_entity()->name,
-                        elgg_get_site_entity()->name,
+                        $site_ent->name,
+                        $site_ent->name,
                         $email,
                         $password,
                         $logged_in_user->name,
                     ),$language);
 
-                    notify_user($user->guid, elgg_get_site_entity()->guid, $subject, $body);
+                    notify_user($user->guid, $site_guid, $subject, $body);
                 }
             }
         }
@@ -686,9 +697,10 @@ class ElggCoffee {
                 }
             }
         }
-        $site = elgg_get_site_entity();
-        if ($site instanceof ElggSite) {
-            if (set_config('language', $language, $site->getGUID())) {
+        $site_guid = $GLOBALS['CONFIG']->site_guid;
+        $site_ent = get_entity($site_guid);
+        if ($site_ent instanceof ElggSite) {
+            if (set_config('language', $language, $site_ent->getGUID())) {
                 $return[] = array('language' => $language);
             }
         }
@@ -722,7 +734,7 @@ class ElggCoffee {
                     Where tag_name.string != ''
                     $where
                     Group By tag_name.string
-                    Order By count(tag_used.id)
+                    Order By count(tag_used.id) Desc
                     Limit $offset,$limit";
        $result = get_data($query);
        if ($result) {
@@ -737,8 +749,45 @@ class ElggCoffee {
        return false;
     }
 
+    public static function get_corporate_tags () {
+        $return = false;
+        $site_guid = $GLOBALS['CONFIG']->site_guid;
+        $site_ent = get_entity($site_guid);
+        if ($site_ent instanceof ElggSite) {
+            $return = $site_ent->corporate_tags;
+        }
+        return $return;
+    }
+
+    public static function set_corporate_tags ($tags = array()) {
+        $site_guid = $GLOBALS['CONFIG']->site_guid;
+        $site_ent = get_entity($site_guid);
+        if ($site_ent instanceof ElggSite && is_array($tags)) {
+            $site_ent->corporate_tags = $tags;
+            if ($site_ent->save()) {
+                ElggCoffee::update_site_trigger(COFFEE_CORPORATE_TAGS_UPDATE);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static function get_translation_table ($locale) {
         return $GLOBALS['CONFIG']->translations[$locale];
+    }
+
+    public static function get_site_trigger ($type = array(COFFEE_SITE_FEED_UPDATE)) {
+        $return = false;
+        $site_guid = $GLOBALS['CONFIG']->site_guid;
+        $site_ent = get_entity($site_guid);
+        if ($site_ent instanceof ElggSite && is_array($type)) {
+            foreach ($type as $key=>$type) {
+                $return[$key] = array($type => $site_ent->$type);
+            }
+        }
+        $return[++$key] = array('system_update' => datalist_get('simplecache_lastupdate_default'));
+        $return[++$key] = array('corporate_tags_update' => $site_ent->corporate_tags_update);
+        return $return;
     }
 
     private static function _add_attachment ($guid_parent, $attachment) {
@@ -812,6 +861,18 @@ class ElggCoffee {
             $entity->time_updated = time();
             $entity->save();
             return true;
+        }
+        return false;
+    }
+
+    private static function update_site_trigger ($type = COFFEE_SITE_FEED_UPDATE) {
+        $site_guid = $GLOBALS['CONFIG']->site_guid;
+        $site_ent = get_entity($site_guid);
+        if ($site_ent instanceof ElggSite) {
+            $site_ent->$type = time();
+            if($site_ent->save()) {
+                return true;
+            }
         }
         return false;
     }

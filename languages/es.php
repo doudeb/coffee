@@ -115,24 +115,24 @@ $spain = array(
 
                     ,'useradd:subject' => '%1$s, bienvenido a CoffeePoke'
                     ,'useradd:body' => '
-                Hola %1$s,
+Hola %1$s,
 
-                %6$s te invito a participar a la comunidad %2$s en CoffeePoke.
+%6$s te invito a participar a la comunidad %2$s en CoffeePoke.
 
-                Para acceder a la comunidad, haz click en el link de abajo y completa tu acceso:
-                http://%2$s.coffeepoke.com/
+Para acceder a la comunidad, haz click en el link de abajo y completa tu acceso:
+http://%2$s.coffeepoke.com/
 
-                Usuario: %4$s
-                Contraseña: %5$s
+Usuario: %4$s
+Contraseña: %5$s
 
-                No esperes más para personalizar tu perfil y publicar en el muro !
+No esperes más para personalizar tu perfil y publicar en el muro !
 
-                La herramienta Coffee TV (cuarta pestaña situada en la barra de menú) esta diseñada para difundir continuamente los últimos mensajes publicados en pantallas idealmente situadas en los lugares de vida de la empresa.
-                Esas pantallas permiten favorecer la difusión de información y hacer que la comunicación sea increíblemente más interactiva e inmediata.
+La herramienta Coffee TV (cuarta pestaña situada en la barra de menú) esta diseñada para difundir continuamente los últimos mensajes publicados en pantallas idealmente situadas en los lugares de vida de la empresa.
+Esas pantallas permiten favorecer la difusión de información y hacer que la comunicación sea increíblemente más interactiva e inmediata.
 
-                Saludos,
+Saludos,
 
-                Renaud',
+Renaud',
 
 );
 

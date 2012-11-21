@@ -12,6 +12,8 @@ define('COFFEE_COMMENT_ATTACHMENT_RELATIONSHIP', 'coffee_comment_attachment');
 define('COFFEE_POST_MENTIONED_RELATIONSHIP', 'post::mentioned');
 define('COFFEE_COMMENT_MENTIONED_RELATIONSHIP', 'comment::mentioned');
 define('COFFEE_COMMENT_TYPE', 'generic_comment');
+define('COFFEE_SITE_FEED_UPDATE', 'feed_last_update');
+define('COFFEE_CORPORATE_TAGS_UPDATE', 'corporate_tags_update');
 
 
 /*
@@ -366,6 +368,16 @@ $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
 
+$exposed[++$i]['method']            = "coffee.getSiteUpdate";
+$exposed[$i]['function']            = "ElggCoffee::get_site_trigger";
+$exposed[$i]['params']          	= array("type" => array('type' => 'array'
+                                                            , 'required' => true
+                                                            , 'default' => array(COFFEE_SITE_FEED_UPDATE)));
+$exposed[$i]['comment']          	= 'Return site last update (Feed, system)';
+$exposed[$i]['call_method']      	= 'GET';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
+
 $exposed[++$i]['method']            = "coffee.getTranslationTable";
 $exposed[$i]['function']            = "ElggCoffee::get_translation_table";
 $exposed[$i]['params']          	= array("locale" => array('type' => 'string'
@@ -374,6 +386,24 @@ $exposed[$i]['params']          	= array("locale" => array('type' => 'string'
 $exposed[$i]['comment']          	= 'Search for tags';
 $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;
-$exposed[$i]['require_user_auth']   = false;
+$exposed[$i]['require_user_auth']   = true;
+
+$exposed[++$i]['method']            = "coffee.getCorporateHashtags";
+$exposed[$i]['function']            = "ElggCoffee::get_corporate_tags";
+$exposed[$i]['params']          	= array();
+$exposed[$i]['comment']          	= 'Search for corporateHashtags';
+$exposed[$i]['call_method']      	= 'GET';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
+
+$exposed[++$i]['method']            = "coffee.setCorporateHashtags";
+$exposed[$i]['function']            = "ElggCoffee::set_corporate_tags";
+$exposed[$i]['params']          	= array("tags" => array('type' => 'array'
+                                                            , 'required' => true
+                                                            , 'default' => array()));
+$exposed[$i]['comment']          	= 'Set corporate tags';
+$exposed[$i]['call_method']      	= 'POST';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
 
 $GLOBALS['CONFIG']->exposed                    = $exposed;

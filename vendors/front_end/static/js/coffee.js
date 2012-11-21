@@ -20,7 +20,12 @@
         }
     },
 
+    isOLderIE = function () {
+        return navigator.userAgent.match(/MSIE 8./i) ? true : false;
+    },
+
     stripslashes = function (str) {
+        if (_.isUndefined(str) || _.isNull(str)) return str;
         str=str.replace(/\\'/g,'\'');
         str=str.replace(/\\"/g,'"');
         str=str.replace(/\\0/g,'\0');
@@ -120,6 +125,7 @@
         models: {},
         collections: {},
         views: {},
+        updaterId: 0,
         resourceUrl: location.host?"/services/api/rest/json":"http://api.coffeepoke.com/services/api/rest/json",
 
         isComposing: false,
@@ -158,6 +164,54 @@
             });
         },
 
+        initTypeAhead: function (elm, method, callback) {
+            $(elm).typeahead({
+                minLength: 2
+                , source: function (query, process) {
+                    var results = []
+                        users = [];
+                    return $.getJSON(App.resourceUrl, {method:method,auth_token: App.models.session.get('authToken'), query: query}, function (response) {
+                         if (response.status != '-1') {
+                             _.each(response.result, function(item) {
+                                 results.push(item.name);
+                                 users[item.name] = item.id;
+                             });
+                             return process(results);
+                         }
+                    });
+                }
+                , updater: function (item) {
+                    if (_.isFunction(callback)) {
+                        callback (item);
+                    }
+                }
+
+            });
+        },
+
+        prepareTags: function (tagsToFormat) {
+            var tags = new Array();
+            _.each(tagsToFormat, function (item, key) {
+                tags.push({name:'#' + item
+                            , css: 'tag'
+                            , del:true});
+            });
+            return tags;
+        },
+
+        prepareUsers: function (usersToFormat) {
+            var users = new Array();
+            _.each(usersToFormat, function (item, key) {
+                user = new UserItem();
+                user.getUserById(item);
+                users.push({id:item
+                            , name:user.attributes.name
+                            , css:'label-info user'
+                            , del:true});
+            });
+            return users;
+        },
+
         getSearchCriteria: function(name) {
             try {
                 searchCriteria = JSON.parse(App.models.session.get('searchCriteria'));
@@ -167,6 +221,69 @@
                 return null;
             }
             return null;
+        },
+
+        setCorporateHashtags: function () {
+            var self = this;
+
+            $.ajax({
+                type: 'GET'
+                , url: App.resourceUrl
+                , dataType: 'json'
+                , data: {
+                    method: 'coffee.getCorporateHashtags'
+                    , auth_token: App.models.session.get('authToken')
+                },
+                success: function (response) {
+                    if (response.status != -1) {
+                        App.models.session.set('corporateHashtags', response.result);
+                        if(_.isObject(App.views.adminView)) {
+                            App.views.adminView.refreshCorporateHashtags(response.result)
+                        }
+                        if(_.isObject(App.views.microbloggingView)) {
+                            App.views.microbloggingView.refreshHashtags(response.result,'#corporateHashtags', 'corporate')
+                        }
+
+                    } else if (response.message == 'pam_auth_userpass:failed') {
+                        App.models.session.end();
+                        Backbone.history.navigate('login', true);
+                    }
+                },
+                error: function () {
+                }
+            });
+        },
+
+        setMostUsedHashtags: function () {
+            var self = this;
+
+            $.ajax({
+                type: 'GET'
+                , url: App.resourceUrl
+                , dataType: 'json'
+                , data: {
+                    method: 'coffee.getTagList'
+                    , auth_token: App.models.session.get('authToken')
+                },
+                success: function (response) {
+                    if (response.status != -1) {
+                        if(_.isObject(App.views.microbloggingView)) {
+                            mostUsedHashtags = [];
+                            _.each(response.result, function (item,key) {
+                                mostUsedHashtags[key] = item.name.replace('#','');
+                            });
+                            mostUsedHashtags = _.difference(mostUsedHashtags, App.models.session.get('corporateHashtags'));
+                            App.views.microbloggingView.refreshHashtags(mostUsedHashtags,'#mostUsedHashTags', 'mostUsed');
+                        }
+
+                    } else if (response.message == 'pam_auth_userpass:failed') {
+                        App.models.session.end();
+                        Backbone.history.navigate('login', true);
+                    }
+                },
+                error: function () {
+                }
+            });
         }
     };
 
@@ -184,6 +301,9 @@
             , accountTime: null
             , loginCount: null
             , searchCriteria: null
+            , lastFeedUpdate: null
+            , systemDate: null
+            , corporateHashtags: null
         },
 
         initialize: function () {
@@ -201,50 +321,46 @@
         },
 
         save: function () {
-            $.cookie('userId', this.get('userId'), { expires: 365 });
-            $.cookie('authToken', this.get('authToken'), { expires: 365 });
-            $.cookie('siteName', this.get('siteName'), { expires: 365 });
-            $.cookie('logoUrl', this.get('logoUrl'), { expires: 365 });
-            $.cookie('backgroundUrl', this.get('backgroundUrl'), { expires: 365 });
-            $.cookie('customCss', this.get('customCss'), { expires: 365 });
-            $.cookie('name', this.get('name'), { expires: 365 });
-            $.cookie('iconUrl', this.get('iconUrl'), { expires: 365 });
-            $.cookie('coverUrl', this.get('coverUrl'), { expires: 365 });
-            $.cookie('isAdmin', this.get('isAdmin'), { expires: 365 });
-            $.cookie('language', this.get('language'), { expires: 365 });
-            $.cookie('accountTime', this.get('accountTime'), { expires: 365 });
-            $.cookie('loginCount', this.get('loginCount'), { expires: 365 });
-            $.cookie('searchCriteria', this.get('searchCriteria'), { expires: 365 });
+            $.cookie('userId', this.get('userId'), { expires: 365*10 });
+            $.cookie('authToken', this.get('authToken'), { expires: 365*10 });
+            $.cookie('siteName', this.get('siteName'), { expires: 365*10 });
+            $.cookie('logoUrl', this.get('logoUrl'), { expires: 365*10 });
+            $.cookie('backgroundUrl', this.get('backgroundUrl'), { expires: 365*10 });
+            $.cookie('customCss', this.get('customCss'), { expires: 365*10 });
+            $.cookie('name', this.get('name'), { expires: 365*10 });
+            $.cookie('iconUrl', this.get('iconUrl'), { expires: 365*10 });
+            $.cookie('coverUrl', this.get('coverUrl'), { expires: 365*10 });
+            $.cookie('isAdmin', this.get('isAdmin'), { expires: 365*10 });
+            $.cookie('language', this.get('language'), { expires: 365*10 });
+            $.cookie('accountTime', this.get('accountTime'), { expires: 365*10 });
+            $.cookie('loginCount', this.get('loginCount'), { expires: 365*10 });
+            $.cookie('searchCriteria', this.get('searchCriteria'), { expires: 365*10 });
+            $.cookie('lastFeedUpdate', 0, { expires: 365*10 });
+            $.cookie('systemDate',this.get('systemDate') , { expires: 365*10 });
+            $.cookie('corporateHashtags',this.get('corporateHashtags') , { expires: 365*10 });
 
             this.trigger('started');
         },
 
-        /*set: function (attributes, options) {
-            if (typeof attributes === 'object') {
-                _.each(attributes, function(value,item) {
-                });
-            } else {
-                $.cookie(attributes, options);
-            }
-            Backbone.Model.prototype.set.call(this, attributes, options);
-        },*/
-
         load: function () {
             this.set({
-                userId: $.cookie('userId'),
-                authToken: $.cookie('authToken'),
-                siteName: $.cookie('siteName'),
-                logoUrl: $.cookie('logoUrl'),
-                backgroundUrl: $.cookie('backgroundUrl'),
-                customCss: $.cookie('custom_css'),
-                name: $.cookie('name'),
-                language: $.cookie('language'),
-                iconUrl: $.cookie('iconUrl'),
-                coverUrl: $.cookie('coverUrl'),
-                isAdmin: $.cookie('isAdmin'),
-                accountTime: $.cookie('accountTime'),
-                loginCount: $.cookie('loginCount'),
-                searchCriteria: $.cookie('searchCriteria')
+                userId: $.cookie('userId')
+				, authToken: $.cookie('authToken')
+				, siteName: $.cookie('siteName')
+				, logoUrl: $.cookie('logoUrl')
+				, backgroundUrl: $.cookie('backgroundUrl')
+				, customCss: $.cookie('custom_css')
+				, name: $.cookie('name')
+				, language: $.cookie('language')
+				, iconUrl: $.cookie('iconUrl')
+				, coverUrl: $.cookie('coverUrl')
+				, isAdmin: $.cookie('isAdmin')
+				, accountTime: $.cookie('accountTime')
+				, loginCount: $.cookie('loginCount')
+				, searchCriteria: $.cookie('searchCriteria')
+                , lastFeedUpdate: 0
+                , systemDate: $.cookie('systemDate')
+                , corporateHashtags: $.cookie('corporateHashtags')
             });
         },
 
@@ -267,13 +383,15 @@
                     if (response.status != -1) {
                         var result = response.result;
                         self.set({
-                            userId: result.user_guid,
-                            siteName: result.name,
-                            logoUrl: result.logo_url,
-                            backgroundUrl: result.background_url,
-                            customCss: result.custom_css,
-                            translations: result.translations,
-                            isAdmin: result.is_admin==='true'?true:''
+                            userId: result.user_guid
+                            , siteName: result.name
+                            , logoUrl: result.logo_url
+                            , backgroundUrl: result.background_url
+                            , customCss: result.custom_css
+                            , translations: result.translations
+                            , isAdmin: result.is_admin==='true'?true:''
+                            , systemDate: result.system_update
+                            , corporateHashtags: result.corporate_hashtags
                         });
                         $.ajax({
                             type: 'GET',
@@ -307,7 +425,6 @@
                         });
 
                     } else if (response.message == 'pam_auth_userpass:failed') {
-                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -332,6 +449,9 @@
             $.cookie('isAdmin',null);
             $.cookie('accountTime',null);
             $.cookie('loginCount',null);
+            $.cookie('lastFeedUpdate',null);
+            $.cookie('systemDate',null);
+            $.cookie('corporateHashtags',null);
 
             Backbone.history.navigate('login', true);
         }
@@ -670,6 +790,7 @@
                             attributes.comment.comments[i].text = this.replaceMentions(attributes.comment.comments[i].text,tagReplacement,'tag');
                         }
                         if (attributes.comment.comments[i].owner_guid == App.models.session.get('userId') || (App.models.session.get('isAdmin') == 'true')) attributes.comment.comments[i].isCommentOwner = true;
+                        attributes.comment.comments[i].text = replaceUrl(attributes.comment.comments[i].text);
                     }
                 }
             }
@@ -709,11 +830,15 @@
 
         initialize: function () {
             _.bindAll(this);
-            this.loadFeed();
+            this.loadFeed(0,10,10);
         },
 
-        loadFeed: function (offset,limit) {
-            var self = this;
+        loadFeed: function (offset,limit,newerThan) {
+            if (typeof App.views.microbloggingView != 'undefined' && App.views.microbloggingView.isAttaching) {
+                return false;
+            }
+            var self = this,
+                latestTimestamp = newerThan || 0;
             $.ajax({
                 type: 'GET',
                 url: App.resourceUrl,
@@ -723,15 +848,40 @@
                     , auth_token: App.models.session.get('authToken')
                     , offset: offset?offset:0
                     , limit: limit?limit:10
+                    , newer_than: newerThan?newerThan:0
                     , tags: App.getSearchCriteria('tags')
                 },
                 success: function (response) {
                     if (response.status != -1) {
-                        var result = response.result;
-                        self.add(result);
-                        self.startCheckingForNewPosts();
+                        result = response.result;
+                        if (self.length === 0 || offset > 0) {
+                            self.add(result);
+                            if (self.models.length > 0) {
+                                latestTimestamp = _.max(self.models, function(latest){
+                                    return latest.attributes.content.time_updated;
+                                }).attributes.content.time_updated;
+                            }
+                        } else {
+                            if (result.length > 0) {
+                                for (i = 0; i < result.length; i++ ) {
+                                    feedItem = result[i];
+                                    exist = self.where({
+                                        guid: feedItem.guid
+                                    });
+                                    if (exist.length > 0) {
+                                        if (!exist[0].get('isComposing')) {
+                                            exist[0].set(feedItem);
+                                        latestTimestamp = feedItem.content.time_updated;
+                                        }
+                                    } else {
+                                        self.unshift(feedItem);
+                                        latestTimestamp = feedItem.content.time_updated;
+                                    }
+                                }
+                            }
+                        }
+                        App.models.session.set('lastFeedUpdate', latestTimestamp);
                     } else if (response.message == 'pam_auth_userpass:failed') {
-                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -766,10 +916,6 @@
                     }
                 }
             });
-        },
-
-        startCheckingForNewPosts: function () {
-            setTimeout(this.checkForNewPosts, 5000);
         },
 
         checkForNewPosts: function () {
@@ -807,9 +953,6 @@
                                     self.loadNew(result[i].guid);
                                 }
                             }
-                        }
-                        if (Backbone.history.fragment.indexOf('feed') != -1) {
-                            self.startCheckingForNewPosts();
                         }
                     } else if (response.message == 'pam_auth_userpass:failed') {
                         localStorage.clear();
@@ -1043,7 +1186,6 @@
                         self.refresh();
                     }
                     if (response.message == 'pam_auth_userpass:failed') {
-                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -1094,7 +1236,6 @@
                             self.render();
                         }
                     } else if (response.message == 'pam_auth_userpass:failed') {
-                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -1242,22 +1383,26 @@
         },
 
         events: {
-            'click #postUpdate': 'postUpdate',
-            'keyup .update-text': 'listenForLink',
-            'paste .update-text': 'detectPaste',
-            'click .attachment .remove': 'removeAttachment',
-            'click .add-media': 'uploadMedia',
-            'click .broadcastMessage': 'toggleBroadcastMessage',
-            'click #cancelPostUpdate': 'hideMobileCommentForm'
+            'click #postUpdate': 'postUpdate'
+            , 'keyup .update-text': 'listenForLink'
+            , 'keyup #searchInput': 'validateSearch'
+            , 'click .attachment .remove': 'removeAttachment'
+            , 'click .add-media': 'uploadMedia'
+            , 'click .broadcastMessage': 'toggleBroadcastMessage'
+            , 'click #cancelPostUpdate': 'hideMobileCommentForm'
+            , 'click #doUpload': 'doUpload'
         },
 
         render: function () {
-            data = {
+
+            var data = {
                 icon_url: App.models.session.get('iconUrl')
                 , isAdmin: App.models.session.get('isAdmin')
                 , siteName: App.models.session.get('siteName')
                 , translate: function() {return function(text) {return t(text);}}
-            };
+                , tags: App.getSearchCriteria('tags')
+            }
+                , self = this;
 
             if(isMobile.any()){
                 var element = ich.mobileMicrobloggingTemplate(data);
@@ -1271,6 +1416,7 @@
             this.feedItemsView = new FeedItemsView();
             this.$el.append(this.feedItemsView.el);
             App.initMention(element.find('textarea.update-text'));
+            App.initTypeAhead('#searchInput', 'coffee.getTagList', this.addTags);
             return this;
         },
 
@@ -1338,42 +1484,26 @@
             var self = this;
             var textarea = $(e.currentTarget);
             var value = textarea.val();
-            if (e.ctrlKey && _.contains([86,16], e.keyCode)) {
+            if ((e.ctrlKey || e.metaKey || e.shiftKey) && _.contains([86,16], e.keyCode)) {
                 textarea.val(textarea.val() + ' ');
             }
-            if(self.isUrl(value)) {
-                var splitValue = value.split(/(\s|\n|\r)/);
-                splitValue[splitValue.length-1] = "";
-                _.each(splitValue, function(item, key) {
-                    if(self.isUrl(item)) {
-                        self.attachLink(item, textarea);
-                    }
-                });
-            }
-            /*
-            if (value.length > (self.updateLength + 7)) {
-                if (self.isUrl(value)) {
-                    var theUrl = value.substr(self.updateLength);
-                    self.attachLink(theUrl);
-                    textarea.val(value.replace(theUrl, ''));
-                }
-            } else {
-                if (e.keyCode == 32) {
-                    if (self.isUrl(value)) {
-                        var splitValue = value.split(' ');
-                        var theUrl = splitValue[splitValue.length - 2];
-                        self.attachLink(theUrl);
-                        textarea.val(value.replace(theUrl, ''));
-                    }
-                }
-            }
 
-            self.updateLength = value.length;*/
+            url = self.getUrl(value);
+
+            if(url) {
+                url = url[0].replace(" ", "");
+                return self.attachLink(url, textarea);
+            }
         },
 
         isUrl: function (s) {
             var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
             return regexp.test(s);
+        },
+
+        getUrl: function (s) {
+            var regexp = /((http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?(\s|\n|\r|\n\r))/
+            return regexp.exec(s);
         },
 
         detectPaste : function (e) {
@@ -1382,16 +1512,15 @@
 
         attachLink: function (url, textarea) {
             var self = this;
-
             if (! self.attachmentGuid && ! self.isAttaching) {
                 self.$el.addClass('microblogging-loading');
                 self.isAttaching = true;
-
+                self.disable();
                 $.ajax({
                     type: 'GET'
                     , url: App.resourceUrl
                     , dataType: 'json'
-                    , timeout: '45000'
+                    , timeout: '20000'
                     , data: {
                         method: 'coffee.getUrlData'
                         , auth_token: App.models.session.get('authToken')
@@ -1407,9 +1536,11 @@
                         }
                         self.isAttaching = false;
                         self.$el.removeClass('microblogging-loading');
+                        self.enable();
                     }, error: function () {
                         self.attachmentGuid = self.isAttaching = false;
                         self.$el.removeClass('microblogging-loading');
+                        self.enable();
                     }
                 });
             }
@@ -1420,7 +1551,7 @@
             if (self.attachmentGuid != false) {
                 self.attachmentElement.remove();
                 self.attachmentGuid = false;
-                self.$el.find('.attachment').remove();
+                self.$el.find('#attachmentPreview').remove();
                 self.$el.find('.add-media').show();
             }
             return false;
@@ -1431,35 +1562,24 @@
             this.$el.find('.update-text').eq(0).val('');
         },
 
-        uploadMedia: function () {
+        uploadMedia: function (e) {
             var self = this
             , upload = $('#upload')
             , uploadForm = $('#uploadForm')
+            if (isOLderIE()) {
+                return uploadForm.toggleClass('out');
+            }
 
             upload
             .trigger('click')
             .change(function (){
-                toggleUploadSpinner();
-                self.isAttaching = true;
-                elm = $(this);
-                var options = {
-                    success: self.updateAttachement
-                    , error: self.updateAttachement
-                    , url: App.resourceUrl
-                    , dataType: 'json'
-                    , uploadProgress : function(event, position, total, percentComplete) {uploadProgress(percentComplete)}
-                    , data: {
-                        method: 'coffee.uploadData'
-                        , auth_token: App.models.session.get('authToken')
-                    }
-                };
-                uploadForm.ajaxSubmit(options);
-                uploadForm.resetForm();
+                self.doUpload();
             });
             return false;
         },
 
         updateAttachement: function (response) {
+            response = JSON.parse(stripslashes(response));
             var self = this;
             if (response.status != -1) {
                 result = response.result;
@@ -1468,6 +1588,9 @@
                 self.attachmentElement
                 .insertBefore(self.$el.find('.update-actions').eq(0));
                 self.$el.find('.add-media').hide();
+                if (isOLderIE()) {
+                    self.$el.find('#uploadForm').toggleClass('out');
+                }
             } else {
             /* Error */
             }
@@ -1505,8 +1628,78 @@
             } catch (e) {
                 return [];
             }
-        }
+        },
 
+        addTags: function (item) {
+            var self = this
+            , item = item.replace("#", '');
+            /*data = {name:item
+                    , id:users[item]
+                    , css:'label-info tag'
+                    , del:true}
+                , self = this;
+            elm = ich.tagTemplate(data);
+            self.$el.find('#hashtagsSelected').append(elm);
+            */
+            tags = JSON.stringify({tags:new Array(item)});
+            App.models.session.set('searchCriteria',tags);
+            self.$el.find('#searchInput').val(item);
+            Backbone.history.navigate('feed/' + item, true);
+
+        },
+
+        refreshHashtags: function (items, dest, type) {
+            var self = this;
+            _.each(self.$el.find('li.' + type), function (item, key) {$(item).remove();});
+            _.each(items, function (item) {
+                if (_.isObject(item)) {
+                    name = item.name;
+                } else {
+                    name = item;
+                }
+                elm = ich.listHashtagsTemplate({name:name,type:type});
+                elm.insertAfter(self.$el.find(dest));
+            });
+        },
+
+        validateSearch: function (e) {
+            if (e.keyCode == 13) { // Enter key
+                var element = $(e.currentTarget)
+                    , query = element.val();
+                if (query.length > 0) {
+                    query = '/' + query;
+                } else {
+                    App.models.session.set('searchCriteria','');
+                }
+                Backbone.history.navigate('feed' + query, true);
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                return false;
+            }
+        },
+
+        doUpload: function () {
+            var self = this
+            , upload = $('#upload')
+            , uploadForm = $('#uploadForm')
+
+            toggleUploadSpinner();
+            self.isAttaching = true;
+            var options = {
+                success: self.updateAttachement
+                , error: self.updateAttachement
+                , url: App.resourceUrl
+                , uploadProgress : function(event, position, total, percentComplete) {uploadProgress(percentComplete)}
+                , data: {
+                    method: 'coffee.uploadData'
+                    , auth_token: App.models.session.get('authToken')
+                }
+            };
+            uploadForm
+            .ajaxSubmit(options);
+
+            return false;
+        }
     });
 
     /* !View: Menu */
@@ -1550,6 +1743,11 @@
                     $(item).removeClass('active');
                 }
             });
+            if (typeof App.updaterId != 'undefined') {
+                this.checkForSiteUpdate();
+            }
+            App.setCorporateHashtags();
+            App.setMostUsedHashtags();
             return this;
         },
 
@@ -1592,6 +1790,67 @@
             $('#profile').hide();
             $('#feed-items').hide();
             $('#microblogging').show();
+        },
+
+        checkForSiteUpdate: function () {
+            App.updaterId = _.delay (this.getSiteUpdate, 5000);
+        },
+
+        getSiteUpdate: function () {
+            var self = this;
+
+            $.ajax({
+                type: 'GET'
+                , url: App.resourceUrl
+                , dataType: 'json'
+                , data: {
+                    method: 'coffee.getSiteUpdate'
+                    , auth_token: App.models.session.get('authToken')
+                },
+                success: function (response) {
+                    if (response.status != -1) {
+                        self.doSiteUpdate(response.result);
+                    } else if (response.message == 'pam_auth_userpass:failed') {
+                        App.models.session.end();
+                        Backbone.history.navigate('login', true);
+                    }
+                    self.checkForSiteUpdate ();
+                },
+                error: function () {
+                    self.checkForSiteUpdate ();
+                }
+            });
+        },
+
+        doSiteUpdate: function (updates) {
+            var self = this;
+            _.each(updates, function (update) {
+                if (!_.isUndefined(update.feed_last_update)) {
+                    if (update.feed_last_update > App.models.session.get('lastFeedUpdate') &&!_.isUndefined(App.views.microbloggingView)) {
+                        App.views.microbloggingView.feedItemsView.collection.loadFeed(0,20,App.models.session.get('lastFeedUpdate'));
+                        App.setMostUsedHashtags();
+                    }
+                }
+                if (!_.isUndefined(update.system_update)) {
+                    if (update.system_update > App.models.session.get('systemDate')) {
+                        App.models.session.set('systemDate', update.system_update);
+                        window.location.reload(true);
+                    }
+                }
+                if (!_.isUndefined(update.corporate_tags_update)) {
+                    if (_.isUndefined(App.models.session.get('corporateTagsUpdate')) || update.corporate_tags_update > App.models.session.get('corporateTagsUpdate')) {
+                        App.setCorporateHashtags();
+                        App.models.session.set('corporateTagsUpdate', update.corporate_tags_update);
+                    }
+                }
+            });
+        },
+
+        remove: function () {
+            if(typeof App.updaterId != 'undefined') {
+                clearTimeout(App.updaterId);
+            }
+            this.$el.remove();
         }
     });
 
@@ -1721,7 +1980,9 @@
             'keyup .editing': 'textareaKeyup',
             'keypress .editing': 'textareaKeypress',
             'click .avatar .btn': 'avatarEdit',
+            'click #avatarUpload #doUpload': 'doAvatarUpload',
             'click #cover-edit': 'coverEdit',
+            'click #coverUpload #doUpload': 'doCoverUpload',
             'click .sm-addnew': 'newSocialmedia',
             'click .add-hobby': 'addHobby',
             'click #profile .btn-danger': 'logout',
@@ -1873,26 +2134,37 @@
             , avatar = $('#avatar')
             , avatarForm = $('#avatarUpload')
             , avatarCrop = $('#avatarCrop');
+
+            if (isOLderIE()) {
+                return avatarForm.toggleClass('out');
+            }
+
             avatar
             .trigger('click')
             .change(function (){
-                elm = $(this);
-                if (self.isPicture(elm.val())) {
-                    toggleUploadSpinner();
-                    var options = {
-                        success: self.updateAvatar
-                        , url: App.resourceUrl
-                        , dataType: 'json'
-                        , uploadProgress : function(event, position, total, percentComplete) {uploadProgress(percentComplete)}
-                        , data: {
-                            method: 'coffee.uploadUserAvatar',
-                            auth_token: App.models.session.get('authToken')
-                        }
-                    };
-                    avatarForm.ajaxSubmit(options);
+                if (self.isPicture(avatar.val())) {
+                    self.doAvatarUpload();
                 }
             });
+            return false;
 
+        },
+
+        doAvatarUpload: function (e) {
+            var self = this
+                , avatarForm = $('#avatarUpload');
+            toggleUploadSpinner();
+            var options = {
+                success: self.updateAvatar
+                , url: App.resourceUrl
+                , uploadProgress : function(event, position, total, percentComplete) {uploadProgress(percentComplete)}
+                , data: {
+                    method: 'coffee.uploadUserAvatar',
+                    auth_token: App.models.session.get('authToken')
+                }
+            };
+            avatarForm.ajaxSubmit(options);
+            return false;
         },
 
         coverEdit: function () {
@@ -1900,26 +2172,36 @@
             , cover = $('#cover')
             , coverForm = $('#coverUpload')
             , coverCrop = $('#coverCrop');
+
+             if (isOLderIE()) {
+                return coverForm.toggleClass('out');
+            }
+
             cover
             .trigger('click')
             .change(function (){
-                elm = $(this);
-                if (self.isPicture(elm.val())) {
-                    toggleUploadSpinner();
-                    var options = {
-                        success: self.updateCover
-                        , url: App.resourceUrl
-                        , dataType: 'json'
-                        , uploadProgress : function(event, position, total, percentComplete) {uploadProgress(percentComplete)}
-                        , data: {
-                            method: 'coffee.uploadUserCover',
-                            auth_token: App.models.session.get('authToken')
-                        }
-                    };
-                    coverForm.ajaxSubmit(options);
+                if (self.isPicture(cover.val())) {
+                    self.doCoverUpload();
                 }
             });
 
+        },
+
+        doCoverUpload: function (e) {
+            var self = this
+                , coverForm = $('#coverUpload');
+            toggleUploadSpinner();
+            var options = {
+                success: self.updateCover
+                , url: App.resourceUrl
+                , uploadProgress : function(event, position, total, percentComplete) {uploadProgress(percentComplete)}
+                , data: {
+                    method: 'coffee.uploadUserCover',
+                    auth_token: App.models.session.get('authToken')
+                }
+            };
+            coverForm.ajaxSubmit(options);
+            return false;
         },
 
         isPicture: function (s) {
@@ -1928,6 +2210,7 @@
         },
 
         updateAvatar: function (response) {
+            response = JSON.parse(stripslashes(response));
             var self = this;
             if (response.status != -1) {
                 self.model.set('icon_url', response.result);
@@ -1937,6 +2220,7 @@
         },
 
         updateCover: function (response) {
+            response = JSON.parse(stripslashes(response));
             var self = this;
             if (response.status != -1) {
                 self.model.set('cover_url', response.result);
@@ -1989,8 +2273,8 @@
             /*this.collection = new FeedItemList();
 			this.collection.bind('add', this.addItem);
             console.log(this.collection);*/
-            this.tags = this.prepareTags(App.getSearchCriteria('tags'));
-            this.users = this.prepareUsers(App.getSearchCriteria('users'));
+            this.tags = App.prepareTags(App.getSearchCriteria('tags'));
+            this.users = App.prepareUsers(App.getSearchCriteria('users'));
             //console.log(this.tags,this.users);
             this.render();
         },
@@ -2112,32 +2396,7 @@
             App.models.session.set('searchCriteria',criteria);
             this.doTvAppConfig(e);
             loadPost(true);
-        },
-
-        prepareTags: function (tagsToFormat) {
-            var tags = new Array();
-            _.each(tagsToFormat, function (item, key) {
-                tags.push({name:'#' + item
-                            , css: 'tag'
-                            , del:true});
-            });
-            return tags;
-        },
-
-        prepareUsers: function (usersToFormat) {
-            var users = new Array();
-            _.each(usersToFormat, function (item, key) {
-                user = new UserItem();
-                user.getUserById(item);
-                users.push({id:item
-                            , name:user.attributes.name
-                            , css:'label-info user'
-                            , del:true});
-            });
-            return users;
         }
-
-
     });
 
     /* !View: adminView */
@@ -2149,6 +2408,7 @@
             this.offset = 0;
             this.limit = 0;
             this.username = '';
+            this.tags = App.prepareTags(App.models.session.get('corporateHashtags'));
         },
 
         events: {
@@ -2156,7 +2416,9 @@
             , 'click #siteSettingsUpdate' : 'siteSettingsUpdate'
             , 'click #manageUser .nav li' : 'manageUserNav'
             , 'click #userSettings' : 'userSettings'
+            , 'click #saveCorporateHashtags' : 'saveCorporateHashTags'
             , 'keyup #manageUser #username' : 'manageUserNav'
+            , 'click span.del' : 'removeTag'
         },
 
         render: function () {
@@ -2176,7 +2438,7 @@
                 e.preventDefault();
                 $(this).tab('show');
             });
-
+            App.initTypeAhead('#corporateHashtags', 'coffee.getTagList', this.addTags);
             return this;
         },
 
@@ -2271,8 +2533,61 @@
         },
 
         userSettings: function () {
-            alert('pouet');
             Backbone.history.navigate('userSettings', true);
+        },
+
+        addTags: function (item) {
+            data = {name:item
+                    , id:item
+                    , css:'label-info tag'
+                    , del:true}
+                , self = this;
+            elm = ich.tagTemplate(data);
+            self.$el.find('#hashtagsSelected').append(elm);
+        },
+
+        saveCorporateHashTags: function (e) {
+            self = this
+                , tags = [];
+            _.each(self.$el.find('span.label.tag'), function (item, key) {
+                tags[key] = $(item).attr('data-name').replace('#','');
+            });
+            $.ajax({
+                type: 'POST',
+                url: App.resourceUrl,
+                dataType: 'json',
+                data: {
+                    method: 'coffee.setCorporateHashtags'
+                    , auth_token: App.models.session.get('authToken')
+                    , tags : tags
+                },
+                success: function (response) {
+                    if (response.status == '-1') {
+                        self.$el.find('#updateResult')
+                            .html(response.message)
+                            .show();
+                    } else if (response.status == '0') {
+                          self.$el.find('#updateResult')
+                            .html('Save success')
+                            .show();
+                    }
+                }
+            });
+            return false;
+        },
+
+        refreshCorporateHashtags: function (items) {
+            var self = this;
+            _.each(self.$el.find('span.label.tag'), function (item) {$(item).remove();});
+            _.each(items, function (name) {
+                self.addTags('#' + name);
+            });
+        },
+
+        removeTag: function (e) {
+            elm = $(e.currentTarget);
+            id = elm.attr('id');
+            elm.parent().remove();
         }
 
     });
@@ -2384,7 +2699,6 @@
             self.$el.prependTo('#container');
             $('#microblogging').show();
             element.find('textarea.update-text').focus();
-
         },
 
         events: {
@@ -2456,6 +2770,7 @@
                         } catch (e) {
                             alert(e);
                         }
+                        App.models.session.set('language', $('#inputLanguage').val());
                         setTimeout("window.location.reload(true)",1000);
                     } else {
                         $('#settingUpdateResult')
@@ -2630,15 +2945,15 @@
             Backbone.history.navigate('feed', true);
         }
 
-        if(isMobile.any()){
+        if (isMobile.any()){
             $(document.body).addClass('mobile');
         }
 
-        $(window).scroll(function() {
-            if($(window).scrollTop() == $(document).height() - $(window).height()
+        $(window).scroll( function() {
+            if ($(window).scrollTop() == $(document).height() - $(window).height()
                 && Backbone.history.fragment === 'feed') {
                 App.views.microbloggingView.offset = App.views.microbloggingView.offset + 10;
-                App.views.microbloggingView.feedItemsView.collection.loadFeed(App.views.microbloggingView.offset);
+                App.views.microbloggingView.feedItemsView.collection.loadFeed(App.views.microbloggingView.offset,0,0);
             }
         });
     });

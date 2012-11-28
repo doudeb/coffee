@@ -106,12 +106,12 @@
                 </div>
                 <div id="search" class="content-module">
                     <div class="input-append">
-                        <input class="span4" id="searchInput" name="searchInput" type="text" placeholder="{{#translate}}search{{/translate}}" value="{{#tags}}{{.}}{{/tags}}" />
+                        <input class="span4" id="searchInput" name="searchInput" type="text" placeholder="{{#translate}}coffee:feed:search{{/translate}}" value="{{#tags}}{{.}}{{/tags}}" />
                         <div class="btn-group">
-                            <button class="btn dropdown-toggle" data-toggle="dropdown">HashTags <span class="caret"></span></button>
+                            <button class="btn dropdown-toggle" data-toggle="dropdown"> <span class="caret"></span></button>
                             <ul class="dropdown-menu">
-                                <li class="header-item" id="corporateHashtags">Corporate Tags</li>
-                                <li class="header-item" id="mostUsedHashTags">Most Used</li>
+                                <li class="header-item" id="corporateHashtags">{{#translate}}coffee:feed:corporatetags{{/translate}}</li>
+                                <li class="header-item" id="mostUsedHashTags">{{#translate}}coffee:feed:corporatetags{{/translate}}</li>
                             </ul>
                         </div>
                     </div>
@@ -185,7 +185,7 @@
                     <div class="secondary-content">
                         <div class="interactions">
                             {{#likes}}
-                            {{#isOne}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{/likes.users}}{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isOne}}
+                            {{#isOne}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{/likes.users}}{{#translate}}coffee:feeditem:likethis{{/translate}}</p>{{/isOne}}
                             {{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{#isFirst}} {{#translate}}coffee:feeditem:and{{/translate}} &nbsp; {{/isFirst}}{{/likes.users}}&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isTwo}}
                             {{#isMore}}<p class="likes">
                                 {{#likes.users}}
@@ -231,7 +231,7 @@
                     {{#displayWelcome}}<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:welcome{{/translate}}" data-action="welcome" data-placement="right"><i class="icon-flag icon-white"></i></a></li>{{/displayWelcome}}
                     <li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:feedlist{{/translate}}" data-action="feed" data-placement="right"><i class="icon-home icon-white"></i></a></li>
                     <li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:profile{{/translate}}" data-action="profile" data-placement="right"><i class="icon-user icon-white"></i></a></li>
-                    <li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:tvapp{{/translate}}" data-action="tv" data-placement="right"><i class="icon-tv icon-white"></i></a></li>
+                    <li id="tvApp"><a href="" rel="tooltip" title="{{#translate}}coffee:menu:tvapp{{/translate}}" data-action="tv" data-placement="right"><i class="icon-tv icon-white"></i></a></li>
                     {{#isAdmin}}<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:admin{{/translate}}" data-action="admin" data-placement="right"><i class="icon-wrench icon-white"></i></a></li>{{/isAdmin}}
                     {{^isAdmin}}<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:settings{{/translate}}" data-action="settings" data-placement="right"><i class="icon-wrench icon-white"></i></a></li>{{/isAdmin}}
                     <li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:logout{{/translate}}" data-action="logout" data-placement="right"><i class="icon-off icon-white"></i></a></li>
@@ -689,7 +689,7 @@
                     <div class="secondary-content line">
                         <div class="interactions">
                             {{#likes}}
-                            {{#isOne}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{/likes.users}}{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isOne}}
+                            {{#isOne}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{/likes.users}}{{#translate}}coffee:feeditem:likethis{{/translate}}</p>{{/isOne}}
                             {{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{#isFirst}} {{#translate}}coffee:feeditem:and{{/translate}} &nbsp; {{/isFirst}}{{/likes.users}}&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isTwo}}
                             {{#isMore}}<p class="likes">
                                 {{#likes.users}}
@@ -788,7 +788,7 @@
                </div>
                <div class="form-item">
                    <label for="makeAdmin">Send email</label>
-                   <input type="checkbox" class="input-large" id="sendEmail" name="sendEmail" checked/>
+                   <input type="checkbox" class="input-large" id="sendEmail" name="sendEmail" />
                </div>
                <div class="form-item">
                    <label for="language">Language</label>
@@ -903,7 +903,7 @@
                 </div>
             </script>
             <script type="text/html" id="siteHashtagsTemplate">
-                <div class="alert" id="updateResult" />
+                <div class="alert" id="updateResult">{{#translate}}coffee:admin:corporatehashtagshelp{{/translate}}</div>
                 <legend>Corporate Hashtags</legend>
                 <div class="input-prepend hashtags ">
                     <span class="add-on">#</span><input class="span2" id="corporateHashtags" size="16" type="text" placeholder="Hashtag">

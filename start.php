@@ -37,3 +37,5 @@ function coffee_init() {
 }
 
 elgg_register_event_handler('init', 'system', 'coffee_init');
+//want your users to stay connected after mysql restart :
+// Alter Table elgg_users_apisessions engine= MYISAM;

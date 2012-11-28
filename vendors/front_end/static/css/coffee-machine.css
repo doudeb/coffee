@@ -215,7 +215,8 @@ a:hover{color:#005580;text-decoration:none;}
 .mobile .feed-item .primary-content .update .time i { height: 15px; }
 .mobile .content-module .secondary-content { padding: 0 15px; }
 .mobile #profile .secondary-content .other .introduction { height: auto; float: none; border: 0 none; }
-.mobile #profile .secondary-content .other .languages, #profile .secondary-content .other .info { margin-left: 280px;word-wrap: break-word;}
+.mobile #profile .secondary-content .other .languages, #profile .secondary-content .other .info { margin-left: 0px;word-wrap: break-word;}
+.mobile #profile .secondary-content .other .languages, #profile .secondary-content .other .info ul { margin-left: 0px}
 .mobile #profile .logout { margin: 10px 0 0 10px; }
 .mobile #profile .primary-content .info .name, .mobile #profile .primary-content .info .headline, .mobile #profile .primary-content .info .department, .mobile #profile .primary-content .info .location { display: inline; }
 .mobile #profile .primary-content .info { float: none; }
@@ -228,7 +229,7 @@ a:hover{color:#005580;text-decoration:none;}
 .icon-profile-mobile { background-position: 0px 0px;width: 35px; height: 35px; display: block; background-image:url("../img/profile.png");}
 .icon-post-mobile { background-position: 0px 0px;width: 35px; height: 35px; display: block; background-image:url("../img/post.png");}
 .mobile .watermark h3 {line-height: 10px}
-.mobile .update-action-comment-mobile {float: left;}
+.mobile .update-action-comment-mobile {float: left}
 .mobile .update-action-like {float: none;}
 body.mobile {padding-left: 0px;padding-right: 0px;overflow:hidden;width:100%;}
 

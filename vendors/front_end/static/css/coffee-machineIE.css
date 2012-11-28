@@ -28,3 +28,5 @@ body {
 .update-actions .update-action a:hover i,  #microblogging .update-actions .broadcastMessage:hover i, #microblogging .update-actions .broadcastMessage.on i{opacity:1;filter:none}
 
 .feed-item .attachment a.thumbnail img {width:100px}
+
+#tvApp {display: none}

@@ -90,12 +90,16 @@ function animationTxt(id) {
 // Animation du post
 
 function animerPost(id) {
-    //if (typeof objJson[id] == 'undefined') arreterRoue ();
+    if (!_.isArray(objJson)) arreterRoue ();
     console.log('id : ' + id);
 	var post = objJson[id];
+    if (!_.isObject(post)) setTimeout("arreterRoue()",seconds);
+
 	$('#logo').animate({ opacity:1},1000, function() {
 		$('#icon_url').attr('src',post.user.icon_url);
-		$('#fond_icon_url').attr('src',post.user.cover_url);
+        if (!_.isNull(post.user.cover_url)) {
+            $('#fond_icon_url').attr('src',post.user.cover_url);
+        }
 		$('#img, #usernameBlanc').addClass("decalageTop");
 		$('#logo').animate({ opacity:1},1100, function() {
 			var seconds = 6500;
@@ -106,7 +110,7 @@ function animerPost(id) {
 			else
 				$('#text').html(post.content.text.replace(/<br \/>/g," ")).show('blind');
 			$('#fond_icon_url').fadeIn();
-			$('#friendly_time').html(post.content.friendly_time).show('blind');
+			//$('#friendly_time').html(post.content.friendly_time).show('blind');
 			if(post.attachment != false) {
 				$('#marges').removeClass('link image video');
 				if(post.attachment[0].type == "image") {

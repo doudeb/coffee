@@ -1,8 +1,10 @@
 <?php
-$sitename = 'sojeans';
+$sitename = 'dmcompanies';
 $_SERVER['REQUEST_URI'] = '/';
-$_SERVER['SERVER_PORT'] = '443';
+//$_SERVER['SERVER_PORT'] = '443';
+$_SERVER['SERVER_PORT'] = '80';
 $_SERVER['HTTP_HOST'] = $sitename . 'api.coffeepoke.com';
+//$_SERVER['HTTP_HOST'] = 'http://api.coffee.enlightn.doudeb/';
 
 include_once(dirname(dirname(dirname(dirname(__FILE__)))) . "/engine/start.php");
 
@@ -45,17 +47,47 @@ foreach($users as $key=>$user) {
         if (strlen($phone) > 0) $user_ent->phone = $phone;
         if (strlen($cellphone) > 0) $user_ent->cellphone = $cellphone;
         $user_ent->save();
+        $message = "Hi,\n<br />
+\n<br /> 
+\n<br />Kavya Ramulu has invited you to join Coffeepoke.
+\n<br /> 
+\n<br />Please click on the link below:
+\n<br />http://dmcompanies.coffeepoke.com
+\n<br /> 
+\n<br />and use the following details:
+\n<br />loggin: $email
+\n<br />pwd: $password
+\n<br /> 
+\n<br />More information about Coffeepoke
+\n<br /> 
+\n<br />What is CoffeePoke ?
+\n<br /> 
+\n<br />Coffee Poke is a new type of Enterprise Social Network. CoffeePoke is the 1st Cross-Platform application (Web +Mobile App + TV) dedicated to strengthening the bonds between employees in the workplace.
+\n<br /> 
+\n<br />Why the concept of Coffee break is at the centre of our reflection?
+\n<br /> 
+\n<br />Beyond occasional (and often expensive) initiatives as teambuilding, ski trips or weekend in the countryside... we have noticed on a day-to-day basis, informal exchanges during a coffee break are, so far, the best way to create those new bonds.
+\n<br />Moreover too often, these exchanges are ephemerals, isolated (geographical borders, organisational silos) or lost (no archives)
+\n<br /> 
+\n<br />Therefore we have created a new concept, the coffee break 2.0 for a new productive and useful way to have a break 2.0.
+\n<br />  
+\n<br />Main characteristics:
+\n<br /> 
+\n<br />Refine, highly intuitive, original and friendly (this last characteristic aims to recreate the atmosphere at the coffee machine).
+\n<br /> 
+\n<br />Our strength:
+\n<br /> 
+\n<br />A TV application allowing extending the coffee break experience by broadcasting the last 10 messages posted on the platform.
+\n<br />In different locations in the workplace (open space, cafeteria, vending machines…) Coffee Poke TV application creates more transparency, more conviviality and more team spirit within the organisation.
+\n<br /> 
+\n<br />The small plus:
+\n<br /> 
+\n<br />On a profile page, “coffepoke” functionality allows you to invite a colleague for a real coffee in a click (let’s not forget the goal is to create more bonds between people of the same company)
+\n<br /> 
+\n<br />Give a go! Have a Coffeebreak 2.0 !!!
+\n<br /> 
+\n<br />Best regards";
         $email = 'edouard@coffeepoke.com';
-        $message = "
-Hello $displayname,\n<br />
-You have been invited to join the $sitename community on CoffeePoke.\n<br />
-\n<br />
-To access your community, please click on the following link:\n\n<br /><br />
-http://$sitename.coffeepoke.com/\n<br />
-Login: $email\n<br />
-Password: $password\n<br />
-    \n<br />
-Enjoy ;-)";
         mail($email, $title, $message, $headers);
     }
 }

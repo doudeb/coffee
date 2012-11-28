@@ -30,8 +30,13 @@ $spain = array(
         , 'coffee:feed:share' => 'Comparte algo con tus colegas...'
         , 'coffee:feed:upload' => 'Subir algo...'
         , 'coffee:feed:send' => 'Enviar'
+        , 'coffee:feed:cancel' => 'Annular'
+        , 'coffee:feed:search' => 'Buscar'
+        , 'coffee:feed:corporatetags' => 'Corporate Tags'
+        , 'coffee:feed:mostused' => 'Most used'
         , 'coffee:feeditem:showalltext' => 'Mostrar todo el texto'
         , 'coffee:feeditem:hidetext' => 'Esconder texto'
+        , 'coffee:feeditem:likethis' => 'le gusta esto'
         , 'coffee:feeditem:likesthis' => 'les gusta esto'
         , 'coffee:feeditem:and' => 'y'
         , 'coffee:feeditem:others' => 'otros'
@@ -52,6 +57,10 @@ $spain = array(
         , 'coffee:menu:logout' => 'Salir'
         , 'coffee:menu:admin' => 'Administración'
         , 'coffee:menu:settings' => 'Ajustes'
+        /*admin*/
+        , 'coffee:admin:corporatehashtagshelp' => 'Les Corporate Hashtags permettent de suggérer à vos utilisateurs les recherches par #hashtags que vous considérez comme les plus utiles. Par exemple, #veille, #RH, #marketing…
+
+Ils retrouveront cette liste sur la home en cliquant sur "Suggestions" dans la barre de recherche.'
         /*welcome*/
         , 'coffee:welcome:headline' => '<h3>¡Bienvenido!</h3>
                         <p>En el mundo profesional, las buenas ideas llegan muchas veces por casualidad, durante discusiones informales, en un pasillo o alrededor de la maquina de café.</p>

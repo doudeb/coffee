@@ -25,6 +25,7 @@ class ElggCoffee {
             $new_post->subtype = $type;
             $new_post->access_id = COFFEE_DEFAULT_ACCESS_ID;
             $new_post->title = $message;
+            $new_post->description = $message;
             $new_post->tags  = $post['tags'];
             if (!$new_post->save()) {
                 return false;
@@ -45,6 +46,7 @@ class ElggCoffee {
             $comment_id = $post->annotate(COFFEE_COMMENT_TYPE, $message['message'], COFFEE_DEFAULT_ACCESS_ID);
             if ($comment_id) {
                 $post->time_updated = time();
+                $post->description = $post->description  .  ' ' . $message['message'];
                 $post->save();
                 ElggCoffee::_add_mentioned($post->guid,$mentioned_user,COFFEE_COMMENT_MENTIONED_RELATIONSHIP);
                 //add_to_river('coffee/river/new_comment', 'create', elgg_get_logged_in_user_guid(), $post->guid,$comment_id);
@@ -107,10 +109,11 @@ class ElggCoffee {
         if (is_array($tags) && count($tags) > 0) {
             $tags_string = "'" . implode("','", $tags) . "'";
             $tags_meta_id = get_metastring_id('tags')?get_metastring_id('tags'):0;
-            $join[] = "Inner Join {$db_prefix}metadata tag_used On tag_used.name_id = $tags_meta_id And tag_used.entity_guid = e.guid
-                        Inner Join {$db_prefix}metastrings tag_name On tag_used.value_id = tag_name.id";
-            $where[] = "tag_name.string In ($tags_string)";
-
+            $join[] = "Left Join {$db_prefix}metadata tag_used On tag_used.name_id = $tags_meta_id And tag_used.entity_guid = e.guid
+                        Left Join {$db_prefix}metastrings tag_name On tag_used.value_id = tag_name.id
+                        Left Join {$db_prefix}objects_entity obj On e.guid = obj.guid";
+            $where[] = "(tag_name.string In ($tags_string)
+                            Or MATCH (obj.title,obj.description) AGAINST ('$tags[0]'))";
         }
         $options  = array('types'=>'object'
                             , 'subtypes'=> $type
@@ -558,7 +561,7 @@ class ElggCoffee {
         if ($user_ent instanceof ElggUser && strlen($value)>0) {
             $user_ent->$name = $value;
             if ($user_ent->save()) {
-                return true;
+                return $value;
             }
         }
         return false;
@@ -754,7 +757,12 @@ class ElggCoffee {
         $site_guid = $GLOBALS['CONFIG']->site_guid;
         $site_ent = get_entity($site_guid);
         if ($site_ent instanceof ElggSite) {
-            $return = $site_ent->corporate_tags;
+            $corporateTags = $site_ent->corporate_tags;
+            if (is_array($corporateTags)) {
+                $return = $corporateTags;
+            } else {
+                $return = array($corporateTags);
+            }
         }
         return $return;
     }

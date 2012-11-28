@@ -25,7 +25,7 @@
     },
 
     stripslashes = function (str) {
-        if (_.isUndefined(str) || _.isNull(str)) return str;
+        str=str+'';
         str=str.replace(/\\'/g,'\'');
         str=str.replace(/\\"/g,'"');
         str=str.replace(/\\0/g,'\0');
@@ -140,7 +140,8 @@
         initMention : function (elm) {
             $(elm).mentionsInput({
                 elastic : true
-                , triggerChar:['@','#']
+                //, triggerChar:['@','#']
+                , triggerChar:['#']
                 , onDataRequest:function (mode, query, triggerChar,callback) {
                     $.ajax({
                         type: 'GET'
@@ -1579,7 +1580,7 @@
         },
 
         updateAttachement: function (response) {
-            response = JSON.parse(stripslashes(response));
+            response = JSON.parse(response);
             var self = this;
             if (response.status != -1) {
                 result = response.result;
@@ -1730,18 +1731,18 @@
             } else {
                 var element = ich.menuTemplate(data);
             }
-            //      var element = ich.mobileMenuTemplate(data);
             this.setElement(element);
 
             this.$el.prependTo('#container');
             var navigationItems = $('#navigation').find('li');
-            $.each(navigationItems, function (key,item) {
+            _.each(navigationItems, function (item) {
                 var current = $(item).find('a').attr('data-action');
                 if (current == Backbone.history.fragment) {
                     $(item).addClass('active');
                 } else {
                     $(item).removeClass('active');
                 }
+
             });
             if (typeof App.updaterId != 'undefined') {
                 this.checkForSiteUpdate();
@@ -1810,9 +1811,6 @@
                 success: function (response) {
                     if (response.status != -1) {
                         self.doSiteUpdate(response.result);
-                    } else if (response.message == 'pam_auth_userpass:failed') {
-                        App.models.session.end();
-                        Backbone.history.navigate('login', true);
                     }
                     self.checkForSiteUpdate ();
                 },
@@ -1932,10 +1930,7 @@
             extraInfo.hobbies = (extraInfo.hasHobbies) ? JSON.parse(stripslashes(object.hobbies)) : [];
             extraInfo.languages = (extraInfo.hasLanguages) ? JSON.parse(stripslashes(object.languages)): [];
             extraInfo.socialmedia = (extraInfo.hasSocialmedia) ? JSON.parse(stripslashes(object.socialmedia)) : [];
-            extraInfo.introduction = (extraInfo.introduction) ? stripslashes(object.introduction) : [];
-            if (extraInfo.introduction.length > 190) {
-                extraInfo.isIntroductionLong = true;
-            }
+            extraInfo.introduction = (extraInfo.introduction) ? stripslashes(object.introduction) : false;
 
             _.each(extraInfo.socialmedia, function(item){
                 var type = item.service;
@@ -2047,7 +2042,7 @@
             , element = $(e.currentTarget)
             , name = element.attr('data-name')
             , key = element.attr('data-key')
-            , prevValue = typeof eval('self.model.attributes.' + name) == 'undefined' ? '':element.html().replace('<br>', '');
+            , prevValue = element.text();
             var editingTextarea = $('<textarea class="editing editing-'+name+'" data-name="'+name+'" data-key="'+key+'">' + prevValue + '</textarea>')
             .bind('blur', function(){
                 editingTextarea.replaceWith(element);
@@ -2107,7 +2102,7 @@
                 },
                 success: function (response) {
                     if (response.status != -1) {
-                        self.model.set(name, processedValue);
+                        self.model.set(name, nl2br(response.result));
                         self.model.set('has' + capitaliseFirstLetter(name), true);
                         self.render();
                     }
@@ -2210,7 +2205,7 @@
         },
 
         updateAvatar: function (response) {
-            response = JSON.parse(stripslashes(response));
+            response = JSON.parse(response);
             var self = this;
             if (response.status != -1) {
                 self.model.set('icon_url', response.result);
@@ -2220,7 +2215,7 @@
         },
 
         updateCover: function (response) {
-            response = JSON.parse(stripslashes(response));
+            response = JSON.parse(response);
             var self = this;
             if (response.status != -1) {
                 self.model.set('cover_url', response.result);

@@ -32,8 +32,12 @@ $english = array(
         , 'coffee:feed:upload' => 'Upload something...'
         , 'coffee:feed:send' => 'Send'
         , 'coffee:feed:cancel' => 'Cancel'
+        , 'coffee:feed:search' => 'Search'
+        , 'coffee:feed:corporatetags' => 'Corporate Tags'
+        , 'coffee:feed:mostused' => 'Most used'
         , 'coffee:feeditem:showalltext' => 'Show all text'
         , 'coffee:feeditem:hidetext' => 'Hide text'
+        , 'coffee:feeditem:likethis' => 'like this'
         , 'coffee:feeditem:likesthis' => 'likes this'
         , 'coffee:feeditem:and' => 'and'
         , 'coffee:feeditem:others' => 'others'
@@ -53,8 +57,12 @@ $english = array(
         , 'coffee:menu:logout' => 'Log out'
         , 'coffee:menu:admin' => 'Administration'
         , 'coffee:menu:settings' => 'Settings'
+        /*admin*/
+        , 'coffee:admin:corporatehashtagshelp' => 'Les Corporate Hashtags permettent de suggérer à vos utilisateurs les recherches par #hashtags que vous considérez comme les plus utiles. Par exemple, #veille, #RH, #marketing…
+
+Ils retrouveront cette liste sur la home en cliquant sur "Suggestions" dans la barre de recherche.'
         /*welcome*/
-        , 'coffee:welcome:headline' => '<h3>Welcome on CoffeePoke!</h3>
+        , 'coffee:welcome:headline' => '<h3>Welcome to CoffeePoke!</h3>
                         <p>In a professional environment, good ideas often rise up during informal discussions in a corridor or at the coffee machine.</p>
                         <p>That\'s the reason why we have decided to develop Coffee Poke application: an innovative and friendly enterprise social network which allows informal exchanges across your whole company.</p>
                         <p>Wherever you are:</p>

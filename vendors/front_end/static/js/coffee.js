@@ -21,6 +21,7 @@
     },
 
     isOLderIE = function () {
+        alert('allo');
         return navigator.userAgent.match(/MSIE 8./i) ? true : false;
     },
 
@@ -170,7 +171,7 @@
                 minLength: 2
                 , source: function (query, process) {
                     var results = []
-                        users = [];
+                        , users = [];
                     return $.getJSON(App.resourceUrl, {method:method,auth_token: App.models.session.get('authToken'), query: query}, function (response) {
                          if (response.status != '-1') {
                              _.each(response.result, function(item) {
@@ -225,7 +226,8 @@
         },
 
         setCorporateHashtags: function () {
-            var self = this;
+            var self = this
+                , corporateHashtags = [];
 
             $.ajax({
                 type: 'GET'
@@ -236,13 +238,17 @@
                     , auth_token: App.models.session.get('authToken')
                 },
                 success: function (response) {
+
                     if (response.status != -1) {
-                        App.models.session.set('corporateHashtags', response.result);
+                        _.each(response.result, function(item) {
+                            corporateHashtags[item.id] = item.name;
+                        });
+                        App.models.session.set('corporateHashtags', corporateHashtags);
                         if(_.isObject(App.views.adminView)) {
-                            App.views.adminView.refreshCorporateHashtags(response.result)
+                            App.views.adminView.refreshCorporateHashtags(corporateHashtags)
                         }
                         if(_.isObject(App.views.microbloggingView)) {
-                            App.views.microbloggingView.refreshHashtags(response.result,'#corporateHashtags', 'corporate')
+                            App.views.microbloggingView.refreshHashtags(corporateHashtags,'#corporateHashtags', 'corporate')
                         }
 
                     } else if (response.message == 'pam_auth_userpass:failed') {
@@ -1386,7 +1392,7 @@
         events: {
             'click #postUpdate': 'postUpdate'
             , 'keyup .update-text': 'listenForLink'
-            , 'keyup #searchInput': 'validateSearch'
+            , 'keypress #searchInput': 'validateSearch'
             , 'click .attachment .remove': 'removeAttachment'
             , 'click .add-media': 'uploadMedia'
             , 'click .broadcastMessage': 'toggleBroadcastMessage'
@@ -1617,6 +1623,9 @@
         getMentions: function () {
             var mentionedUsers = new Array();
             try {
+                if (isOlderIE()) {
+                    $('#microblogging .update-text').css('height','100px');
+                }
                 $('#microblogging .update-text')
                     .mentionsInput('getMentions', function(data) {
                         _.each(data, function(user, key){
@@ -2042,7 +2051,7 @@
             , element = $(e.currentTarget)
             , name = element.attr('data-name')
             , key = element.attr('data-key')
-            , prevValue = element.text();
+            , prevValue = $.trim(element.text());
             var editingTextarea = $('<textarea class="editing editing-'+name+'" data-name="'+name+'" data-key="'+key+'">' + prevValue + '</textarea>')
             .bind('blur', function(){
                 editingTextarea.replaceWith(element);
@@ -2102,7 +2111,13 @@
                 },
                 success: function (response) {
                     if (response.status != -1) {
-                        self.model.set(name, nl2br(response.result));
+                        if (name === 'introduction') {
+                            self.model.set(name, nl2br(response.result));
+                        } else if (name === 'hobbies') {
+                            self.model.set(name, JSON.parse(response.result));
+                        } else {
+                            self.model.set(name, response.result);
+                        }
                         self.model.set('has' + capitaliseFirstLetter(name), true);
                         self.render();
                     }
@@ -2532,7 +2547,7 @@
         },
 
         addTags: function (item) {
-            data = {name:item
+            var data = {name:item
                     , id:item
                     , css:'label-info tag'
                     , del:true}
@@ -2574,8 +2589,8 @@
         refreshCorporateHashtags: function (items) {
             var self = this;
             _.each(self.$el.find('span.label.tag'), function (item) {$(item).remove();});
-            _.each(items, function (name) {
-                self.addTags('#' + name);
+            _.each(items, function (item) {
+                self.addTags('#' + item);
             });
         },
 

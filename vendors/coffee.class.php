@@ -759,9 +759,15 @@ class ElggCoffee {
         if ($site_ent instanceof ElggSite) {
             $corporateTags = $site_ent->corporate_tags;
             if (is_array($corporateTags)) {
-                $return = $corporateTags;
+                foreach ($corporateTags as $key=>$tag) {
+                    $return[] = array('id' =>$key
+                                    , 'type' => 'tag'
+                                    , 'name' => $tag);
+                }
             } else {
-                $return = array($corporateTags);
+                $return[] = array('id' =>0
+                                    , 'type' => 'tag'
+                                    , 'name' => $corporateTags);
             }
         }
         return $return;

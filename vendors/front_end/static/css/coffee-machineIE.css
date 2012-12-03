@@ -26,7 +26,7 @@ body {
 
 .feed-item .primary-content .update .time i, .update-actions .update-action a i, #microblogging .update-actions .broadcastMessage i, #microblogging .attachment .remove i{filter:none;}
 .update-actions .update-action a:hover i,  #microblogging .update-actions .broadcastMessage:hover i, #microblogging .update-actions .broadcastMessage.on i{opacity:1;filter:none}
-
-.feed-item .attachment a.thumbnail img {width:100px}
+#microblogging .update-actions .broadcastMessage.on i{border: 2px solid #000000}
+.feed-item .attachment a.thumbnail img { max-height: 200px;}
 
 #tvApp {display: none}

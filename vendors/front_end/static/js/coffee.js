@@ -21,7 +21,6 @@
     },
 
     isOLderIE = function () {
-        alert('allo');
         return navigator.userAgent.match(/MSIE 8./i) ? true : false;
     },
 

@@ -21,7 +21,7 @@ a:hover{color:#005580;text-decoration:none;}
 .feed-item .primary-content .update .attachment{margin-top:10px;background-color:#f0f0f0;padding:5px;*zoom:1;position:relative;}.feed-item .primary-content .update .attachment:before,.feed-item .primary-content .update .attachment:after{display:table;content:"";}
 .feed-item .primary-content .update .attachment:after{clear:both;}
 .feed-item .primary-content .update .attachment .thumbnail{float:left;padding:3px;background-color:#ffffff;}
-.feed-item .primary-content .update .attachment .info{float:left;margin-left:5px;font-size:12px;line-height:17px;width: 315px;}.feed-item .primary-content .update .attachment .info .title{display:block;font-weight:bold;margin-bottom:5px;word-wrap: break-word;}
+.feed-item .primary-content .update .attachment .info {margin-left:110px;font-size:12px;line-height:17px;}.feed-item .primary-content .update .attachment .info .title{display:block;font-weight:bold;margin-bottom:5px;word-wrap: break-word;}
 .feed-item .primary-content .update .attachment .info .description{color:#555555;}
 .feed-item .secondary-content .interactions{margin-left:50px;font-size:12px;}.feed-item .secondary-content .interactions .likes{margin:0;padding:0 0 5px 0;border-bottom:1px solid #d8d8d8;}
 .feed-item .secondary-content .interactions .comments{margin:0;padding:0;list-style-type:none;border-top:1px solid #ffffff;}.feed-item .secondary-content .interactions .comments .comment{padding:10px 0;*zoom:1;}.feed-item .secondary-content .interactions .comments .comment:before,.feed-item .secondary-content .interactions .comments .comment:after{display:table;content:"";}
@@ -177,7 +177,6 @@ a:hover{color:#005580;text-decoration:none;}
 /*  .mobile #container { -webkit-overflow-scrolling : touch; }*/
 .mobile { background-image: none !important; background-color: #494949 !important; }
 .mobile #login, .mobile #profile, .mobile #profile .primary-content .info, .mobile #profile .secondary-content .other .introduction, .mobile #welcome { width: auto; }
-.mobile .feed-item .primary-content .update .attachment .info {width:150px}
 .mobile .feed-item .primary-content .name{font-weight:bold;margin-left: 10px}
 .mobile #watermark {display: none}
 .mobile .feed-item .secondary-content .interactions .comments .comment .comment-content{width: auto}
@@ -231,7 +230,7 @@ a:hover{color:#005580;text-decoration:none;}
 .mobile .watermark h3 {line-height: 10px}
 .mobile .update-action-comment-mobile {float: left}
 .mobile .update-action-like {float: none;}
-body.mobile {padding-left: 0px;padding-right: 0px;overflow:hidden;width:100%;}
+body.mobile {padding-left: 0px;padding-right: 0px;overflow-x:hidden;width:100%;}
 
 .mentions-input-box {
   position: relative;

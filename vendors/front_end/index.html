@@ -2,10 +2,9 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport" id="viewport">
+        <meta name="viewport" content="width=device-width; initial-scale = 1.0; maximum-scale=1.0; user-scalable=no" />
         <meta content="yes" name="apple-mobile-web-app-capable" />
         <meta content="black" name="apple-mobile-web-app-status-bar-style" />
-        <meta name="viewport" content="width=320,user-scalable=false" />
 
         <title>CoffeePoke</title>
         <link href="static/css/bootstrap.min.css" rel="stylesheet" />
@@ -28,6 +27,7 @@
         <script src="static/js/vendor/jquery.elastic.js"></script>
         <script src="static/js/vendor/jquery.mentionsInput.js"></script>
         <script src="static/js/vendor/bootstrap.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
         <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
           <link href="static/css/coffee-machineIE.css" rel="stylesheet" />
@@ -472,6 +472,7 @@
                     </div>
                     <div class="form-actions">
                         <button class="btn btn-primary" id="doLogin">Login</button>
+                        <img class="loader" src="static/img/loader.gif" width="16" height="16" />
                     </div>
                 </form>
             </div>
@@ -649,6 +650,7 @@
                         <div class="update-actions">
                             <button id="cancelPostUpdate" class="btn btn-danger small">{{#translate}}coffee:feed:cancel{{/translate}}</button>
                             <button id="postUpdate" class="btn btn-primary">{{#translate}}coffee:feed:send{{/translate}}</button>
+                            <button id="takeAPicture" class="btn btn small"><i class="icon-camera"></i></button>
                             <img class="loader" src="static/img/loader.gif" width="16" height="16" />
                             {{#isAdmin}}
                             <span class="broadcastMessage">
@@ -920,6 +922,21 @@
 
             <script src="static/js/coffee.js"></script>
             <script>
+
+                document.addEventListener('touchstart', function(e){ e.preventDefault(); });
+                var pictureSource;   // picture source
+                var destinationType; // sets the format of returned value
+
+                // Wait for Cordova to connect with the device
+                //
+                document.addEventListener("deviceready",onDeviceReady,false);
+
+                // Cordova is ready to be used!
+                //
+                function onDeviceReady() {
+                    pictureSource=navigator.camera.PictureSourceType;
+                    destinationType=navigator.camera.DestinationType;
+                }
                 $('body').delegate('[rel*=tooltip]', 'mouseenter mouseleave mousedown', function(e) {
                     var element = $(this);
 

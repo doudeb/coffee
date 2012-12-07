@@ -23,17 +23,17 @@ $english = array(
         , 'coffee:profile:addheadline' => 'Add your headline'
         , 'coffee:profile:addlocation' => 'Add your location'
         , 'coffee:profile:button:changeavatar' => 'Change your avatar'
-        , 'coffee:poke:action' => 'Coffee Poke !!'
-        , 'coffee:poke:body' => 'Let\s have a coffee'
-        , 'coffee:poke:subject' => 'Coffee ??'
+        , 'coffee:poke:action' => 'Coffee Poke'
+        , 'coffee:poke:body' => 'Let\'s have a coffee'
+        , 'coffee:poke:subject' => 'Coffee Break ?'
         , 'coffee:profile:incomplete' => '<strong>This is your profile.</strong><br />It is visible to your coworkers so be sure to complete it and keep it up to date!'
         /*feed*/
-        , 'coffee:feed:share' => 'Share something with your colleagues…'
+        , 'coffee:feed:share' => 'Share something with your colleagues...'
         , 'coffee:feed:upload' => 'Upload something...'
         , 'coffee:feed:send' => 'Send'
         , 'coffee:feed:cancel' => 'Cancel'
         , 'coffee:feed:search' => 'Search'
-        , 'coffee:feed:corporatetags' => 'Corporate Tags'
+        , 'coffee:feed:corporatetags' => 'Sponsored Tags'
         , 'coffee:feed:mostused' => 'Most used'
         , 'coffee:feeditem:showalltext' => 'Show all text'
         , 'coffee:feeditem:hidetext' => 'Hide text'
@@ -48,86 +48,75 @@ $english = array(
         , 'coffee:feeditem:action:like' => 'Like'
         , 'coffee:feeditem:action:unlike' => 'Unlike'
         , 'coffee:feeditem:action:removecomment' => 'Remove comment'
-        , 'coffee:feeditem:action:openlinkconfirm' => 'To see the atachment, You will be redirected'
+        , 'coffee:feeditem:action:openlinkconfirm' => 'This will open a new window'
         /*menu*/
-        , 'coffee:menu:welcome' => 'Welcome !!'
-        , 'coffee:menu:feedlist' => 'News Feed'
+        , 'coffee:menu:welcome' => 'Welcome'
+        , 'coffee:menu:feedlist' => 'Feed'
         , 'coffee:menu:profile' => 'Profile'
-        , 'coffee:menu:tvapp' => 'Launch TV App'
+        , 'coffee:menu:tvapp' => 'CoffeeTV'
         , 'coffee:menu:logout' => 'Log out'
         , 'coffee:menu:admin' => 'Administration'
         , 'coffee:menu:settings' => 'Settings'
         /*admin*/
-        , 'coffee:admin:corporatehashtagshelp' => 'Les Corporate Hashtags permettent de suggérer à vos utilisateurs les recherches par #hashtags que vous considérez comme les plus utiles. Par exemple, #veille, #RH, #marketing…
-
-Ils retrouveront cette liste sur la home en cliquant sur "Suggestions" dans la barre de recherche.'
+        , 'coffee:admin:corporatehashtagshelp' => 'As an administrator, you are able to highlight some hashtags (keywords that begin with a # to make them clickable). Users will see this list if they click on the arrow at the right of the search field (on the feed).'
         /*welcome*/
-        , 'coffee:welcome:headline' => '<h3>Welcome to CoffeePoke!</h3>
-                        <p>In a professional environment, good ideas often rise up during informal discussions in a corridor or at the coffee machine.</p>
-                        <p>That\'s the reason why we have decided to develop Coffee Poke application: an innovative and friendly enterprise social network which allows informal exchanges across your whole company.</p>
-                        <p>Wherever you are:</p>
-                        <ul>
-                            <li>Keep yourself up-to-date with your company’s news</li>
-                            <li>Share and comment on information and best practices</li>
-                            <li>And don\'t forget to invite your colleagues for a real coffee thanks to coffee poke</li>
-                        </ul>
-                        '
+        , 'coffee:welcome:headline' => '<h3>Hello,</h3>
+                        <p>Welcome to CoffeePoke. This message will only display for your 3 first log ins, so that you get used with the application.</p>
+                        <p><a href="/static/doc/CoffeePoke_en.pdf">Click here </a> to understand how CoffeePoke will make you even more efficient. (this will open a .pdf file).</p>
+                        <p>Enjoy and have a nice day with CoffeePoke.</p>'
         , 'coffee:welcome:instructions' => '
-                            <h3>Follow those easy steps to get started</h3>
+                            <h3>Taste the 2.0 Coffee Break</h3>
                             <div class="steps">
                                 <!--<span class="stepN">1.</span>-->
                                 <span class="instruction">
-                                    <a href="#profile">Customise your profile:</a>
+                                    <a href="#feed">The private feed of your coworkers</a>
                                     <br />
-                                    Share your hobbies, add your picture and choose a background
-                                    <br />
-                                </span>
-                            </div>
-                            <div class="steps">
-                                <span class="instruction">
-                                    <a href="#feed">Edit a message:</a>
-                                    <br />
-                                    Let people know what you are working on, ask a question, seek advises, share articles, photos and videos
+                                    Share and comment with your colleagues. Use the # symbol before a keywords to make it clickable and find information more easily.
                                     <br />
                                 </span>
                             </div>
                             <div class="steps">
                                 <span class="instruction">
-                                    <a href="#feed">Be pro-active:</a>
+                                    <a href="#profile">Profile</a>
                                     <br />
-                                    Like and comment posts based on your personal or professional experience
+                                    Meet your colleagues and show them the real you. Share your hobbies, choose a background that represent what you like, and of course add your avatar!
                                     <br />
                                 </span>
                             </div>
                             <div class="steps">
                                 <span class="instruction">
-                                    <a href="#feed">Accessibility:</a>
+                                    <a href="#tv">CoffeeTV</a>
                                     <br />
-                                    Coffee poke is accessible from any computer or smartphone at any time. Also, you can enjoy our TV app in your office. A real tool that creates connections within your company. With the TV app, you can follow what is going on on CoffeePoke.
+                                    No time to check CoffeePoke every day? Don\'t worry, the TV app is here for that. Have a look at the TV while you\'re at the watercooler, having a break. The TVs will show some of the public messages from your colleagues in a nice and fun interface. There is no TV in your office? Ask your boss to contact us, we\'ll take care of everything ;-)
                                     <br />
                                 </span>
-                            </div>
-
-                            <p><h3><a href="/static/doc/CoffeePoke_en.pdf">More information</a> to get the best from Coffee Poke</h3></p>'
+                            </div>'
 
 /**
  * User add
  */
 
-	,'useradd:subject' => 'User account created'
+	,'useradd:subject' => '%1$s, welcome to CoffeePoke'
 	,'useradd:body' => '
-%1$s,
+Hello %1$s,
 
-A user account has been created for you at %2$s. To log in, visit:
+CoffeePoke is the new private social network for %2$s.
+CoffeePoke is here to let you share easily with your coworkers informal and free messages in a nice, simple and colored interface.
+This is not a new productivity tool, this is just a new simple way to make your company smaller than it looks like and strenghten the bonds within the company.
 
+%2$s has just created a user account for you.
+
+To log-in, visit:
 http://%2$s.coffeepoke.com/
-
 And log in with these user credentials:
 
 Username: %4$s
 Password: %5$s
 
-Enjoy coffeePoke!!',
+You can also log-in from your smartphone ;-)
+See you soon,
+
+%2$s',
 
 );
 

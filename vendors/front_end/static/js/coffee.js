@@ -24,6 +24,10 @@
         return navigator.userAgent.match(/MSIE 8./i) ? true : false;
     },
 
+    isPhoneGAPTV = function () {
+       return false;
+    },
+
     stripslashes = function (str) {
         str=str+'';
         str=str.replace(/\\'/g,'\'');
@@ -526,6 +530,10 @@
 
         redirectToFeed: function () {
             loginCount = parseInt(this.session.get('loginCount'));
+            if (isPhoneGAPTV()) {
+                Backbone.history.navigate('tv/' + this.session.get('authToken'), true);
+                return true;
+            }
             if (loginCount <= 5) {
                 Backbone.history.navigate('welcome', true);
             } else {
@@ -914,7 +922,6 @@
                         var result = response.result;
                         self.unshift(result[0]);
                     } else if (response.message == 'pam_auth_userpass:failed') {
-                        localStorage.clear();
                         App.models.session.end();
                         Backbone.history.navigate('login', true);
                     } else {
@@ -1934,10 +1941,13 @@
                     extraInfo.isProfileComplete = false;
                 }
             }
-
-            extraInfo.hobbies = (extraInfo.hasHobbies) ? JSON.parse(stripslashes(object.hobbies)) : [];
-            extraInfo.languages = (extraInfo.hasLanguages) ? JSON.parse(stripslashes(object.languages)): [];
-            extraInfo.socialmedia = (extraInfo.hasSocialmedia) ? JSON.parse(stripslashes(object.socialmedia)) : [];
+            try {
+                extraInfo.hobbies = JSON.parse(stripslashes(object.hobbies));
+            } catch (e) {
+                extraInfo.hobbies = [];
+            }
+            //extraInfo.languages = (extraInfo.hasLanguages) ? JSON.parse(stripslashes(object.languages)): [];
+            //extraInfo.socialmedia = (extraInfo.hasSocialmedia) ? JSON.parse(stripslashes(object.socialmedia)) : [];
             extraInfo.introduction = (extraInfo.introduction) ? stripslashes(object.introduction) : false;
 
             _.each(extraInfo.socialmedia, function(item){
@@ -2110,13 +2120,14 @@
                 },
                 success: function (response) {
                     if (response.status != -1) {
-                        if (name === 'introduction') {
-                            self.model.set(name, nl2br(response.result));
-                        } else if (name === 'hobbies') {
-                            self.model.set(name, JSON.parse(response.result));
-                        } else {
-                            self.model.set(name, response.result);
+                        result = response.result;
+                        result = nl2br(response.result);
+                        try {
+                            result = JSON.parse(response.result);
+                        } catch (e) {
+                            console.log(e);
                         }
+                        self.model.set(name, result);
                         self.model.set('has' + capitaliseFirstLetter(name), true);
                         self.render();
                     }
@@ -2556,7 +2567,7 @@
         },
 
         saveCorporateHashTags: function (e) {
-            self = this
+            var self = this
                 , tags = [];
             _.each(self.$el.find('span.label.tag'), function (item, key) {
                 tags[key] = $(item).attr('data-name').replace('#','');
@@ -2713,15 +2724,58 @@
         events: {
             "click #postUpdate": "post"
             , "click #cancelPostUpdate": "back"
+            , "click #takeAPicture": "takeApicutre"
             , "keyup .update-text": "listenForLink"
         },
 
         back: function() {
-            Backbone.history.navigate(-1, true);
+            Backbone.history.navigate('feed', true);
         },
 
         post: function(e) {
             this.postUpdate(e);
+        },
+
+        takeApicutre: function () {
+            // Retrieve image file location from specified source
+            if (_.isObject(navigator.camera)) {
+                navigator.camera.getPicture(this.uploadFile, this.captureError, { destinationType: destinationType.FILE_URI});
+            } else {
+                alert("Only avaible in native mobile application");
+            }
+        },
+
+        captureError: function () {
+
+        },
+
+        uploadFile: function(imageURI) {
+            var ft = new FileTransfer(),
+                self = this,
+                options = new FileUploadOptions(),
+                params = new Object();
+
+            toggleUploadSpinner();
+
+            options.fileKey="upload";
+            options.fileName=imageURI.substr(imageURI.lastIndexOf('/')+1);
+            options.mimeType="image/jpeg";
+
+            params.method = 'coffee.uploadData'
+            params.auth_token = App.models.session.get('authToken')
+
+            options.params = params;
+            options.chunkedMode = false;
+
+            ft.upload(imageURI,
+                App.resourceUrl,
+                function(result) {
+                    self.updateAttachement(result.response);
+                },
+                function(error) {
+                    alert(error.code);
+                },
+                options);
         }
     });
 
@@ -2941,8 +2995,6 @@
                 Backbone.history.navigate('login', true);
             }
         }
-
-
     });
 
 
@@ -2950,6 +3002,11 @@
         App.models.session = new Session();
         new WorkspaceRouter();
         Backbone.history.start();
+
+        if (isPhoneGAPTV() && App.models.session.authenticated()) {
+            Backbone.history.navigate('tv/' + App.models.session.get('authToken'), true);
+        }
+
         if (window.location.hash == "") {
             Backbone.history.navigate('feed', true);
         }

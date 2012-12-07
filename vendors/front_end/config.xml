@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns     = "http://www.w3.org/ns/widgets"
+        xmlns:gap = "http://phonegap.com/ns/1.0"
+        id        = "com.phonegap.coffeepokeTV"
+        version   = "1.0.25">
+    <name>CoffeePoke</name>
+
+    <description>
+        The machine that strengthen the bonds within your company
+    </description>
+
+    <author href="http://www.coffeepoke.com" email="edouard@coffeepoke.com">
+        CoffeePoke Team
+    </author>
+
+    <gap:platforms>
+        <gap:platform name="ios"/>
+        <gap:platform name="android" minVersion="2.1"/>
+        <gap:platform name="webos"/>
+        <gap:platform name="symbian.wrt"/>
+        <gap:platform name="blackberry" project="widgets"/>
+    </gap:platforms>
+
+	<feature name="http://api.phonegap.com/1.0/device"/>
+	<feature name="http://api.phonegap.com/1.0/battery"/>
+	<feature name="http://api.phonegap.com/1.0/camera"/>
+	<feature name="http://api.phonegap.com/1.0/contacts"/>
+	<feature name="http://api.phonegap.com/1.0/file"/>
+	<feature name="http://api.phonegap.com/1.0/geolocation"/>
+	<feature name="http://api.phonegap.com/1.0/media"/>
+	<feature name="http://api.phonegap.com/1.0/network"/>
+	<feature name="http://api.phonegap.com/1.0/notification"/>
+
+
+    <icon src="static/img/logo.png" />
+    <icon src="res/icon/android/icon-36-ldpi.png"   gap:platform="android"    gap:density="ldpi" />
+    <icon src="res/icon/android/icon-48-mdpi.png"   gap:platform="android"    gap:density="mdpi" />
+    <icon src="res/icon/android/icon-72-hdpi.png"   gap:platform="android"    gap:density="hdpi" />
+    <icon src="res/icon/android/icon-96-xhdpi.png"  gap:platform="android"    gap:density="xhdpi" />
+    <icon src="res/icon/blackberry/icon-80.png"     gap:platform="blackberry" />
+    <icon src="res/icon/blackberry/icon-80.png"     gap:platform="blackberry" gap:state="hover"/>
+    <icon src="res/icon/ios/icon-57.png"            gap:platform="ios"        width="57" height="57" />
+    <icon src="res/icon/ios/icon-72.png"            gap:platform="ios"        width="72" height="72" />
+    <icon src="res/icon/ios/icon-57-2x.png"         gap:platform="ios"        width="114" height="114" />
+    <icon src="res/icon/ios/icon-72-2x.png"         gap:platform="ios"        width="144" height="144" />
+    <icon src="res/icon/webos/icon-64.png"          gap:platform="webos" />
+    <icon src="res/icon/windows-phone/icon-48.png"  gap:platform="winphone" />
+    <icon src="res/icon/windows-phone/icon-173.png" gap:platform="winphone"   gap:role="background" />
+
+    <gap:splash src="static/img/logo.png"           gap:platform="android" gap:density="ldpi" />
+    <gap:splash src="static/img/logo.png"           gap:platform="android" gap:density="mdpi" />
+    <gap:splash src="static/img/logo.png"           gap:platform="android" gap:density="hdpi" />
+    <gap:splash src="static/img/logo.png"           gap:platform="android" gap:density="xhdpi" />
+    <gap:splash src="static/img/logo.png"           gap:platform="blackberry" />
+    <gap:splash src="static/img/logo.png"           gap:platform="ios"     width="320" height="480" />
+    <gap:splash src="static/img/logo.png"           gap:platform="ios"     width="640" height="960" />
+    <gap:splash src="static/img/logo.png"           gap:platform="ios"     width="768" height="1024" />
+    <gap:splash src="static/img/logo.png"           gap:platform="ios"     width="1024" height="768" />
+    <gap:splash src="static/img/logo.png"           gap:platform="winphone" />
+</widget>

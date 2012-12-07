@@ -26,7 +26,7 @@ $(document).ready(function() {
 function loadPost (isReload) {
     $.ajax({
         type: 'GET'
-        , url: '/services/api/rest/json'
+        , url: location.host?"/services/api/rest/json":"http://api.coffeepoke.com/services/api/rest/json"
         , dataType: 'json'
         , data: {
             method: 'coffee.getPosts'

@@ -554,9 +554,13 @@ class ElggCoffee {
         exit();
     }
 
-    public static function set_user_extra_info ($name, $value) {
+    public static function set_user_extra_info ($name, $value, $guid = false) {
         $value = strip_tags($value,'<br><br/><em><strong>');
-        $guid = elgg_get_logged_in_user_guid();
+        if ($guid == false) {
+            $guid = elgg_get_logged_in_user_guid();
+        } elseif ($guid && !elgg_is_admin_logged_in()) {
+            return false;
+        }
         $user_ent = get_user($guid);
         if ($user_ent instanceof ElggUser && strlen($value)>0) {
             $user_ent->$name = $value;

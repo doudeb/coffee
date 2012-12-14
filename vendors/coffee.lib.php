@@ -19,6 +19,7 @@ function coffee_api_set_site_id () {
         $login_result = elgg_authenticate($username, $password);
 		if ($login_result === true) {
 			$user_ent = get_user_by_username($username);
+            login($user_ent);
             $login_count = (int)$user_ent->getPrivateSetting('login_count') +1;
             $user_ent->setPrivateSetting('login_count', $login_count);
             $CONFIG->language = $user_ent->language;

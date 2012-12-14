@@ -170,16 +170,16 @@
         },
 
         initTypeAhead: function (elm, method, callback) {
+            var results = []
+                , typeAheadResult = [];
             $(elm).typeahead({
                 minLength: 2
                 , source: function (query, process) {
-                    var results = []
-                        , users = [];
                     return $.getJSON(App.resourceUrl, {method:method,auth_token: App.models.session.get('authToken'), query: query}, function (response) {
                          if (response.status != '-1') {
                              _.each(response.result, function(item) {
                                  results.push(item.name);
-                                 users[item.name] = item.id;
+                                 typeAheadResult[item.name] = item.id;
                              });
                              return process(results);
                          }
@@ -187,7 +187,7 @@
                 }
                 , updater: function (item) {
                     if (_.isFunction(callback)) {
-                        callback (item);
+                        callback (item,typeAheadResult[item]);
                     }
                 }
 
@@ -217,9 +217,10 @@
             return users;
         },
 
-        getSearchCriteria: function(name) {
+        getSearchCriteria: function(name, from) {
+            var dataSrc = from || App.models.session.get('searchCriteria');
             try {
-                searchCriteria = JSON.parse(App.models.session.get('searchCriteria'));
+                searchCriteria = JSON.parse(dataSrc);
                 value = eval('searchCriteria.' + name);
                 if (typeof value != 'undefined') return value;
             } catch (Exception) {
@@ -601,6 +602,9 @@
                 case 'remove' :
                     self.removeUser();
                     break;
+                case 'setTvSettings' :
+                    self.setTvSettings(e);
+                    break;
                 default:
                     return false;
                     break;
@@ -609,7 +613,7 @@
         },
 
         removeUser: function () {
-            if (!confirm("Are you sure ?")) return false;
+            if (!confirm(t('coffee:admin:popupdelete '))) return false;
             var self = this;
             var guid = self.model.get('id');
             $.ajax({
@@ -634,6 +638,104 @@
 
                 }
             });
+        },
+
+        setTvSettings: function (e) {
+            var self = this
+                , guid = self.model.get('id')
+                , elm = $(e.currentTarget)
+                , exist = $('body').find('.popover');
+                if (_.isObject(exist) && exist.length > 0) {
+                    exist.popover('destroy');
+                    return false;
+                }
+                $.ajax({
+                    type: 'GET'
+                    , url: App.resourceUrl
+                    , dataType: 'json'
+                    , data: {
+                        method: 'coffee.getUserExtraInfo'
+                        , auth_token: App.models.session.get('authToken')
+                        , guid: self.model.get('id')
+                        , names: ['tvAppSettings']
+                    },
+                    success: function (response) {
+                        if (response.status == "0") {
+                            var result = response.result.tvAppSettings
+                                , tags = App.prepareTags(App.getSearchCriteria('tags',result))
+                                , users = App.prepareUsers(App.getSearchCriteria('users',result));
+                        }
+                        config = ich.userTvConfigTemplate({tags : tags, users : users});
+                        elm.popover({title : "User TV #" + self.model.get('id') +  " config (for TV App)"
+                                     , content : config.html()});
+                        elm.popover('show');
+                        App.initTypeAhead('#usersTvAdd', 'coffee.getUserList', self.addUsers);
+                        App.initTypeAhead('#tagsTvAdd', 'coffee.getTagList', self.addTags);
+                        $('.del').bind('click', self.removeTag);
+                        $('#saveConfig').bind('click', function () {self.saveConfig();elm.popover('destroy');});
+                        $('#cancelTvConfig').bind('click', function () {elm.popover('destroy');});
+                    }
+                });
+        },
+
+        saveConfig: function () {
+            self = this
+                , users = []
+                , tags = []
+                , criteria = [];
+            _.each($('#usersTvSelected').find('span.label.user'), function (item, key) {
+                users[key] = $(item).attr('data-id');
+            });
+
+            _.each($('#hashtagsTvSelected').find('span.label.tag'), function (item, key) {
+                tags[key] = $(item).attr('data-name').replace('#','');
+            });
+
+            criteria = {tags:tags,users:users};
+            criteria = JSON.stringify(criteria);
+            $.ajax({
+                type: 'POST'
+                , url: App.resourceUrl
+                , dataType: 'json'
+                , data: {
+                    method: 'coffee.setUserExtraInfo'
+                    , auth_token: App.models.session.get('authToken')
+                    , name: 'tvAppSettings'
+                    , value: criteria
+                    , guid: self.model.get('id')
+                },
+                success: function (response) {
+                    if (response.status != -1) {
+                        alert("Settings successfuly saved.");
+                        $('#tvAppConfig').popover('destroy');
+                    }
+                }
+            });
+        },
+
+        addUsers: function (item, id) {
+                    data = {name:item
+                            , id:id
+                            , css:'label-info user'
+                            , del:true};
+                    elm = ich.tagTemplate(data);
+                    $('#usersTvSelected').append(elm);
+                    elm.find('.del').bind('click', this.removeTag);
+        },
+
+        addTags: function (item) {
+                    data = {name:item
+                            , id:users[item]
+                            , css:'tag'
+                            , del:true};
+                    elm = ich.tagTemplate(data);
+                    $('#hashtagsTvSelected').append(elm);
+                    elm.find('.del').bind('click', this.removeTag);
+        },
+
+        removeTag: function (e) {
+            elm = $(e.currentTarget);
+            elm.parent().remove();
         }
     });
 
@@ -1050,6 +1152,7 @@
                     }
                 }
             });
+            return false;
         },
 
         textareaKeydown: function (e) {
@@ -1616,6 +1719,11 @@
             elm = $(e.currentTarget);
             elm.toggleClass('on');
             this.isBroadCastMessage = elm.hasClass('on');
+            if (this.isBroadCastMessage) {
+                elm.attr('title', t('coffee:feed:broadcastmessage'));
+            } else {
+                elm.attr('title', t('coffee:feed:broadcastmessageunactive'));
+            }
             return false;
         },
 
@@ -1739,6 +1847,7 @@
                 , displayWelcome : parseInt(App.models.session.get('accountTime')) + (60 * 60 * 24 * 30) > Math.round(new Date().getTime()) / 1000
                 , isAdmin : App.models.session.get('isAdmin')
                 , siteName : App.models.session.get('siteName')
+                , isFeed : Backbone.history.fragment === 'feed'?true:false
             };
 
             if(isMobile.any()){
@@ -1779,6 +1888,9 @@
                 default:
                     App.models.session.set('searchCriteria',null);
                     Backbone.history.navigate('feed', true);
+                    break;
+                case 'backToFeed':
+                    window.history.back();
                     break;
                 case 'profile':
                     Backbone.history.navigate('profile', true);
@@ -1825,7 +1937,12 @@
                 },
                 success: function (response) {
                     if (response.status != -1) {
-                        self.doSiteUpdate(response.result);
+                        if (response.message == 'pam_auth_userpass:failed') {
+                            App.models.session.end();
+                            Backbone.history.navigate('login', true);
+                        } else {
+                            self.doSiteUpdate(response.result);
+                        }
                     }
                     self.checkForSiteUpdate ();
                 },
@@ -2315,6 +2432,7 @@
                 , name : App.models.session.get('name')
                 , users : this.users
                 , tags : this.tags
+                , translate : function() {return function(text) {return t(text);}}
             };
             var self = this
                 , element = ich.tvAppTemplate(data);

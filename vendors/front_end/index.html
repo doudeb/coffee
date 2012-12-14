@@ -196,7 +196,7 @@
                             {{/likes}}
                             <ul class="comments">
                                 {{#comment.showAllLink}}
-                                <li class="show-all"><a class="show-all-link" href="javascript:void(0)">{{#translate}}coffee:feeditem:showall{{/translate}}&nbsp;{{comment.total}}&nbsp;{{#translate}}coffee:feeditem:comments{{/translate}}</a></li>
+                                <li class="show-all"><a class="show-all-link" href="#">{{#translate}}coffee:feeditem:showall{{/translate}}&nbsp;{{comment.total}}&nbsp;{{#translate}}coffee:feeditem:comments{{/translate}}</a></li>
                                 {{/comment.showAllLink}}
                                 {{#comment.comments}}
                                 <li class="comment">
@@ -355,48 +355,73 @@
                 </div>
             </div>
         </script>
+        <script type="text/html" id="userTvConfigTemplate">
+           <div id="tvAppConfig">
+                <div class="input-prepend users">
+                    <span class="add-on">@</span><input id="usersTvAdd" size="16" type="text" placeholder="Username">
+                </div>
+                <div id="usersTvSelected">
+                    Users :
+                    {{#users}}
+                        {{>tagTemplate}}
+                    {{/users}}
+                </div>
+                <p>Hashtags : </p>
+                <div class="input-prepend hashtags ">
+                    <span class="add-on">#</span><input id="tagsTvAdd" size="16" type="text" placeholder="Hashtag">
+                </div>
+                <div id="hashtagsTvSelected">
+                    Tags :
+                    {{#tags}}
+                        {{>tagTemplate}}
+                    {{/tags}}
+                </div>
+                <div class="update-action">
+                    <button class="btn btn-primary" id="saveConfig">Save</button>
+                    <!--<a href="" class="cancel" id="cancelTvConfig">Cancel</a>-->
+                </div>
+           </div>
+        </script>
         <script type="text/html" id="tvAppConfigTemplate">
             <div id="tvAppConfig">
                 <div class="content-module">
                     <div class="primary-content">
-                        <h1>Hello {{name}} !</h1>
-                        <p>What would you like to see on your Coffee TV ? <button class="btn btn-primary" id="doTvAppConfig">Reply</button></p>
+                        <h1>{{#translate}}coffee:tvapp:title{{/translate}} {{name}}</h1>
+                        <p>{{#translate}}coffee:tvapp:message{{/translate}} <button class="btn btn-primary" id="doTvAppConfig">{{#translate}}coffee:tvapp:button{{/translate}}</button></p>
                     </div>
                     <div class="secondary-content hide">
                         <div class="avatar">
                             <img class="radius3" src="{{iconUrl}}" title="{{name}}" width="40" height="40"/>
                         </div>
                         <div>
-                            <p>I'd love to see the 10 last posts</p>
-                            <label for="fromUsers">From</label>
+                            <p>{{#translate}}coffee:tvapp:answer1{{/translate}}</p>
+                            <label for="fromUsers">{{#translate}}coffee:tvapp:fromusers{{/translate}}</label>
                             <select class="input-large" id="fromUsersSelect">
-                                <option value="@all" {{^users}}selected{{/users}}>Everybody</option>
-                                <option value="select" {{#users}}selected {{/users}}>The following users</option>
+                                <option value="@all" {{^users}}selected{{/users}}>{{#translate}}coffee:tvapp:fromusersall{{/translate}}</option>
+                                <option value="select" {{#users}}selected {{/users}}>{{#translate}}coffee:tvapp:fromuserselect{{/translate}}</option>
                             </select>
                         </div>
                         <div class="input-prepend users {{^users}}hide{{/users}}">
-                            <span class="add-on">@</span><input class="span2" id="users" size="16" type="text" placeholder="Username">
+                            <span class="add-on">@</span><input class="span2" id="users" size="16" type="text" placeholder="{{#translate}}coffee:tvapp:fromuserselectusername{{/translate}}">
                         </div>
                         <div id="usersSelected">
-                            Users :
                             {{#users}}
                                 {{>tagTemplate}}
                             {{/users}}
                         </div>
-                        <p>But only those with the following hashtags : </p>
+                        <p>{{#translate}}coffee:tvapp:tagselect{{/translate}} : </p>
                         <div class="input-prepend hashtags ">
-                            <span class="add-on">#</span><input class="span2" id="tags" size="16" type="text" placeholder="Hashtag">
+                            <span class="add-on">#</span><input class="span2" id="tags" size="16" type="text" placeholder="{{#translate}}coffee:tvapp:addhashtag{{/translate}}">
                         </div>
                         <div id="hashtagsSelected">
-                            Tags :
                             {{#tags}}
                                 {{>tagTemplate}}
                             {{/tags}}
                         </div>
                     </div>
                     <div class="update-action hide">
-                        <button class="btn btn-primary btn-large" id="saveConfig">Thanks</button>
-                        <a href="#tv" class="cancel">Cancel</a>
+                        <button class="btn btn-primary btn-large" id="saveConfig">{{#translate}}coffee:tvapp:thanks{{/translate}}</button>
+                        <a href="#tv" class="cancel">{{#translate}}coffee:tvapp:cancel{{/translate}} </a>
                     </div>
                 </div>
             </div>
@@ -511,8 +536,8 @@
                                 {{#hasLiked}}<li class="update-action update-action-unlike"><a href="#" title="Unlike" data-action="unlike">Unlike</a></li>{{/hasLiked}}
                             </ul>
                             <ul class="counters comments unit lastUnit">
-                                <li class="comment update-action update-action-comment update-action-comment-mobile">{{comment.total}} <a href="#" title="Add a comment" data-action="comment"><i class="icon-comment"></i></a></li>
-                                <li class="like update-action update-action-comment-mobile update-action-like">{{likes.total}} <a href="{{id}}" title="Like" data-action="comment"><i class="icon-thumbs-up"></i></a></li>
+                                <li class="comment update-action update-action-comment update-action-comment-mobile">{{comment.total}} <i class="icon-comment"></i></li>
+                                <li class="like update-action update-action-comment-mobile update-action-like">{{likes.total}} <i class="icon-thumbs-up"></i></li>
                             </ul>
                         </div>
                     </div>
@@ -522,9 +547,16 @@
 
         <script type="text/html" id="mobileMenuTemplate">
             <div id="menu">
-                <span class="home"><a href="#feed" title="Home" data-action="feed"><h2> {{siteName}} </h2></a></span>
-                <span class="profile"><a href="" title="Profile" data-action="profile"><i class="icon-profile-mobile"></i></a></span>
-                <span class="post"><a href="" title="Post feed" data-action="mobilePost"><i class="icon-post-mobile"></i></a></span>
+                <!--<ul>
+                    <li class="home"><button id="home" class="btn" data-action="feed"><i class="icon-home"></i></button></li>
+                    <li class="siteName"> {{siteName}}</li>
+                    <li class="post"><button id="home" class="btn" data-action="mobilePost"><i class="icon-comment"></i></button></li>
+                </ul>-->
+                <span class="home"><h2> {{siteName}} </h2></span>
+                {{#isFeed}}<span class="feed"><a href="" title="Profile" data-action="feed"><button id="home" class="btn" data-action="feed"><i class="icon-home"></i></button></a></span>{{/isFeed}}
+                {{^isFeed}}<span class="feed"><a href="" title="Profile" data-action="backToFeed"><button id="home" class="btn" data-action="feed"><i class="icon-circle-arrow-left"></i></button></a></span>{{/isFeed}}
+                <span class="post"><a href="" title="Post feed" data-action="mobilePost"><button id="home" class="btn" data-action="mobilePost"><i class="icon-comment"></i></button></a></span>
+
 
             </div>
         </script>
@@ -542,7 +574,7 @@
                             <img class="loader" src="static/img/loader.gif" width="16" height="16" />
                             {{#isAdmin}}
                             <span class="broadcastMessage">
-                                <a class="" rel="tooltip" title="Broadcast message" href="" data-placement="left"><i class="icon-bullhorn"></i></a>
+                                <a class="" rel="tooltip" title="{{#translate}}coffee:feed:broadcastmessageunactive{{/translate}}" href="" data-placement="left"><i class="icon-bullhorn"></i></a>
                             </span>
                             {{/isAdmin}}
                         </div>
@@ -731,23 +763,22 @@
                 <div id="admin">
                     <div class="content-module">
                         <div class="alert">
-                            This is your coffeePoke Admin panel.<br />
-                            <a href="#userSettings">Change your settings</a>
+                            {{#translate}}coffee:admin:message{{/translate}}
                         </div>
                         <div class="primary-content">
                             <ul class="nav nav-tabs" id="adminMenu">
                                 <li class="dropdown active">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Users <b class="caret"></b></a>
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{#translate}}coffee:admin:users{{/translate}} <b class="caret"></b></a>
                                     <ul class="dropdown-menu">
-                                      <li><a href="#addnewuser" data-toggle="tab">Add new user</a></li>
-                                      <li><a href="#manageuser" data-toggle="tab">Manage user</a></li>
+                                      <li><a href="#addnewuser" data-toggle="tab">{{#translate}}coffee:admin:addnewuser{{/translate}}</a></li>
+                                      <li><a href="#manageuser" data-toggle="tab">{{#translate}}coffee:admin:manageuser{{/translate}}</a></li>
                                     </ul>
                                 </li>
                                 <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Site <b class="caret"></b></a>
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{#translate}}coffee:admin:site{{/translate}} <b class="caret"></b></a>
                                     <ul class="dropdown-menu">
-                                      <li><a href="#settings" data-toggle="tab">Site settings</a></li>
-                                      <li><a href="#hashtags" data-toggle="tab">Corporate Hashtags</a></li>
+                                      <li><a href="#settings" data-toggle="tab">{{#translate}}coffee:admin:sitesettings{{/translate}}</a></li>
+                                      <li><a href="#hashtags" data-toggle="tab">{{#translate}}coffee:admin:corporatehashtags{{/translate}}</a></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -766,68 +797,68 @@
 
         <script type="text/html" id="addNewUserTemplate">
             <form class="form-horizontal">
-               <legend>Add a user</legend>
+               <legend>{{#translate}}coffee:admin:addnewusertitle{{/translate}}</legend>
                <div class="alert hide" id="registrationResult"/>
                <div class="form-item">
-                   <label for="displayName">Display name</label>
+                   <label for="displayName">{{#translate}}coffee:admin:displayname{{/translate}}</label>
                    <input type="text" class="input-large" id="displayName" />
                </div>
                <div class="form-item">
-                   <label for="email">Email</label>
+                   <label for="email">{{#translate}}coffee:admin:email{{/translate}}</label>
                    <input type="text" class="input-large" id="email" />
                </div>
                <div class="form-item">
-                   <label for="password">Password</label>
+                   <label for="password">{{#translate}}coffee:admin:password{{/translate}}</label>
                    <input type="password" class="input-large" id="password" />
                </div>
                <div class="form-item">
-                   <label for="password2">Password confirmation</label>
+                   <label for="password2">{{#translate}}coffee:admin:confirmpassword{{/translate}}</label>
                    <input type="password" class="input-large" id="password2" />
                </div>
                <div class="form-item">
-                   <label for="makeAdmin">Admin ?</label>
+                   <label for="makeAdmin">{{#translate}}coffee:admin:admin{{/translate}}</label>
                    <input type="checkbox" class="input-large" id="makeAdmin" name="makeAdmin" />
                </div>
-               <div class="form-item">
-                   <label for="makeAdmin">Send email</label>
+               <divtvAppTemplate class="form-item">
+                   <label for="makeAdmin">{{#translate}}coffee:admin:sendemail{{/translate}}</label>
                    <input type="checkbox" class="input-large" id="sendEmail" name="sendEmail" />
                </div>
                <div class="form-item">
-                   <label for="language">Language</label>
+                   <label for="language">{{#translate}}coffee:admin:language{{/translate}}</label>
                    <select class="input-large" id="language">
-                       <option value="en">English</option>
-                       <option value="fr">Français</option>
-                       <option value="es">Spanish</option>
+                    <option value="en">{{#translate}}coffee:usersettings:languageEN{{/translate}}</option>
+                    <option value="fr">{{#translate}}coffee:usersettings:languageFR{{/translate}}</option>
+                    <option value="es">{{#translate}}coffee:usersettings:languageES{{/translate}}</option>
                    </select>
                </div>
                <div class="form-actions">
-                   <button class="btn btn-primary" id="addNewUser">Save</button>
+                   <button class="btn btn-primary" id="addNewUser">{{#translate}}coffee:admin:addnewusersave{{/translate}}</button>
                </div>
            </form>
         </script>
 
       <script type="text/html" id="siteSettingsTemplate">
           <form class="form-horizontal" id="siteSettingForm" enctype="multipart/form-data" method="post">
-               <legend>Site settings</legend>
+               <legend>{{#translate}}coffee:admin:sitesettingstitle{{/translate}}</legend>
                <div class="alert hide" id="registrationResult"/>
                <div class="form-item">
-                   <label for="displayName">Logo</label>
+                   <label for="displayName">{{#translate}}coffee:admin:logo{{/translate}}</label>
                    <input type="file" class="input-large" id="logo" name="logo"/>
                </div>
                <div class="form-item">
-                   <label for="email">Background</label>
+                   <label for="email">{{#translate}}coffee:admin:background{{/translate}}</label>
                    <input type="file" class="input-large" id="background" name="background"/>
                </div>
                <div class="form-item">
-                   <label for="language">Default language</label>
+                   <label for="language">{{#translate}}coffee:admin:defaultlanguage{{/translate}}</label>
                    <select class="input-large" id="language">
-                       <option value="en">English</option>
-                       <option value="fr">Français</option>
-                       <option value="es">Spanish</option>
+                        <option value="en">{{#translate}}coffee:usersettings:languageEN{{/translate}}</option>
+                        <option value="fr">{{#translate}}coffee:usersettings:languageFR{{/translate}}</option>
+                        <option value="es">{{#translate}}coffee:usersettings:languageES{{/translate}}</option>
                    </select>
                </div>
                <div class="form-actions">
-                   <button class="btn btn-primary" id="siteSettingsUpdate">Save</button>
+                   <button class="btn btn-primary" id="siteSettingsUpdate">{{#translate}}coffee:admin:sitesettingssave{{/translate}}</button>
                </div>
            </form>
         </script>
@@ -860,6 +891,7 @@
                     <img class="vcard-avatar radius3" src="{{avatar}}">
                     <ul class="update-actions">
                         <li class="update-action update-action-remove"><a href="#" rel="tooltip" title="{{#translate}}coffee:feeditem:action:removecomment{{/translate}}" data-action="remove" data-placement="right"><i class="icon-trash"></i></a></li>
+                        <li class="update-action update-action-set-tv-settings"><a href="#" rel="tooltip" title="{{#translate}}coffee:useradmin:action:settvsettings{{/translate}}" data-action="setTvSettings" data-placement="right"><i class="icon-tv"></i></a></li>
                     </ul>
                 </div>
         </script>
@@ -869,35 +901,37 @@
                 <div id="userSettings">
                     <div class="content-module">
                         <div class="primary-content">
-                            <div class="alert" id="settingUpdateResult" />
+                            <div class="alert" id="settingUpdateResult" >
+                                {{#translate}}coffee:usersettings:message{{/translate}}
+                            </div>
                             <form class="form-horizontal">
-                                <legend>User Settings</legend>
+                                <legend>{{#translate}}coffee:usersettings:usersettings{{/translate}}</legend>
                                 <div class="form-item">
-                                    <label for="inputEmail">Name</label>
+                                    <label for="inputEmail">{{#translate}}coffee:usersettings:name{{/translate}}</label>
                                     <input type="text" class="input-large" id="inputName" value="{{userSetting.name}}"/>
                                 </div>
                                 <div class="form-item">
-                                    <label for="inputPassword">Current password</label>
+                                    <label for="inputPassword">{{#translate}}coffee:usersettings:currentpassword{{/translate}}</label>
                                     <input type="password" class="input-large" id="inputCurrentPassword" />
                                 </div>
                                 <div class="form-item">
-                                    <label for="inputPassword">New password</label>
+                                    <label for="inputPassword">{{#translate}}coffee:usersettings:newpassword{{/translate}}</label>
                                     <input type="password" class="input-large" id="inputNewPassword" />
                                 </div>
                                 <div class="form-item">
-                                    <label for="inputPassword">New password confirmation</label>
+                                    <label for="inputPassword">{{#translate}}coffee:usersettings:confirmnewpassword{{/translate}}</label>
                                     <input type="password" class="input-large" id="inputNewPassword2" />
                                 </div>
                                 <div class="form-item">
-                                    <label for="inputPassword">Language</label>
+                                    <label for="inputPassword">{{#translate}}coffee:usersettings:language{{/translate}}</label>
                                     <select class="input-large" id="inputLanguage">
-                                        <option value="en">English</option>
-                                        <option value="fr">Français</option>
-                                        <option value="es">Spanish</option>
+                                        <option value="en">{{#translate}}coffee:usersettings:languageEN{{/translate}}</option>
+                                        <option value="fr">{{#translate}}coffee:usersettings:languageFR{{/translate}}</option>
+                                        <option value="es">{{#translate}}coffee:usersettings:languageES{{/translate}}</option>
                                     </select>
                                 </div>
                                 <div class="form-actions">
-                                    <button class="btn btn-primary" id="saveSettings">Save</button>
+                                    <button class="btn btn-primary" id="saveSettings">{{#translate}}coffee:usersettings:save{{/translate}}</button>
                                 </div>
                             </form>
                         </div>
@@ -905,16 +939,15 @@
                 </div>
             </script>
             <script type="text/html" id="siteHashtagsTemplate">
-                <legend>Corporate Hashtags</legend>
+                <legend>{{#translate}}coffee:admin:corporatehashtagstitle{{/translate}}</legend>
                 <div class="alert" id="updateResult">{{#translate}}coffee:admin:corporatehashtagshelp{{/translate}}</div>
                 <div class="input-prepend hashtags ">
-                    <span class="add-on">#</span><input class="span2" id="corporateHashtags" size="16" type="text" placeholder="Hashtag">
+                    <span class="add-on">#</span><input class="span2" id="corporateHashtags" size="16" type="text" placeholder="{{#translate}}coffee:admin:addhashtag{{/translate}}">
                 </div>
                 <div id="hashtagsSelected">
-                    Tags :
                 </div>
                 <div class="form-actions">
-                    <button class="btn btn-primary" id="saveCorporateHashtags">Save</button>
+                    <button class="btn btn-primary" id="saveCorporateHashtags">{{#translate}}coffee:admin:corporatehashtagssave{{/translate}}</button>
                 </div>
             </script>
 

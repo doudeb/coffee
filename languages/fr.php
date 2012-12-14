@@ -7,25 +7,51 @@
  */
 
 $translation = array(
-       /*profile */
-        'coffee:profile:add:hobbiesandinterest' => 'Ajouter un centre d\'intérêt'
-        , 'coffee:profile:hobbiesandinterest' => 'Centres d\'intérêts'
-        , 'coffee:profile:information:mobilephone' => 'portable'
-        , 'coffee:profile:information:workphone' => 'professionnel'
-        , 'coffee:profile:information' => 'Coordonnés'
-        , 'coffee:profile:presentation' => 'Présentation'
-        , 'coffee:profile:button:background' => 'Fond d\'écran'
-        , 'coffee:profile:title:changecoverpic' => 'Personnaliser le fond d\'écran de mon profil'
-        , 'coffee:profile:button:changeavatar' => 'Changer ma photo'
-        , 'coffee:profile:add:presentation' => 'Présentez vous en quelques lignes'
-        , 'coffee:profile:add:workphone' => 'Ajouter mon téléphone professionnel'
-        , 'coffee:profile:add:mobilephone' => 'Ajouter mon numéro de portable'
-        , 'coffee:profile:addheadline' => 'Ajouter votre fonction'
-        , 'coffee:profile:addlocation' => 'Situation géographique'
-        , 'coffee:poke:action' => 'Coffee Poke'
-        , 'coffee:poke:body' => 'Je t\'invite à prendre un café'
-        , 'coffee:poke:subject' => 'Une pause café ?'
-        , 'coffee:profile:incomplete' => '<strong>Ceci est votre profil.</strong><br />Tous vos collègues y ont accès et peuvent le consulter. Faites en sorte de bien le personnaliser et à le mettre à jour!'
+        /*menu*/
+        'coffee:menu:welcome' => 'Bienvenue!'
+        , 'coffee:menu:feedlist' => 'Coffee Wall '
+        , 'coffee:menu:profile' => 'Mon profil'
+        , 'coffee:menu:tvapp' => 'Coffee TV'
+        , 'coffee:menu:admin' => 'Administration'
+        , 'coffee:menu:settings' => 'Préférences'
+        , 'coffee:menu:logout' => 'Déconnexion'
+
+        /*welcome*/
+        , 'coffee:welcome:headline' => '<h3>Bonjour %1$s,</h3>
+                        <p>Bienvenue sur CoffeePoke.
+                        Ce message d\'accueil s\'affichera seulement lors de vos trois premières connexions pour vous familiariser avec l\'application.</p>
+                        <p><a href="/static/doc/CoffeePoke_fr.pdf">Cliquez ici</a> pour comprendre comment CoffeePoke vous permet d\'être encore plus efficace. (vous allez télécharger un .pdf)</p>
+                        <p>Bonne découverte, et très bonne journée avec CoffeePoke.</p>'
+        , 'coffee:welcome:instructions' => '
+                            <h3>Goûtez à la Pause-Café 2.0</h3>
+                            <div class="steps">
+                                <!--<span class="stepN">1.</span>-->
+                                <span class="instruction">
+                                    <a href="#feed">Coffee Wall, l\'espace Café de %2$s.</a>
+                                    <br />
+                                    Partagez et commentez messages publics et documents avec vos collègues. Accolez le signe # devant un mot-clé pour le rendre cliquable et rendre l\'information plus facilement accessible.
+                                    <br />
+                                </span>
+                            </div>
+                            <div class="steps">
+                                <span class="instruction">
+                                    <a href="#profile">Profil</a>
+                                    <br />
+                                    (Re)découvrez vos collègues et présentez vous sous un autre jour. Partagez vos passions, choisissez un fond d\'écran qui vous ressemble, personnalisez votre message d\'accueil et bien sur ajoutez votre photo !
+                                    <br />
+                                </span>
+                            </div>
+                            <div class="steps">
+                                <span class="instruction">
+                                    <a href="#tv">Coffee TV</a>
+                                    <br />
+                                    Pas de temps pour consulter l\'application? Profitez de votre pause-café pour rester informé ! Conviviale, colorée, l\'interface Coffee TV facilite la diffusion des messages grâce aux écrans situés dans les lieux de vie de l\'entreprise.
+                                    <br />
+                                    Il n\'y a pas encore d\'écrans TV dans votre entreprise? Parlez-en à votre Community Manager, CoffeePoke s\'occupe de tout !
+                                    <br />
+                                </span>
+                            </div>'
+
         /*feed*/
         , 'coffee:feed:share' => 'Partager une information avec mes collègues'
         , 'coffee:feed:upload' => 'Ajouter une pièce jointe...'
@@ -36,8 +62,8 @@ $translation = array(
         , 'coffee:feed:mostused' => 'Plus populaires'
         , 'coffee:feeditem:showalltext' => 'Voir plus'
         , 'coffee:feeditem:hidetext' => 'Cacher'
-        , 'coffee:feeditem:likethis' => 'aiment ça'
-        , 'coffee:feeditem:likesthis' => 'aime ça'
+        , 'coffee:feeditem:likethis' => 'aime ça'
+        , 'coffee:feeditem:likesthis' => 'aiment ça'
         , 'coffee:feeditem:and' => 'et'
         , 'coffee:feeditem:others' => 'autres'
         , 'coffee:feeditem:showall' => 'Voir les'
@@ -47,49 +73,94 @@ $translation = array(
         , 'coffee:feeditem:action:like' => 'J\'aime'
         , 'coffee:feeditem:action:unlike' => 'Je n\'aime plus'
         , 'coffee:feeditem:action:removecomment' => 'Supprimer le commentaire'
-        , 'coffee:feeditem:action:openlinkconfirm' => 'Cela va ouvrir une nouvelle page.'
-        /*menu*/
-        , 'coffee:menu:welcome' => 'Bienvenue!'
-        , 'coffee:menu:feedlist' => 'L\'espace Café '
-        , 'coffee:menu:profile' => 'Mon profil'
-        , 'coffee:menu:tvapp' => 'CoffeeTV'
-        , 'coffee:menu:logout' => 'Déconnexion'
-        , 'coffee:menu:admin' => 'Administration'
-        , 'coffee:menu:settings' => 'Préférences'
+        , 'coffee:feeditem:action:openlinkconfirm' => 'Cette action va ouvrir une nouvelle page.'
+       	, 'coffee:feed:broadcastmessageunactive' => 'Activer la mise en avant'
+		, 'coffee:feed:broadcastmessage' => 'Désactiver la mise en avant'
+		, 'coffee:feed:search' => 'Recherche'
+		, 'coffee:feed:corporatetags' => 'Suggestions'
+		, 'coffee:feed:mostused' => 'Plus populaires'
+
+        /*profile */
+        , 'coffee:profile:add:hobbiesandinterest' => 'Ajouter un centre d\'intérêt'
+        , 'coffee:profile:hobbiesandinterest' => 'Centres d\'intérêt'
+        , 'coffee:profile:information:mobilephone' => 'portable'
+        , 'coffee:profile:information:workphone' => 'pro'
+        , 'coffee:profile:information' => 'Coordonnés'
+        , 'coffee:profile:presentation' => 'Présentation'
+        , 'coffee:profile:button:background' => 'Fond d\'écran'
+        , 'coffee:profile:title:changecoverpic' => 'Personnaliser le fond d\'écran de mon profil'
+        , 'coffee:profile:button:changeavatar' => 'Changer ma photo'
+        , 'coffee:profile:add:presentation' => 'Présentez vous en quelques lignes'
+        , 'coffee:profile:add:workphone' => 'Numéro de tél pro'
+        , 'coffee:profile:add:mobilephone' => 'Numéro de tél portable'
+        , 'coffee:profile:addheadline' => 'Ajouter votre fonction'
+        , 'coffee:profile:addlocation' => 'Situation géographique'
+        , 'coffee:poke:action' => 'Coffee Poke'
+        , 'coffee:poke:body' => 'Veux-tu partager une petite pause-café avec moi?'
+        , 'coffee:poke:subject' => 'Une pause café ?'
+        , 'coffee:profile:incomplete' => '<strong>Ceci est votre profil.</strong><br />Tous vos collègues y ont accès et peuvent le consulter. Faites en sorte de bien le personnaliser et à le mettre à jour!'
+
+        /*TVapp*/
+		, 'coffee:tvapp:title' => 'Bonjour,'
+		, 'coffee:tvapp:message' => 'Que voulez-vous afficher sur l\'écran ?'
+		, 'coffee:tvapp:button' => 'Répondre'
+		, 'coffee:tvapp:answer1' => 'J\'aimerais voir les 10 derniers messages'
+		, 'coffee:tvapp:fromusers' => 'de'
+		, 'coffee:tvapp:fromusersall' => 'tous les utilisateurs'
+		, 'coffee:tvapp:fromuserselect' => 'les utilisateurs suivants :'
+		, 'coffee:tvapp:fromuserselectusername' => 'Nom'
+		, 'coffee:tvapp:tagselect' => 'Uniquement ceux qui contiennent le(s) @hashtag(s) suivant(s) :'
+		, 'coffee:tvapp:addhashtag' => 'hashtag'
+		, 'coffee:tvapp:thanks' => 'Merci !'
+		, 'coffee:tvapp:cancel' => 'Annuler'
+
         /*admin*/
-        , 'coffee:admin:corporatehashtagshelp' => 'En tant qu\'administrateur, vous avez la possibilité de mettre en avant certains hashtags (mot-clés commençant par # pour les rendre cliquables). Vos utilisateurs retrouveront cette liste en cliquant sur la flche ˆ droite du moteur de recherche, sur le mur.'
-        /*welcome*/
-        , 'coffee:welcome:headline' => '<h3>Bonjour,</h3>
-                        <p>Bienvenue sur CoffeePoke. Ce message d\'accueil s\'affichera seulement lors de vos trois premières connexions pour vous familiariser avec l\'application.</p>
-                        <p><a href="/static/doc/CoffeePoke_fr.pdf">Cliquez ici</a> pour comprendre comment CoffeePoke vous permet d\'être encore plus efficace. (vous allez télécharger un .pdf)</p>
-                        <p>Bonne découverte, et très bonne journée avec CoffeePoke.</p>'
-        , 'coffee:welcome:instructions' => '
-                            <h3>Goûtez à la Pause-Café 2.0</h3>
-                            <div class="steps">
-                                <!--<span class="stepN">1.</span>-->
-                                <span class="instruction">
-                                    <a href="#feed">L\'espace Café de votre entreprise.</a>
-                                    <br />
-                                    Partagez et commentez avec vos collègues. Utilisez le sigle # devant un mot-clé pour le rendre cliquable et retrouver plus facilement l\'information.
-                                    <br />
-                                </span>
-                            </div>
-                            <div class="steps">
-                                <span class="instruction">
-                                    <a href="#profile">Profil</a>
-                                    <br />
-                                    (re)découvrez vos collègues et présentez vous sous un autre jour. Partagez vos passions, choisissez un fond d\'écran qui vous ressemble, personnalisez votre message d\'accueil et bien sur ajoutez votre photo!
-                                    <br />
-                                </span>
-                            </div>
-                            <div class="steps">
-                                <span class="instruction">
-                                    <a href="#tv">CoffeeTV</a>
-                                    <br />
-                                    Pas de temps pour consulter l\'application? Profitez de votre pause-café pour rester informé! Conviviale, colorée, l\'interface CoffeeTV facilite la transmission des messages grÃ¢ce aux écrans situés dans les lieux de vie de l\'entreprise. Il n\'y a pas encore d\'écrans TV dans votre entreprise? Parlez-en à votre hiérarchie, CoffeePoke s\'occupe de tout!
-                                    <br />
-                                </span>
-                            </div>'
+		, 'coffee:admin:message' => 'Ceci est votre outil d\'Administration. <br/ > <a href="#userSettings">Accédez à vos Préférences.</a> '
+		, 'coffee:admin:users' => 'Utilisateurs'
+		, 'coffee:admin:search' => 'Recherche'
+		, 'coffee:admin:addnewuser' => 'Ajouter un nouvel utilisateur'
+		, 'coffee:admin:addnewusertitle' => 'Ajouter un nouvel utilisateur'
+		, 'coffee:admin:displayname' => 'Prénom Nom'
+		, 'coffee:admin:email' => 'Email'
+		, 'coffee:admin:password' => 'Choisir un mot de passe'
+		, 'coffee:admin:confirmpassword' => 'Confirmer le mot de passe'
+		, 'coffee:admin:admin' => 'Cochez ci-dessous si vous souhaitez qu\'il ait les droits d\'administrateur :'
+		, 'coffee:admin:sendemail' => 'Cochez ci-dessous si vous souhaitez que CoffeePoke lui envoie un email de bienvenue avec ses identifiants de connexion :'
+		, 'coffee:admin:language' => 'Langue de navigation'
+		, 'coffee:admin:languageES' => 'Espagnol'
+		, 'coffee:admin:languageFR' => 'Français'
+		, 'coffee:admin:languageEN' => 'Anglais'
+		, 'coffee:admin:addnewusersave' => 'Créer le compte'
+		, 'coffee:admin:manageuser' => 'Gérer les utilisateurs'
+		, 'coffee:admin:popupdelete' => 'Êtes-vous sûr de vouloir supprimer cet utilisateur? <br /> Attention, cette opération est irréversible. Son profil et tous ses messages seront supprimés.'
+		, 'coffee:admin:site' => 'Site'
+		, 'coffee:admin:sitesettings' => 'Personnalisation'
+		, 'coffee:admin:sitesettingstitle' => 'Personnalisation de votre plateforme'
+		, 'coffee:admin:logo' => '<strong>Logo</strong><br/>taille max recommandée: width: 300px - height: 100px'
+		, 'coffee:admin:background' => '<strong>Fond d\'écran</strong><br/>taille recommandée: 1920*1080 min. Poids max recommandé: 300px'
+		, 'coffee:admin:defaultlanguage' => 'Langue par défaut'
+		, 'coffee:admin:defaultlanguageEN' => 'Anglais'
+		, 'coffee:admin:defaultlanguageES' => 'Espagnol'
+		, 'coffee:admin:defaultlanguageFR' => 'Français'
+		, 'coffee:admin:sitesettingssave' => 'Sauvegarder'
+		, 'coffee:admin:corporatehashtags' => 'Suggestions de #hashtags'
+		, 'coffee:admin:corporatehashtagstitle' => 'Suggestions de #hashtags'
+		, 'coffee:admin:corporatehashtagshelp' => 'En tant qu\'administrateur, vous avez la possibilité de mettre en avant certains hashtags. Les #hashtags sont des mots-clés rendus cliquables par l\'accolade du signe "#" en début de mot. L\'utilisation de hashtags facilite l\'accessibilité de telle ou telle information. Vos utilisateurs retrouveront cette liste en cliquant sur la flèche située à droite du moteur de recherche, sur votre Coffee Wall.'
+		, 'coffee:admin:addhashtag' => 'hashtag'
+		, 'coffee:admin:corporatehashtagssave' => 'Sauvegarder'
+
+        /*usersettings*/
+		, 'coffee:usersettings:message' => 'Bienvenue dans vos Préférences.'
+		, 'coffee:usersettings:usersettings' => 'Préférences'
+		, 'coffee:usersettings:name' => 'Prénom Nom'
+		, 'coffee:usersettings:currentpassword' => 'Mot de passe actuel'
+		, 'coffee:usersettings:newpassword' => 'Choisissez un nouveau mot de passe'
+		, 'coffee:usersettings:confirmnewpassword' => 'Confirmez votre nouveau mot de passe'
+		, 'coffee:usersettings:language' => 'Langue de navigation'
+		, 'coffee:usersettings:languageES' => 'Espagnol'
+		, 'coffee:usersettings:languageFR' => 'Français'
+		, 'coffee:usersettings:languageEN' => 'Anglais'
+		, 'coffee:usersettings:save' => 'Sauvegarder'
 
 /**
  * User add
@@ -100,25 +171,23 @@ $translation = array(
 
 Bonjour %1$s,
 
-CoffeePoke est le nouveau réseau social privé de %2$s.
-CoffeePoke est le prolongement de la pause-café.
-Il est là pour vous permettre d\'échanger librement, simplement et de manière totalement informelle entre vous.
-Le tout dans un esprit convivial, sur une interface simple, colorée et très accessible.
-Ce n\'est pas un outil de travail, c\'est simplement une nouvelle manière sympa de rendre l\'entreprise plus petite qu\'elle n\'y parait, de créer du lien social, une cohésion d\'équipe...
+Je vous invite à rejoindre notre communauté %2$s sur CoffeePoke.
 
-%2$s vient de créer un compte pour vous.
+CoffeePoke, notre réseau social privé, nous permet d\'échanger des messages publics sur notre "Coffee Wall" dans un esprit convivial.
+Notre objectif : développer les échanges informels pour mieux nous connaitre et favoriser la cohésion d\'équipe.
 
-Pour vous connecter, rendez-vous sur:
+Je viens de vous créer un compte. Pour y accéder, cliquez sur:
 http://%2$s.coffeepoke.com/
-et connectez-vous avec vos identifiants personnels:
-
+et renseignez vos identifiants :
 Utilisateur: %4$s
 Mot de passe: %5$s
 
-Vous pouvez aussi accéder à CoffeePoke sur votre mobile :-)
-A très vite,
+Connectez-vous sans plus attendre pour partager ce sur quoi vous travailler, vous tenir informé de l\'actualité de %2$s ou poser une question.
 
-%2$s'
+Toujours en déplacement? Aucun problème, connectez-vous depuis le navigateur de votre mobile.
+A tout de suite sur CoffeePoke,
+
+%6$s'
 			//DATES
 			,'friendlytime:justnow' => "à l'instant"
 			,'friendlytime:minutes' => "il y a %s minutes"

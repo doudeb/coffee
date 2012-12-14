@@ -240,7 +240,9 @@ $exposed[$i]['function']            = "ElggCoffee::set_user_extra_info";
 $exposed[$i]['params']          	= array("name" => array('type' => 'string'
                                                             , 'required' => true)
                                                         , "value" => array('type' => 'string'
-                                                            , 'required' => true));
+                                                            , 'required' => true)
+                                                        , "guid" => array('type' => 'int'
+                                                            , 'required' => false));
 $exposed[$i]['comment']          	= 'Set user extra information.
                                         @name string profile name
                                         @value string profile value';

@@ -66,7 +66,7 @@ a:hover{color:#005580;text-decoration:none;}
 #search {margin-top: 15px; padding : 10px 0 5px 0; text-align: center;background-color:rgba(255, 255, 255, 0.7);}
 #search .btn-group,#search #hashtagsSelected {text-align: left}
 #search #hashtagsSelected {margin-left: 5px}
-#search .dropdown-menu .header-item {text-align: right;font-size: 70%;margin-right: 2px}
+#search .dropdown-menu .header-item {text-align: right;font-size: 70%;margin-right: 10px}
 #login{background-color:#ffffff;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 3px rgba(0, 0, 0, 0.4);-moz-box-shadow:0 1px 3px rgba(0, 0, 0, 0.4);box-shadow:0 1px 3px rgba(0, 0, 0, 0.4);width:500px;margin:100px auto;}#login form legend{width:470px;padding:15px 15px 0 15px;}
 #login form .form-actions{-webkit-border-radius:0 0 3px 3px;-moz-border-radius:0 0 3px 3px;border-radius:0 0 3px 3px;}
 #profile {padding-top:15px;width:520px;}
@@ -173,6 +173,7 @@ a:hover{color:#005580;text-decoration:none;}
 .size3of5{width:60%;}
 .size4of5{width:80%;}
 .lastUnit {display: table-cell; *display:block;*zoom:1;float:none;_position:relative; _left:-3px; _margin-right: -3px;width:auto;}
+.typeahead {z-index:1050}
 
 /*  .mobile #container { -webkit-overflow-scrolling : touch; }*/
 .mobile { background-image: none !important; background-color: #494949 !important; }
@@ -188,18 +189,18 @@ a:hover{color:#005580;text-decoration:none;}
 .mobile .form-item { padding: 0 10px; }
 .mobile .input-large { width: 95%; }
 .mobile .form-horizontal .form-actions { padding: 10px 0; text-align: center;}
-.mobile .btn {width: 88%;}
+.mobile [class^="icon-"],[class*=" icon-"]{margin-top: 0px;}
 .mobile #microblogging, .mobile .postForm { -webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px; }
 .mobile #microblogging .btn, .mobile .postForm .btn { width: auto; float: right; margin-right: 5px; }
 .mobile #microblogging .update-content .update-text, .mobile .postForm .update-content .update-text { width: 98%; height: 70px; margin-left: 0; }
 .mobile .postForm .update-content .new-comment-textarea { height: auto; }
-.mobile #container #content { margin: 35px 0 0 0; }
-.mobile #container #menu {width:100%;height: 33px; top: 0; z-index: 2; background-color: rgba(73, 73, 73, 0.5); -webkit-border-bottom-right-radius: 3px;-webkit-border-bottom-left-radius: 3px;-moz-border-radius-bottomright: 3px;-moz-border-radius-bottomleft: 3px;border-bottom-right-radius: 3px;border-bottom-left-radius: 3px;}
-.mobile #container #menu span {width:35px;position:absolute}
+.mobile #container #content { margin: 37px 0 0 0; }
+.mobile #container #menu {width:100%;height: 30px; top: 0; z-index: 2; background-color: #e5e5e5;padding: 1px;}
+.mobile #container #menu span {width:40px;position:absolute}
 .mobile #container #menu span.home {width: 100%; text-align: center;overflow: hidden}
-.mobile #container #menu span.home h2 {font-size: 22px; color: #fff;line-height: 5px;}
-.mobile #container #menu span.post {right:1px}
-.mobile #container #menu span.profile {text-align: right;}
+.mobile #container #menu span.home h2 {font-size: 22px; color: #000;line-height: 5px;}
+.mobile #container #menu span.post {right:3px}
+.mobile #container #menu span.feed {text-align: right;}
 
 .mobile #container a:hover.home { text-decoration: none; }
 .mobile #microblogging { display: none; }
@@ -230,6 +231,12 @@ a:hover{color:#005580;text-decoration:none;}
 .mobile .watermark h3 {line-height: 10px}
 .mobile .update-action-comment-mobile {float: left}
 .mobile .update-action-like {float: none;}
+.mobile #menu ul {list-style: none; margin: 0}
+.mobile #menu ul li {display: inline-block}
+.mobile #menu ul li.home, .mobile #menu ul li.post {width : 40px}
+.mobile #menu ul li.siteName {width: 72%; text-align: center}
+.mobile #menu ul li.home h2 {font-size: 22px; color: #000;line-height: 5px;}
+
 body.mobile {padding-left: 0px;padding-right: 0px;overflow-x:hidden;width:100%;}
 
 .mentions-input-box {

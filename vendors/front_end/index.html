@@ -361,7 +361,6 @@
                     <span class="add-on">@</span><input id="usersTvAdd" size="16" type="text" placeholder="Username">
                 </div>
                 <div id="usersTvSelected">
-                    Users :
                     {{#users}}
                         {{>tagTemplate}}
                     {{/users}}
@@ -371,7 +370,6 @@
                     <span class="add-on">#</span><input id="tagsTvAdd" size="16" type="text" placeholder="Hashtag">
                 </div>
                 <div id="hashtagsTvSelected">
-                    Tags :
                     {{#tags}}
                         {{>tagTemplate}}
                     {{/tags}}
@@ -783,7 +781,6 @@
                                 </li>
                             </ul>
                             <div class="tab-content">
-                              <div class="tab-pane" id="users">Choose a menu</div>
                               <div class="tab-pane" id="addnewuser">{{>addNewUserTemplate}}</div>
                               <div class="tab-pane active" id="manageuser">{{>manageUserTemplate}}</div>
                               <div class="tab-pane" id="settings">{{>siteSettingsTemplate}}</div>
@@ -819,7 +816,7 @@
                    <label for="makeAdmin">{{#translate}}coffee:admin:admin{{/translate}}</label>
                    <input type="checkbox" class="input-large" id="makeAdmin" name="makeAdmin" />
                </div>
-               <divtvAppTemplate class="form-item">
+               <div class="form-item">
                    <label for="makeAdmin">{{#translate}}coffee:admin:sendemail{{/translate}}</label>
                    <input type="checkbox" class="input-large" id="sendEmail" name="sendEmail" />
                </div>

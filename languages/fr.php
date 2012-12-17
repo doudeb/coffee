@@ -7,8 +7,8 @@
  */
 
 $translation = array(
-        /*menu*/
-        'coffee:menu:welcome' => 'Bienvenue!'
+/*menu*/
+         'coffee:menu:welcome' => 'Bienvenue!'
         , 'coffee:menu:feedlist' => 'Coffee Wall '
         , 'coffee:menu:profile' => 'Mon profil'
         , 'coffee:menu:tvapp' => 'Coffee TV'
@@ -16,7 +16,7 @@ $translation = array(
         , 'coffee:menu:settings' => 'Préférences'
         , 'coffee:menu:logout' => 'Déconnexion'
 
-        /*welcome*/
+/*welcome*/
         , 'coffee:welcome:headline' => '<h3>Bonjour %1$s,</h3>
                         <p>Bienvenue sur CoffeePoke.
                         Ce message d\'accueil s\'affichera seulement lors de vos trois premières connexions pour vous familiariser avec l\'application.</p>
@@ -52,7 +52,7 @@ $translation = array(
                                 </span>
                             </div>'
 
-        /*feed*/
+/*feed*/
         , 'coffee:feed:share' => 'Partager une information avec mes collègues'
         , 'coffee:feed:upload' => 'Ajouter une pièce jointe...'
         , 'coffee:feed:send' => 'Envoyer'
@@ -80,7 +80,7 @@ $translation = array(
 		, 'coffee:feed:corporatetags' => 'Suggestions'
 		, 'coffee:feed:mostused' => 'Plus populaires'
 
-        /*profile */
+/*profile */
         , 'coffee:profile:add:hobbiesandinterest' => 'Ajouter un centre d\'intérêt'
         , 'coffee:profile:hobbiesandinterest' => 'Centres d\'intérêt'
         , 'coffee:profile:information:mobilephone' => 'portable'
@@ -100,7 +100,7 @@ $translation = array(
         , 'coffee:poke:subject' => 'Une pause café ?'
         , 'coffee:profile:incomplete' => '<strong>Ceci est votre profil.</strong><br />Tous vos collègues y ont accès et peuvent le consulter. Faites en sorte de bien le personnaliser et à le mettre à jour!'
 
-        /*TVapp*/
+/*TVapp*/
 		, 'coffee:tvapp:title' => 'Bonjour,'
 		, 'coffee:tvapp:message' => 'Que voulez-vous afficher sur l\'écran ?'
 		, 'coffee:tvapp:button' => 'Répondre'
@@ -109,12 +109,12 @@ $translation = array(
 		, 'coffee:tvapp:fromusersall' => 'tous les utilisateurs'
 		, 'coffee:tvapp:fromuserselect' => 'les utilisateurs suivants :'
 		, 'coffee:tvapp:fromuserselectusername' => 'Nom'
-		, 'coffee:tvapp:tagselect' => 'Uniquement ceux qui contiennent le(s) @hashtag(s) suivant(s) :'
+		, 'coffee:tvapp:tagselect' => 'Uniquement ceux qui contiennent le(s) #hashtag(s) suivant(s) :'
 		, 'coffee:tvapp:addhashtag' => 'hashtag'
 		, 'coffee:tvapp:thanks' => 'Merci !'
 		, 'coffee:tvapp:cancel' => 'Annuler'
 
-        /*admin*/
+/*admin*/
 		, 'coffee:admin:message' => 'Ceci est votre outil d\'Administration. <br/ > <a href="#userSettings">Accédez à vos Préférences.</a> '
 		, 'coffee:admin:users' => 'Utilisateurs'
 		, 'coffee:admin:search' => 'Recherche'
@@ -136,8 +136,8 @@ $translation = array(
 		, 'coffee:admin:site' => 'Site'
 		, 'coffee:admin:sitesettings' => 'Personnalisation'
 		, 'coffee:admin:sitesettingstitle' => 'Personnalisation de votre plateforme'
-		, 'coffee:admin:logo' => '<strong>Logo</strong><br/>taille max recommandée: width: 300px - height: 100px'
-		, 'coffee:admin:background' => '<strong>Fond d\'écran</strong><br/>taille recommandée: 1920*1080 min. Poids max recommandé: 300px'
+		, 'coffee:admin:logo' => '<strong>Logo</strong><br/>Taille max recommandée: width: 300px - height: 100px'
+		, 'coffee:admin:background' => '<strong>Fond d\'écran</strong><br/>Taille recommandée: 1920*1080 min. Poids max recommandé: 300mo'
 		, 'coffee:admin:defaultlanguage' => 'Langue par défaut'
 		, 'coffee:admin:defaultlanguageEN' => 'Anglais'
 		, 'coffee:admin:defaultlanguageES' => 'Espagnol'
@@ -149,7 +149,7 @@ $translation = array(
 		, 'coffee:admin:addhashtag' => 'hashtag'
 		, 'coffee:admin:corporatehashtagssave' => 'Sauvegarder'
 
-        /*usersettings*/
+/*usersettings*/
 		, 'coffee:usersettings:message' => 'Bienvenue dans vos Préférences.'
 		, 'coffee:usersettings:usersettings' => 'Préférences'
 		, 'coffee:usersettings:name' => 'Prénom Nom'
@@ -162,9 +162,7 @@ $translation = array(
 		, 'coffee:usersettings:languageEN' => 'Anglais'
 		, 'coffee:usersettings:save' => 'Sauvegarder'
 
-/**
- * User add
- */
+/*User add*/
 
 	, 'useradd:subject' => '%1$s, bienvenue sur CoffeePoke.'
 	, 'useradd:body' => '

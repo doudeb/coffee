@@ -7,59 +7,16 @@
  */
 
 $english = array(
-       /*profile */
-        'coffee:profile:add:hobbiesandinterest' => 'Add a hobby or interest'
-        , 'coffee:profile:hobbiesandinterest' => 'Hobbies & Interests'
-        , 'coffee:profile:information:mobilephone' => 'mobile'
-        , 'coffee:profile:information:workphone' => 'work'
-        , 'coffee:profile:information' => 'Contact Information'
-        , 'coffee:profile:presentation' => 'Presentation'
-        , 'coffee:profile:button:background' => 'Background'
-        , 'coffee:profile:title:changecoverpic' => 'Change your background picture'
-        , 'coffee:profile:button:changeavatar' => 'Change your avatar'
-        , 'coffee:profile:add:presentation' => 'Add your presentation'
-        , 'coffee:profile:add:workphone' => 'Add your phone number'
-        , 'coffee:profile:add:mobilephone' => 'Add your mobile number'
-        , 'coffee:profile:addheadline' => 'Add your headline'
-        , 'coffee:profile:addlocation' => 'Add your location'
-        , 'coffee:profile:button:changeavatar' => 'Change your avatar'
-        , 'coffee:poke:action' => 'Coffee Poke'
-        , 'coffee:poke:body' => 'Let\'s have a coffee'
-        , 'coffee:poke:subject' => 'Coffee Break ?'
-        , 'coffee:profile:incomplete' => '<strong>This is your profile.</strong><br />It is visible to your coworkers so be sure to complete it and keep it up to date!'
-        /*feed*/
-        , 'coffee:feed:share' => 'Share something with your colleagues...'
-        , 'coffee:feed:upload' => 'Upload something...'
-        , 'coffee:feed:send' => 'Send'
-        , 'coffee:feed:cancel' => 'Cancel'
-        , 'coffee:feed:search' => 'Search'
-        , 'coffee:feed:corporatetags' => 'Sponsored Tags'
-        , 'coffee:feed:mostused' => 'Most used'
-        , 'coffee:feeditem:showalltext' => 'Show all text'
-        , 'coffee:feeditem:hidetext' => 'Hide text'
-        , 'coffee:feeditem:likethis' => 'like this'
-        , 'coffee:feeditem:likesthis' => 'likes this'
-        , 'coffee:feeditem:and' => 'and'
-        , 'coffee:feeditem:others' => 'others'
-        , 'coffee:feeditem:showall' => 'Show all'
-        , 'coffee:feeditem:comments' => 'comments'
-        , 'coffee:feeditem:action:removecomment' => 'Remove comment'
-        , 'coffee:feeditem:action:addcomment' => 'Write a comment...'
-        , 'coffee:feeditem:action:like' => 'Like'
-        , 'coffee:feeditem:action:unlike' => 'Unlike'
-        , 'coffee:feeditem:action:removecomment' => 'Remove comment'
-        , 'coffee:feeditem:action:openlinkconfirm' => 'This will open a new window'
-        /*menu*/
-        , 'coffee:menu:welcome' => 'Welcome'
+/*menu*/
+         'coffee:menu:welcome' => 'Welcome'
         , 'coffee:menu:feedlist' => 'Feed'
         , 'coffee:menu:profile' => 'Profile'
         , 'coffee:menu:tvapp' => 'CoffeeTV'
-        , 'coffee:menu:logout' => 'Log out'
         , 'coffee:menu:admin' => 'Administration'
         , 'coffee:menu:settings' => 'Settings'
-        /*admin*/
-        , 'coffee:admin:corporatehashtagshelp' => 'As an administrator, you are able to highlight some hashtags (keywords that begin with a # to make them clickable). Users will see this list if they click on the arrow at the right of the search field (on the feed).'
-        /*welcome*/
+        , 'coffee:menu:logout' => 'Log out'
+
+/*welcome*/
         , 'coffee:welcome:headline' => '<h3>Hello,</h3>
                         <p>Welcome to CoffeePoke. This message will only display for your 3 first log ins, so that you get used with the application.</p>
                         <p><a href="/static/doc/CoffeePoke_en.pdf">Click here </a> to understand how CoffeePoke will make you even more efficient. (this will open a .pdf file).</p>
@@ -92,31 +49,139 @@ $english = array(
                                 </span>
                             </div>'
 
-/**
- * User add
- */
+/*feed*/
+        , 'coffee:feed:share' => 'Share something with your colleagues…'
+        , 'coffee:feed:upload' => 'Upload something...'
+        , 'coffee:feed:send' => 'Send'
+        , 'coffee:feed:cancel' => 'Cancel'
+        , 'coffee:feed:search' => 'Search'
+        , 'coffee:feed:corporatetags' => 'Sponsored Tags'
+        , 'coffee:feed:mostused' => 'Most used'
+        , 'coffee:feeditem:showalltext' => 'Show all text'
+        , 'coffee:feeditem:hidetext' => 'Hide text'
+        , 'coffee:feeditem:likethis' => 'like this'
+        , 'coffee:feeditem:likesthis' => 'likes this'
+        , 'coffee:feeditem:and' => 'and'
+        , 'coffee:feeditem:others' => 'others'
+        , 'coffee:feeditem:showall' => 'Show all'
+        , 'coffee:feeditem:comments' => 'comments'
+        , 'coffee:feeditem:action:removecomment' => 'Remove comment'
+        , 'coffee:feeditem:action:addcomment' => 'Write a comment...'
+        , 'coffee:feeditem:action:like' => 'Like'
+        , 'coffee:feeditem:action:unlike' => 'Unlike'
+        , 'coffee:feeditem:action:removecomment' => 'Remove comment'
+        , 'coffee:feeditem:action:openlinkconfirm' => 'This will open a new window'
+       	, 'coffee:feed:broadcastmessageunactive' => 'Highlight this message'
+		, 'coffee:feed:broadcastmessage' => 'Don\'t highlight this message'
+		, 'coffee:feed:search' => 'Search'
+		, 'coffee:feed:corporatetags' => 'Suggestions'
+		, 'coffee:feed:mostused' => 'Most used'
+
+/*profile */
+        , 'coffee:profile:add:hobbiesandinterest' => 'Add a hobby or interest'
+        , 'coffee:profile:hobbiesandinterest' => 'Hobbies & Interests'
+        , 'coffee:profile:information:mobilephone' => 'mobile'
+        , 'coffee:profile:information:workphone' => 'work'
+        , 'coffee:profile:information' => 'Contact Information'
+        , 'coffee:profile:presentation' => 'Presentation'
+        , 'coffee:profile:button:background' => 'Background'
+        , 'coffee:profile:title:changecoverpic' => 'Change your background picture'
+        , 'coffee:profile:button:changeavatar' => 'Change your avatar'
+        , 'coffee:profile:add:presentation' => 'Add your presentation'
+        , 'coffee:profile:add:workphone' => 'Add your phone number'
+        , 'coffee:profile:add:mobilephone' => 'Add your mobile number'
+        , 'coffee:profile:addheadline' => 'Add your headline'
+        , 'coffee:profile:addlocation' => 'Add your location'
+        , 'coffee:poke:action' => 'Coffee Poke'
+        , 'coffee:poke:body' => 'Let\'s have a coffee break together?'
+        , 'coffee:poke:subject' => 'Coffee Break ?'
+        , 'coffee:profile:incomplete' => '<strong>This is your profile.</strong><br />It is visible to your coworkers so be sure to complete it and keep it up to date!'
+
+/*TVapp*/
+		, 'coffee:tvapp:title' => 'Hello,'
+		, 'coffee:tvapp:message' => 'What would you like to seen on the screen ?'
+		, 'coffee:tvapp:button' => 'Reply'
+		, 'coffee:tvapp:answer1' => 'I\'d love to see the 10 last posts'
+		, 'coffee:tvapp:fromusers' => 'from'
+		, 'coffee:tvapp:fromusersall' => 'everybody'
+		, 'coffee:tvapp:fromuserselect' => 'the following users :'
+		, 'coffee:tvapp:fromuserselectusername' => 'Name'
+		, 'coffee:tvapp:tagselect' => 'Only those with the following #hashtags :'
+		, 'coffee:tvapp:addhashtag' => 'hashtag'
+		, 'coffee:tvapp:thanks' => 'Thanks !'
+		, 'coffee:tvapp:cancel' => 'Cancel'
+
+/*admin*/
+		, 'coffee:admin:message' => 'This is your CoffeePoke admin panel. <br/ > <a href="#userSettings">Change your settings</a>'
+		, 'coffee:admin:users' => 'Users'
+		, 'coffee:admin:search' => 'Search'
+		, 'coffee:admin:addnewuser' => 'Add new user'
+		, 'coffee:admin:addnewusertitle' => 'Add new user'
+		, 'coffee:admin:displayname' => 'Display name'
+		, 'coffee:admin:email' => 'Email'
+		, 'coffee:admin:password' => 'Password'
+		, 'coffee:admin:confirmpassword' => 'Password confirmation'
+		, 'coffee:admin:admin' => 'Do you want this user to be an admin?'
+		, 'coffee:admin:sendemail' => 'Do you want us to send a welcome message to this user?'
+		, 'coffee:admin:language' => 'Language'
+		, 'coffee:admin:languageES' => 'Spanish'
+		, 'coffee:admin:languageFR' => 'French'
+		, 'coffee:admin:languageEN' => 'English'
+		, 'coffee:admin:addnewusersave' => 'Create this user'
+		, 'coffee:admin:manageuser' => 'Manage users'
+		, 'coffee:admin:popupdelete' => 'Are you sure you want to delete this user? <br /> This action will remove permanently the profile and their messages.'
+		, 'coffee:admin:site' => 'Site'
+		, 'coffee:admin:sitesettings' => 'Settings'
+		, 'coffee:admin:sitesettingstitle' => 'Customization'
+		, 'coffee:admin:logo' => '<strong>Logo</strong><br/>Max recommended size: width: 300px - height: 100px'
+		, 'coffee:admin:background' => '<strong>Background</strong><br/>Recommended size: 1920*1080 min. Max recommended weight: 300mo'
+		, 'coffee:admin:defaultlanguage' => 'Default language'
+		, 'coffee:admin:defaultlanguageEN' => 'English'
+		, 'coffee:admin:defaultlanguageES' => 'Spanish'
+		, 'coffee:admin:defaultlanguageFR' => 'French'
+		, 'coffee:admin:sitesettingssave' => 'Save'
+		, 'coffee:admin:corporatehashtags' => '#Hashtags Suggestions'
+		, 'coffee:admin:corporatehashtagstitle' => '#Hashtags Suggestions'
+		, 'coffee:admin:corporatehashtagshelp' => 'As an admin, you can highlight some hashtags. #Hashtags are clickable keywords (with a "#" in front of it). Users will find this list on the Coffee Feed when clicking on the arrow next to the search field.'
+		, 'coffee:admin:addhashtag' => 'hashtag'
+		, 'coffee:admin:corporatehashtagssave' => 'Save'
+
+/*usersettings*/
+		, 'coffee:usersettings:message' => 'Welcome to your settings'
+		, 'coffee:usersettings:usersettings' => 'User Settings'
+		, 'coffee:usersettings:name' => 'Name'
+		, 'coffee:usersettings:currentpassword' => 'Current password'
+		, 'coffee:usersettings:newpassword' => 'New password'
+		, 'coffee:usersettings:confirmnewpassword' => 'New password confirmation'
+		, 'coffee:usersettings:language' => 'Language'
+		, 'coffee:usersettings:languageES' => 'Spanish'
+		, 'coffee:usersettings:languageFR' => 'French'
+		, 'coffee:usersettings:languageEN' => 'English'
+		, 'coffee:usersettings:save' => 'Save'
+
+/*User add*/
 
 	,'useradd:subject' => '%1$s, welcome to CoffeePoke'
 	,'useradd:body' => '
 Hello %1$s,
 
-CoffeePoke is the new private social network for %2$s.
-CoffeePoke is here to let you share easily with your coworkers informal and free messages in a nice, simple and colored interface.
-This is not a new productivity tool, this is just a new simple way to make your company smaller than it looks like and strenghten the bonds within the company.
+I invite you to join %2$s\'s private community on CoffeePoke.
 
-%2$s has just created a user account for you.
+CoffeePoke is here to let you share easily with your coworkers in a nice, simple and fun interface.
+Our goal: to strenghten the bonds, promote informal exchanges and reinforce conviviality within our company.
 
-To log-in, visit:
+I\'ve just created a user account for you. To log-in, visit:
 http://%2$s.coffeepoke.com/
 And log in with these user credentials:
-
 Username: %4$s
 Password: %5$s
 
-You can also log-in from your smartphone ;-)
-See you soon,
+Log in now to see what your colleagues are talking about, and tell them what you\'re working on.
 
-%2$s',
+Oh by the way, you can also log in from the web browser of your smartphone while your out of the office.
+See you soon on CoffeePoke,
+
+%6$s',
 
 );
 

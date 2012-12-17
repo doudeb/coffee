@@ -4,30 +4,31 @@
  *
  * @package Elgg.Core
  * @subpackage Languages.French
+ * @versiondate 171212
  */
 
 $translation = array(
 /*menu*/
          'coffee:menu:welcome' => 'Bienvenue!'
-        , 'coffee:menu:feedlist' => 'Coffee Wall '
+        , 'coffee:menu:feedlist' => 'CoffeeWall '
         , 'coffee:menu:profile' => 'Mon profil'
-        , 'coffee:menu:tvapp' => 'Coffee TV'
+        , 'coffee:menu:tvapp' => 'CoffeeTV'
         , 'coffee:menu:admin' => 'Administration'
         , 'coffee:menu:settings' => 'Préférences'
-        , 'coffee:menu:logout' => 'Déconnexion'
+        , 'coffee:menu:logout' => 'Déconnexion'      
 
 /*welcome*/
-        , 'coffee:welcome:headline' => '<h3>Bonjour %1$s,</h3>
+        , 'coffee:welcome:headline' => '<h3>Bonjour,</h3>
                         <p>Bienvenue sur CoffeePoke.
                         Ce message d\'accueil s\'affichera seulement lors de vos trois premières connexions pour vous familiariser avec l\'application.</p>
-                        <p><a href="/static/doc/CoffeePoke_fr.pdf">Cliquez ici</a> pour comprendre comment CoffeePoke vous permet d\'être encore plus efficace. (vous allez télécharger un .pdf)</p>
+                        <p><a href="/static/doc/CoffeePoke_fr.pdf" target="_blank">Cliquez ici</a> pour comprendre comment CoffeePoke vous permet d\'être encore plus efficace (vous allez télécharger un .pdf).</p>
                         <p>Bonne découverte, et très bonne journée avec CoffeePoke.</p>'
         , 'coffee:welcome:instructions' => '
                             <h3>Goûtez à la Pause-Café 2.0</h3>
                             <div class="steps">
                                 <!--<span class="stepN">1.</span>-->
                                 <span class="instruction">
-                                    <a href="#feed">Coffee Wall, l\'espace Café de %2$s.</a>
+                                    <a href="#feed">CoffeeWall, l\'espace Café de votre entreprise.</a>
                                     <br />
                                     Partagez et commentez messages publics et documents avec vos collègues. Accolez le signe # devant un mot-clé pour le rendre cliquable et rendre l\'information plus facilement accessible.
                                     <br />
@@ -37,17 +38,17 @@ $translation = array(
                                 <span class="instruction">
                                     <a href="#profile">Profil</a>
                                     <br />
-                                    (Re)découvrez vos collègues et présentez vous sous un autre jour. Partagez vos passions, choisissez un fond d\'écran qui vous ressemble, personnalisez votre message d\'accueil et bien sur ajoutez votre photo !
+                                    (Re)découvrez vos collègues et présentez vous sous un autre jour. Partagez vos passions, choisissez un fond d\'écran qui vous ressemble, personnalisez votre message d\'accueil et bien sûr ajoutez votre photo !
                                     <br />
                                 </span>
                             </div>
                             <div class="steps">
                                 <span class="instruction">
-                                    <a href="#tv">Coffee TV</a>
+                                    <a href="#tv">CoffeeTV</a>
                                     <br />
-                                    Pas de temps pour consulter l\'application? Profitez de votre pause-café pour rester informé ! Conviviale, colorée, l\'interface Coffee TV facilite la diffusion des messages grâce aux écrans situés dans les lieux de vie de l\'entreprise.
+                                    Pas de temps pour consulter l\'application ? Profitez de votre pause-café pour rester informé ! Conviviale, colorée, l\'interface CoffeeTV facilite la diffusion des messages grâce aux écrans situés dans les lieux de vie de l\'entreprise.
                                     <br />
-                                    Il n\'y a pas encore d\'écrans TV dans votre entreprise? Parlez-en à votre Community Manager, CoffeePoke s\'occupe de tout !
+                                    Il n\'y a pas encore d\'écrans TV dans votre entreprise ? Parlez-en à votre Community Manager, CoffeePoke s\'occupe de tout !
                                     <br />
                                 </span>
                             </div>'
@@ -62,8 +63,8 @@ $translation = array(
         , 'coffee:feed:mostused' => 'Plus populaires'
         , 'coffee:feeditem:showalltext' => 'Voir plus'
         , 'coffee:feeditem:hidetext' => 'Cacher'
-        , 'coffee:feeditem:likethis' => 'aime ça'
-        , 'coffee:feeditem:likesthis' => 'aiment ça'
+        , 'coffee:feeditem:likesthis' => 'aime ça'
+        , 'coffee:feeditem:likethis' => 'aiment ça'
         , 'coffee:feeditem:and' => 'et'
         , 'coffee:feeditem:others' => 'autres'
         , 'coffee:feeditem:showall' => 'Voir les'
@@ -85,37 +86,37 @@ $translation = array(
         , 'coffee:profile:hobbiesandinterest' => 'Centres d\'intérêt'
         , 'coffee:profile:information:mobilephone' => 'portable'
         , 'coffee:profile:information:workphone' => 'pro'
-        , 'coffee:profile:information' => 'Coordonnés'
+        , 'coffee:profile:information' => 'Coordonnées'
         , 'coffee:profile:presentation' => 'Présentation'
         , 'coffee:profile:button:background' => 'Fond d\'écran'
         , 'coffee:profile:title:changecoverpic' => 'Personnaliser le fond d\'écran de mon profil'
         , 'coffee:profile:button:changeavatar' => 'Changer ma photo'
-        , 'coffee:profile:add:presentation' => 'Présentez vous en quelques lignes'
+        , 'coffee:profile:add:presentation' => 'Présentez-vous en quelques lignes'
         , 'coffee:profile:add:workphone' => 'Numéro de tél pro'
         , 'coffee:profile:add:mobilephone' => 'Numéro de tél portable'
         , 'coffee:profile:addheadline' => 'Ajouter votre fonction'
         , 'coffee:profile:addlocation' => 'Situation géographique'
-        , 'coffee:poke:action' => 'Coffee Poke'
+        , 'coffee:poke:action' => 'CoffeePoke'
         , 'coffee:poke:body' => 'Veux-tu partager une petite pause-café avec moi?'
         , 'coffee:poke:subject' => 'Une pause café ?'
         , 'coffee:profile:incomplete' => '<strong>Ceci est votre profil.</strong><br />Tous vos collègues y ont accès et peuvent le consulter. Faites en sorte de bien le personnaliser et à le mettre à jour!'
 
 /*TVapp*/
 		, 'coffee:tvapp:title' => 'Bonjour,'
-		, 'coffee:tvapp:message' => 'Que voulez-vous afficher sur l\'écran ?'
+		, 'coffee:tvapp:message' => 'Que voulez-vous afficher sur l\'écran'
 		, 'coffee:tvapp:button' => 'Répondre'
 		, 'coffee:tvapp:answer1' => 'J\'aimerais voir les 10 derniers messages'
 		, 'coffee:tvapp:fromusers' => 'de'
 		, 'coffee:tvapp:fromusersall' => 'tous les utilisateurs'
 		, 'coffee:tvapp:fromuserselect' => 'les utilisateurs suivants :'
 		, 'coffee:tvapp:fromuserselectusername' => 'Nom'
-		, 'coffee:tvapp:tagselect' => 'Uniquement ceux qui contiennent le(s) #hashtag(s) suivant(s) :'
+		, 'coffee:tvapp:tagselect' => 'Uniquement ceux qui contiennent le(s) hashtag(s) suivant(s)'
 		, 'coffee:tvapp:addhashtag' => 'hashtag'
-		, 'coffee:tvapp:thanks' => 'Merci !'
+		, 'coffee:tvapp:thanks' => 'Merci'
 		, 'coffee:tvapp:cancel' => 'Annuler'
-
+     
 /*admin*/
-		, 'coffee:admin:message' => 'Ceci est votre outil d\'Administration. <br/ > <a href="#userSettings">Accédez à vos Préférences.</a> '
+		, 'coffee:admin:message' => 'Ceci est votre outil d\'administration. <br/ > <a href="#userSettings">Accédez à vos préférences.</a> '
 		, 'coffee:admin:users' => 'Utilisateurs'
 		, 'coffee:admin:search' => 'Recherche'
 		, 'coffee:admin:addnewuser' => 'Ajouter un nouvel utilisateur'
@@ -124,7 +125,7 @@ $translation = array(
 		, 'coffee:admin:email' => 'Email'
 		, 'coffee:admin:password' => 'Choisir un mot de passe'
 		, 'coffee:admin:confirmpassword' => 'Confirmer le mot de passe'
-		, 'coffee:admin:admin' => 'Cochez ci-dessous si vous souhaitez qu\'il ait les droits d\'administrateur :'
+		, 'coffee:admin:admin' => 'Cochez ci-dessous si vous souhaitez qu\'il ait les droits administrateur :'
 		, 'coffee:admin:sendemail' => 'Cochez ci-dessous si vous souhaitez que CoffeePoke lui envoie un email de bienvenue avec ses identifiants de connexion :'
 		, 'coffee:admin:language' => 'Langue de navigation'
 		, 'coffee:admin:languageES' => 'Espagnol'
@@ -136,21 +137,21 @@ $translation = array(
 		, 'coffee:admin:site' => 'Site'
 		, 'coffee:admin:sitesettings' => 'Personnalisation'
 		, 'coffee:admin:sitesettingstitle' => 'Personnalisation de votre plateforme'
-		, 'coffee:admin:logo' => '<strong>Logo</strong><br/>Taille max recommandée: width: 300px - height: 100px'
-		, 'coffee:admin:background' => '<strong>Fond d\'écran</strong><br/>Taille recommandée: 1920*1080 min. Poids max recommandé: 300mo'
+		, 'coffee:admin:logo' => '<strong>Logo</strong><br/>Taille max. recommandée: width: 300px - height: 100px.'
+		, 'coffee:admin:background' => '<strong>Fond d\'écran</strong><br/>Taille min. recommandée: 1920*1080 min. Poids max. recommandé: 300mo.'
 		, 'coffee:admin:defaultlanguage' => 'Langue par défaut'
 		, 'coffee:admin:defaultlanguageEN' => 'Anglais'
 		, 'coffee:admin:defaultlanguageES' => 'Espagnol'
 		, 'coffee:admin:defaultlanguageFR' => 'Français'
 		, 'coffee:admin:sitesettingssave' => 'Sauvegarder'
-		, 'coffee:admin:corporatehashtags' => 'Suggestions de #hashtags'
-		, 'coffee:admin:corporatehashtagstitle' => 'Suggestions de #hashtags'
-		, 'coffee:admin:corporatehashtagshelp' => 'En tant qu\'administrateur, vous avez la possibilité de mettre en avant certains hashtags. Les #hashtags sont des mots-clés rendus cliquables par l\'accolade du signe "#" en début de mot. L\'utilisation de hashtags facilite l\'accessibilité de telle ou telle information. Vos utilisateurs retrouveront cette liste en cliquant sur la flèche située à droite du moteur de recherche, sur votre Coffee Wall.'
+		, 'coffee:admin:corporatehashtags' => 'Suggestions de hashtags'
+		, 'coffee:admin:corporatehashtagstitle' => 'Suggestions de hashtags'
+		, 'coffee:admin:corporatehashtagshelp' => 'En tant qu\'administrateur, vous avez la possibilité de mettre en avant certains hashtags. Les #hashtags sont des mots-clés rendus cliquables par l\'accolade du signe # en début de mot. L\'utilisation de hashtags facilite l\'accessibilité de telle ou telle information. Vos utilisateurs retrouveront cette liste en cliquant sur la flèche située à droite du moteur de recherche, sur votre CoffeeWall.'
 		, 'coffee:admin:addhashtag' => 'hashtag'
 		, 'coffee:admin:corporatehashtagssave' => 'Sauvegarder'
 
 /*usersettings*/
-		, 'coffee:usersettings:message' => 'Bienvenue dans vos Préférences.'
+		, 'coffee:usersettings:message' => 'Bienvenue dans vos préférences.'
 		, 'coffee:usersettings:usersettings' => 'Préférences'
 		, 'coffee:usersettings:name' => 'Prénom Nom'
 		, 'coffee:usersettings:currentpassword' => 'Mot de passe actuel'
@@ -171,7 +172,7 @@ Bonjour %1$s,
 
 Je vous invite à rejoindre notre communauté %2$s sur CoffeePoke.
 
-CoffeePoke, notre réseau social privé, nous permet d\'échanger des messages publics sur notre "Coffee Wall" dans un esprit convivial.
+CoffeePoke, notre réseau social privé, nous permet d\'échanger des messages publics sur notre "CoffeeWall" dans un esprit convivial.
 Notre objectif : développer les échanges informels pour mieux nous connaitre et favoriser la cohésion d\'équipe.
 
 Je viens de vous créer un compte. Pour y accéder, cliquez sur:

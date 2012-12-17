@@ -98,7 +98,7 @@
                             <img class="loader" src="static/img/loader.gif" width="16" height="16" />
                             {{#isAdmin}}
                             <span class="broadcastMessage">
-                                <a class="" rel="tooltip" title="Broadcast message" href="" data-placement="left"><i class="icon-bullhorn"></i></a>
+                                <a class="" rel="tooltip" title="{{#translate}}coffee:feed:broadcastmessage{{/translate}}" href="" data-placement="left"><i class="icon-bullhorn"></i></a>
                             </span>
                             {{/isAdmin}}
                         </div>
@@ -174,7 +174,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         {{^html}}
-                                        <a href="{{url}}" class="btn btn-primary">Download</a>
+                                        <a href="{{url}}" class="btn btn-primary" target="_blank">Download</a>
                                         {{/html}}
                                     </div>
                                 </div>
@@ -185,8 +185,8 @@
                     <div class="secondary-content">
                         <div class="interactions">
                             {{#likes}}
-                            {{#isOne}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{/likes.users}}{{#translate}}coffee:feeditem:likethis{{/translate}}</p>{{/isOne}}
-                            {{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{#isFirst}} {{#translate}}coffee:feeditem:and{{/translate}} &nbsp; {{/isFirst}}{{/likes.users}}&nbsp;{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isTwo}}
+                            {{#isOne}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{/likes.users}}{{#translate}}coffee:feeditem:likesthis{{/translate}}</p>{{/isOne}}
+                            {{#isTwo}}<p class="likes">{{#likes.users}}<a href="#profile/{{owner_guid}}">{{name}}</a>&nbsp;{{#isFirst}} {{#translate}}coffee:feeditem:and{{/translate}} &nbsp; {{/isFirst}}{{/likes.users}}&nbsp;{{#translate}}coffee:feeditem:likethis{{/translate}}</p>{{/isTwo}}
                             {{#isMore}}<p class="likes">
                                 {{#likes.users}}
                                 {{#isFirst}}<a href="#profile/{{owner_guid}}">{{name}}</a>{{/isFirst}}
@@ -384,8 +384,8 @@
             <div id="tvAppConfig">
                 <div class="content-module">
                     <div class="primary-content">
-                        <h1>{{#translate}}coffee:tvapp:title{{/translate}} {{name}}</h1>
-                        <p>{{#translate}}coffee:tvapp:message{{/translate}} <button class="btn btn-primary" id="doTvAppConfig">{{#translate}}coffee:tvapp:button{{/translate}}</button></p>
+                        <h1>{{#translate}}coffee:tvapp:title{{/translate}}</h1>
+                        <p>{{#translate}}coffee:tvapp:message{{/translate}} {{name}} ?     <button class="btn btn-primary" id="doTvAppConfig">{{#translate}}coffee:tvapp:button{{/translate}}</button></p>
                     </div>
                     <div class="secondary-content hide">
                         <div class="avatar">
@@ -407,7 +407,7 @@
                                 {{>tagTemplate}}
                             {{/users}}
                         </div>
-                        <p>{{#translate}}coffee:tvapp:tagselect{{/translate}} : </p>
+                        <p>{{#translate}}coffee:tvapp:tagselect{{/translate}}</p>
                         <div class="input-prepend hashtags ">
                             <span class="add-on">#</span><input class="span2" id="tags" size="16" type="text" placeholder="{{#translate}}coffee:tvapp:addhashtag{{/translate}}">
                         </div>

@@ -102,7 +102,7 @@ class ElggCoffee {
 
     }
 
-    public static function get_posts($newer_than = 0, $offset = 0, $limit = 10, $owner_guids = array(), $type = array(COFFEE_SUBTYPE,COFFEE_SUBTYPE_BROADCAST_MESSAGE), $guid = false, $tags = array()) {
+    public static function get_posts($newer_than = 0, $offset = 0, $limit = 10, $owner_guids = array(), $type = array(), $guid = false, $tags = array()) {
         $join = $where = $return = array();
         $db_prefix = elgg_get_config('dbprefix');
         $where[] = 'e.time_updated > ' . $newer_than;
@@ -114,6 +114,9 @@ class ElggCoffee {
                         Left Join {$db_prefix}objects_entity obj On e.guid = obj.guid";
             $where[] = "(tag_name.string In ($tags_string)
                             Or MATCH (obj.title,obj.description) AGAINST ('$tags[0]'))";
+        }
+        if ($type === false) {
+            $type = array(COFFEE_SUBTYPE,COFFEE_SUBTYPE_BROADCAST_MESSAGE);
         }
         $options  = array('types'=>'object'
                             , 'subtypes'=> $type
@@ -805,6 +808,20 @@ class ElggCoffee {
         }
         $return[++$key] = array('system_update' => datalist_get('simplecache_lastupdate_default'));
         $return[++$key] = array('corporate_tags_update' => $site_ent->corporate_tags_update);
+        return $return;
+    }
+
+    public static function get_tv_post () {
+        $return = array();
+        $user_ent = elgg_get_logged_in_user_entity();
+        if ($user_ent instanceof ElggUser) {
+            $tv_filters = $user_ent->tvAppSettings;
+            $tv_filters = json_decode($tv_filters);
+            $tv_filters_tags = $tv_filters->tags;
+            $tv_filters_users = $tv_filters->users;
+        }
+        $return['site_data'] = ElggCoffee::get_site_data();
+        $return['posts'] = ElggCoffee::get_posts(0,0,10,$tv_filters_users,FALSE,FALSE,$tv_filters_tags);
         return $return;
     }
 

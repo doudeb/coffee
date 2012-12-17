@@ -758,7 +758,7 @@
                 data: {
                     method: 'coffee.getUserList'
                     , auth_token: App.models.session.get('authToken')
-                    , username: username?username:''
+                    , query: username?username:''
                     , offset: offset?offset:0
                     , limit: limit?limit:10
                 },

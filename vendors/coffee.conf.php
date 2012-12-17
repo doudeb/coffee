@@ -408,4 +408,12 @@ $exposed[$i]['call_method']      	= 'POST';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
 
+$exposed[++$i]['method']            = "coffee.getTVPosts";
+$exposed[$i]['function']            = "ElggCoffee::get_tv_post";
+$exposed[$i]['params']          	= array();
+$exposed[$i]['comment']          	= 'Load post and data for TV app';
+$exposed[$i]['call_method']      	= 'GET';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
+
 $GLOBALS['CONFIG']->exposed                    = $exposed;

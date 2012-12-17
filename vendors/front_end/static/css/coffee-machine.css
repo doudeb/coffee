@@ -154,6 +154,8 @@ a:hover{color:#005580;text-decoration:none;}
 #tvAppConfig .secondary-content label { float: left;margin: 5px 5px 5px 0;}
 #tvAppConfig .update-action {text-align: right;padding: 10px 5px 10px 0}
 
+.popover input {width: 167px}
+
 @media screen and (max-width: 640px){
 
 }
@@ -201,7 +203,7 @@ a:hover{color:#005580;text-decoration:none;}
 .mobile #container #menu span.home h2 {font-size: 22px; color: #000;line-height: 5px;}
 .mobile #container #menu span.post {right:3px}
 .mobile #container #menu span.feed {text-align: right;}
-
+.mobile #profile .secondary-content .other h3, #profile .secondary-content .introduction h3, #profile .secondary-content .info h3 {margin: 0px;line-height:10px;}
 .mobile #container a:hover.home { text-decoration: none; }
 .mobile #microblogging { display: none; }
 .mobile { background-size: auto !important; }
@@ -226,8 +228,6 @@ a:hover{color:#005580;text-decoration:none;}
 .mobile .feed-item .secondary-content .interactions .counters { text-align: right; }
 .mobile .comments { list-style-type: none; margin: 0 10px; padding: 0; }
 .mobile .comments p { margin: 0.1em 0; }
-.icon-profile-mobile { background-position: 0px 0px;width: 35px; height: 35px; display: block; background-image:url("../img/profile.png");}
-.icon-post-mobile { background-position: 0px 0px;width: 35px; height: 35px; display: block; background-image:url("../img/post.png");}
 .mobile .watermark h3 {line-height: 10px}
 .mobile .update-action-comment-mobile {float: left}
 .mobile .update-action-like {float: none;}

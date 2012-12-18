@@ -15,7 +15,7 @@ $translation = array(
         , 'coffee:menu:tvapp' => 'CoffeeTV'
         , 'coffee:menu:admin' => 'Administration'
         , 'coffee:menu:settings' => 'Préférences'
-        , 'coffee:menu:logout' => 'Déconnexion'      
+        , 'coffee:menu:logout' => 'Déconnexion'
 
 /*welcome*/
         , 'coffee:welcome:headline' => '<h3>Bonjour,</h3>
@@ -114,9 +114,9 @@ $translation = array(
 		, 'coffee:tvapp:addhashtag' => 'hashtag'
 		, 'coffee:tvapp:thanks' => 'Merci'
 		, 'coffee:tvapp:cancel' => 'Annuler'
-     
+
 /*admin*/
-		, 'coffee:admin:message' => 'Ceci est votre outil d\'administration. <br/ > <a href="#userSettings">Accédez à vos préférences.</a> '
+		, 'coffee:admin:message' => 'Ceci est votre outil d\'administration. <br/ > <a href="#userSettings">Accédez à vos préférences.</a> '
 		, 'coffee:admin:users' => 'Utilisateurs'
 		, 'coffee:admin:search' => 'Recherche'
 		, 'coffee:admin:addnewuser' => 'Ajouter un nouvel utilisateur'

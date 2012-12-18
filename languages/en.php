@@ -77,7 +77,7 @@ $english = array(
 		, 'coffee:feed:search' => 'Search'
 		, 'coffee:feed:corporatetags' => 'Suggestions'
 		, 'coffee:feed:mostused' => 'Most used'
-                            
+
 /*profile */
         , 'coffee:profile:add:hobbiesandinterest' => 'Add a hobby or interest'
         , 'coffee:profile:hobbiesandinterest' => 'Hobbies & Interests'
@@ -113,7 +113,7 @@ $english = array(
 		, 'coffee:tvapp:cancel' => 'Cancel'
 
 /*admin*/
-		, 'coffee:admin:message' => 'This is your CoffeePoke admin tool. <br/ > <a href="#userSettings">Go to your settings</a>'
+		, 'coffee:admin:message' => 'This is your CoffeePoke admin tool. <br/ > <a href="#userSettings">Go to your settings</a>'
 		, 'coffee:admin:users' => 'Users'
 		, 'coffee:admin:search' => 'Search'
 		, 'coffee:admin:addnewuser' => 'Add a new user'
@@ -159,7 +159,7 @@ $english = array(
 		, 'coffee:usersettings:languageFR' => 'French'
 		, 'coffee:usersettings:languageEN' => 'English'
 		, 'coffee:usersettings:save' => 'Save'
-		
+
 /*User add*/
 
 	,'useradd:subject' => '%1$s, welcome to CoffeePoke'

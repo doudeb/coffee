@@ -23,7 +23,7 @@ $spain = array(
                         <p><a href="/static/doc/CoffeePoke_es.pdf" target="_blank">Haz click</a> para entender como CoffeePoke te permite ser todavía más eficaz (descargando un documento pdf).</p>
                         <p>Que tengas buen día con CoffeePoke.</p>'
         , 'coffee:welcome:instructions' => '
-                            <h3>Prueba Coffee break 2.0</h3>
+                            <h3>Prueba Coffee break 2.0</h3>
                             <div class="steps">
                                 <!--<span class="stepN">1.</span>-->
                                 <span class="instruction">
@@ -97,7 +97,7 @@ $spain = array(
         , 'coffee:poke:body' => 'Tomemos un café'
         , 'coffee:poke:subject' => '¿Café?'
         , 'coffee:profile:incomplete' => '<strong>Este es tu perfil.</strong><br />Será visible para tus colegas, así que asegúrate de completarlo y mantenerlo actualizado!'
-      
+
 /*TVapp*/
 		, 'coffee:tvapp:title' => 'Hola,'
 		, 'coffee:tvapp:message' => 'Que quieres difundir en esta pantalla'
@@ -113,7 +113,7 @@ $spain = array(
 		, 'coffee:tvapp:cancel' => 'Cancelar'
 
 /*admin*/
-		, 'coffee:admin:message' => 'Esto es tu panel de administración CoffeePoke. <br/ > <a href="#userSettings">Accede a tus Ajustes.</a> '
+		, 'coffee:admin:message' => 'Esto es tu panel de administración CoffeePoke. <br/ > <a href="#userSettings">Accede a tus Ajustes.</a> '
 		, 'coffee:admin:users' => 'Usuarios'
 		, 'coffee:admin:search' => 'Búsqueda'
 		, 'coffee:admin:addnewuser' => 'Añadir nuevo usuario'

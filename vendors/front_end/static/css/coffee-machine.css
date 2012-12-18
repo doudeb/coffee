@@ -203,7 +203,7 @@ a:hover{color:#005580;text-decoration:none;}
 .mobile #container #menu span.home h2 {font-size: 22px; color: #000;line-height: 5px;}
 .mobile #container #menu span.post {right:3px}
 .mobile #container #menu span.feed {text-align: right;}
-.mobile #profile .secondary-content .other h3, #profile .secondary-content .introduction h3, #profile .secondary-content .info h3 {margin: 0px;line-height:10px;}
+.mobile #profile .secondary-content .other h3, .mobile #profile .secondary-content .introduction h3, .mobile #profile .secondary-content .info h3 {margin: 0px;line-height:10px;}
 .mobile #container a:hover.home { text-decoration: none; }
 .mobile #microblogging { display: none; }
 .mobile { background-size: auto !important; }

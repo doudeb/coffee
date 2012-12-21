@@ -283,7 +283,7 @@ $exposed[$i]['params']          	= array();
 $exposed[$i]['comment']          	= '';
 $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;
-$exposed[$i]['require_user_auth']   = true;
+$exposed[$i]['require_user_auth']   = false;
 
 $exposed[++$i]['method']            = "coffee.getTokenByEmail";
 $exposed[$i]['function']            = "auth_gettoken_by_email";
@@ -388,7 +388,7 @@ $exposed[$i]['params']          	= array("locale" => array('type' => 'string'
 $exposed[$i]['comment']          	= 'Search for tags';
 $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;
-$exposed[$i]['require_user_auth']   = true;
+$exposed[$i]['require_user_auth']   = false;
 
 $exposed[++$i]['method']            = "coffee.getCorporateHashtags";
 $exposed[$i]['function']            = "ElggCoffee::get_corporate_tags";
@@ -415,5 +415,28 @@ $exposed[$i]['comment']          	= 'Load post and data for TV app';
 $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
+
+$exposed[++$i]['method']            = "coffee.sendNewPassword";
+$exposed[$i]['function']            = "ElggCoffee::send_new_password";
+$exposed[$i]['params']          	= array("user" => array('type' => 'string'
+                                                            , 'required' => true
+                                                            , 'default' => false));
+$exposed[$i]['comment']          	= 'Send a reset password link to a user';
+$exposed[$i]['call_method']      	= 'POST';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = false;
+
+$exposed[++$i]['method']            = "coffee.resetPassword";
+$exposed[$i]['function']            = "ElggCoffee::reset_password";
+$exposed[$i]['params']          	= array("user_guid" => array('type' => 'int'
+                                                            , 'required' => true
+                                                            , 'default' => false)
+                                            , "code" => array('type' => 'string'
+                                                            , 'required' => true
+                                                            , 'default' => false));
+$exposed[$i]['comment']          	= 'Send a reset password link to a user';
+$exposed[$i]['call_method']      	= 'POST';
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = false;
 
 $GLOBALS['CONFIG']->exposed                    = $exposed;

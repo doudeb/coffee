@@ -452,12 +452,24 @@ class ElggCoffee {
         }
         $user = get_user_by_username($username);
         if ($user) {
-            if (send_new_password_request($user->guid)) {
-                return true;
-            } else {
-                return false;
-            }
+            // generate code
+            $code = generate_random_cleartext_password();
+            $user->setPrivateSetting('passwd_conf_code', $code);
+            // generate link
+            $link = $_SERVER['HTTP_REFERER'] . "#resetPassword/" . $user->guid . "/$code";
+
+            // generate email
+            $email = elgg_echo('email:resetreq:body', array($user->name, $_SERVER['REMOTE_ADDR'], $link));
+
+            return notify_user($user->guid, $GLOBALS['CONFIG']->site->guid,
+                elgg_echo('email:resetreq:subject'), $email, NULL, 'email');
         }
+
+        return false;
+    }
+
+    public static function reset_password ($user_guid = false, $code = false) {
+        return execute_new_password_request($user_guid, $code);
     }
 
     public static function upload_user_avatar ($square = false) {

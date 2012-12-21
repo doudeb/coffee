@@ -1720,9 +1720,9 @@
             elm.toggleClass('on');
             this.isBroadCastMessage = elm.hasClass('on');
             if (this.isBroadCastMessage) {
-                elm.attr('title', t('coffee:feed:broadcastmessage'));
+                elm.find("a").attr('data-original-title', t('coffee:feed:broadcastmessage'));
             } else {
-                elm.attr('title', t('coffee:feed:broadcastmessageunactive'));
+                elm.find("a").attr('data-original-title', t('coffee:feed:broadcastmessageunactive'));
             }
             return false;
         },
@@ -1890,7 +1890,7 @@
                     Backbone.history.navigate('feed', true);
                     break;
                 case 'backToFeed':
-                    window.history.back();
+                    Backbone.history.navigate('feed', true);
                     break;
                 case 'profile':
                     Backbone.history.navigate('profile', true);
@@ -2964,6 +2964,91 @@
         }
     });
 
+   /* !View: lostPassword */
+    var lostPasswordView = Backbone.View.extend({
+        initialize: function () {
+            _.bindAll(this);
+
+            this.render();
+        },
+
+        render: function () {
+            var self = this;
+            data = { user_guid : self.options.user_guid
+                , code : self.options.code
+                , 'translate': function() {
+                    return function(text) {
+                        return t(text);
+                    }
+                }
+            };
+
+            var element = ich.lostPassword(data);
+            self.setElement(element);
+
+            self.$el
+            .prependTo('#container')
+            .hide()
+            .fadeIn(500);
+        },
+
+        events: {
+            "click #sendNewPassword" : "sendNewPassword"
+            , "click #doResetPassword" : "doResetPassword"
+        },
+
+        sendNewPassword: function(e) {
+
+            var self = this
+                , data = {
+                    method: 'coffee.sendNewPassword'
+                    , user: self.$el.find('#inputEmail').val()
+            };
+            $.ajax({
+                type: 'POST'
+                , url: App.resourceUrl
+                , dataType: 'json'
+                , data: data
+                , success: function (response) {
+                    if (response.status != -1) {
+                        self.$el.find('.alert').html(t('user:password:resetreq:success'));
+                        setTimeout("window.location.href='#login'", 5000);
+
+                    } else {
+                        self.$el.find('.alert').html(t('user:password:resetreq:fail'));
+                    }
+                }
+            });
+            return false;
+        },
+
+        doResetPassword: function(e) {
+
+            var self = this
+                , data = {
+                    method: 'coffee.resetPassword'
+                    , user_guid : self.options.user_guid
+                    , code : self.options.code
+            };
+            $.ajax({
+                type: 'POST'
+                , url: App.resourceUrl
+                , dataType: 'json'
+                , data: data
+                , success: function (response) {
+                    if (response.status != -1) {
+                        self.$el.find('.alert').html(t('admin:user:resetpassword:yes'));
+                        setTimeout("window.location.href='#login'", 5000);
+
+                    } else {
+                        self.$el.find('.alert').html(t('admin:user:resetpassword:no'));
+                    }
+                }
+            });
+            return false;
+        }
+    });
+
     /* !Router: WorkspaceRouter */
     var WorkspaceRouter = Backbone.Router.extend({
         routes: {
@@ -2979,6 +3064,8 @@
             , "mobilePost":             "mobilePost"
             , "userSettings":           "userSettings"
             , "admin":                  "admin"
+            , "lostPassword":           "lostPassword"
+            , "resetPassword/:user_guid/:code":           "lostPassword"
         },
 
 
@@ -3112,6 +3199,14 @@
             } else {
                 Backbone.history.navigate('login', true);
             }
+        },
+
+        lostPassword: function (user_guid, code) {
+            App.removeAllViews();
+            App.views.lostPasswordtView = new lostPasswordView({
+                    user_guid: user_guid
+                    , code: code
+                });
         }
     });
 

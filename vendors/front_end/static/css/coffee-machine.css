@@ -69,6 +69,7 @@ a:hover{color:#005580;text-decoration:none;}
 #search .dropdown-menu .header-item {text-align: right;font-size: 70%;margin-right: 10px}
 #login{background-color:#ffffff;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 3px rgba(0, 0, 0, 0.4);-moz-box-shadow:0 1px 3px rgba(0, 0, 0, 0.4);box-shadow:0 1px 3px rgba(0, 0, 0, 0.4);width:500px;margin:100px auto;}#login form legend{width:470px;padding:15px 15px 0 15px;}
 #login form .form-actions{-webkit-border-radius:0 0 3px 3px;-moz-border-radius:0 0 3px 3px;border-radius:0 0 3px 3px;}
+#login form .alert{margin: 10px 10px 20px 10px}
 #profile {padding-top:15px;width:520px;}
 #profile .primary-content{*zoom:1;}
 #profile .primary-content:before,#profile .primary-content:after{display:table;content:"";}
@@ -179,6 +180,7 @@ a:hover{color:#005580;text-decoration:none;}
 
 /*  .mobile #container { -webkit-overflow-scrolling : touch; }*/
 .mobile { background-image: none !important; background-color: #494949 !important; }
+.mobile .btn {height: 40px;}
 .mobile #login, .mobile #profile, .mobile #profile .primary-content .info, .mobile #profile .secondary-content .other .introduction, .mobile #welcome { width: auto; }
 .mobile .feed-item .primary-content .name{font-weight:bold;margin-left: 10px}
 .mobile #watermark {display: none}
@@ -196,11 +198,11 @@ a:hover{color:#005580;text-decoration:none;}
 .mobile #microblogging .btn, .mobile .postForm .btn { width: auto; float: right; margin-right: 5px; }
 .mobile #microblogging .update-content .update-text, .mobile .postForm .update-content .update-text { width: 98%; height: 70px; margin-left: 0; }
 .mobile .postForm .update-content .new-comment-textarea { height: auto; }
-.mobile #container #content { margin: 37px 0 0 0; }
-.mobile #container #menu {width:100%;height: 30px; top: 0; z-index: 2; background-color: #e5e5e5;padding: 1px;}
+.mobile #container #content { margin: 45px 0 0 0; }
+.mobile #container #menu {width:100%;height: 40px; top: 0; z-index: 2; background-color: #e5e5e5;padding: 1px;background-image: -webkit-gradient(linear, left top, left bottom, from(#C5C5C5), to(#E6E6E6));}
 .mobile #container #menu span {width:40px;position:absolute}
-.mobile #container #menu span.home {width: 100%; text-align: center;overflow: hidden}
-.mobile #container #menu span.home h2 {font-size: 22px; color: #000;line-height: 5px;}
+.mobile #container #menu span.home {width: 100%; text-align: center;overflow: hidden;height: 40px;padding-top: 5px}
+.mobile #container #menu span.home h2 {font-size: 22px; color: #000;line-height: 5px;text-shadow: 0px 1px 0px #fff;}
 .mobile #container #menu span.post {right:3px}
 .mobile #container #menu span.feed {text-align: right;}
 .mobile #profile .secondary-content .other h3, .mobile #profile .secondary-content .introduction h3, .mobile #profile .secondary-content .info h3 {margin: 0px;line-height:10px;}

@@ -72,7 +72,32 @@
                         </div>
                     </div>
                     <div class="form-actions">
+                        <a href="#lostPassword" class="pull-right text-info" id="lostPassword">Lost password</a>
                         <button class="btn btn-primary" id="doLogin">Login</button>
+                        <img class="loader" src="static/img/loader.gif" width="16" height="16" />
+                    </div>
+                </form>
+            </div>
+        </script>
+        <script type="text/html" id="lostPassword">
+            <div id="login">
+                <form class="form-horizontal">
+                    <legend>Lost password</legend>
+                    <div class="alert">
+                        {{^user_guid}}To request a new password, enter your email address below and click the Request button.{{/user_guid}}
+                        {{#user_guid}}Resetting your password will email a new password to your registered email address.{{/user_guid}}
+                    </div>
+                    {{^user_guid}}
+                    <div class="control-group">
+                        <label class="control-label" for="inputEmail">Email</label>
+                        <div class="controls">
+                            <input type="text" class="input-large" id="inputEmail" />
+                        </div>
+                    </div>
+                    {{/user_guid}}
+                    <div class="form-actions">
+                        {{^user_guid}}<button class="btn btn-primary" id="sendNewPassword">Request</button>{{/user_guid}}
+                        {{#user_guid}}<button class="btn btn-primary" id="doResetPassword">Reset password</button>{{/user_guid}}
                         <img class="loader" src="static/img/loader.gif" width="16" height="16" />
                     </div>
                 </form>
@@ -98,7 +123,7 @@
                             <img class="loader" src="static/img/loader.gif" width="16" height="16" />
                             {{#isAdmin}}
                             <span class="broadcastMessage">
-                                <a class="" rel="tooltip" title="{{#translate}}coffee:feed:broadcastmessage{{/translate}}" href="" data-placement="left"><i class="icon-bullhorn"></i></a>
+                                <a class="" rel="tooltip" title="{{#translate}}coffee:feed:broadcastmessageunactive{{/translate}}" href="" data-placement="left"><i class="icon-bullhorn"></i></a>
                             </span>
                             {{/isAdmin}}
                         </div>
@@ -231,7 +256,7 @@
                     {{#displayWelcome}}<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:welcome{{/translate}}" data-action="welcome" data-placement="right"><i class="icon-flag icon-white"></i></a></li>{{/displayWelcome}}
                     <li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:feedlist{{/translate}}" data-action="feed" data-placement="right"><i class="icon-home icon-white"></i></a></li>
                     <li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:profile{{/translate}}" data-action="profile" data-placement="right"><i class="icon-user icon-white"></i></a></li>
-                    <li id="tvApp"><a href="" rel="tooltip" title="{{#translate}}coffee:menu:tvapp{{/translate}}" data-action="tv" data-placement="right"><i class="icon-tv icon-white"></i></a></li>
+                    {{#isAdmin}}<li id="tvApp"><a href="" rel="tooltip" title="{{#translate}}coffee:menu:tvapp{{/translate}}" data-action="tv" data-placement="right"><i class="icon-tv icon-white"></i></a></li>{{/isAdmin}}
                     {{#isAdmin}}<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:admin{{/translate}}" data-action="admin" data-placement="right"><i class="icon-wrench icon-white"></i></a></li>{{/isAdmin}}
                     {{^isAdmin}}<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:settings{{/translate}}" data-action="settings" data-placement="right"><i class="icon-wrench icon-white"></i></a></li>{{/isAdmin}}
                     <li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:logout{{/translate}}" data-action="logout" data-placement="right"><i class="icon-off icon-white"></i></a></li>

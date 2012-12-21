@@ -33,7 +33,6 @@ function coffee_init() {
     elgg_register_action('coffee/settings/save', elgg_get_plugins_path() . 'coffee/actions/save_settings.php');
     //view extend
     elgg_extend_view('api/output','coffee/api/json/output',501,'json');
-
 }
 
 elgg_register_event_handler('init', 'system', 'coffee_init');

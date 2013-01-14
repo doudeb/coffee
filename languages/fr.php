@@ -199,4 +199,3 @@ A tout de suite sur CoffeePoke,
 
 
 );
-add_translation("fr",$translation);

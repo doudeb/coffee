@@ -7,7 +7,7 @@
  * @versiondate 171212
  */
 
-$spain = array(
+$translation = array(
 /*menu*/
          'coffee:menu:welcome' => 'Bienvenid@'
         , 'coffee:menu:feedlist' => 'CoffeeWall'
@@ -198,5 +198,3 @@ CoffeePoke, nuestro coffee break 2.0'
                     ,'friendlytime:date_format' => 'j F Y à H:i'
 
 );
-
-add_translation("es",$spain);

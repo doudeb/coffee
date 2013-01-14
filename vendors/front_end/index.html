@@ -96,7 +96,10 @@
                     </div>
                     {{/user_guid}}
                     <div class="form-actions">
-                        {{^user_guid}}<button class="btn btn-primary" id="sendNewPassword">Request</button>{{/user_guid}}
+                        {{^user_guid}}
+                            <button class="btn pull-right" id="back">Cancel</button>
+                            <button class="btn btn-primary" id="sendNewPassword">Request</button>
+                        {{/user_guid}}
                         {{#user_guid}}<button class="btn btn-primary" id="doResetPassword">Reset password</button>{{/user_guid}}
                         <img class="loader" src="static/img/loader.gif" width="16" height="16" />
                     </div>
@@ -400,6 +403,7 @@
                     {{/tags}}
                 </div>
                 <div class="update-action">
+                    <button class="btn pull-right" id="closeConfig">Cancel</button>
                     <button class="btn btn-primary" id="saveConfig">Save</button>
                     <!--<a href="" class="cancel" id="cancelTvConfig">Cancel</a>-->
                 </div>
@@ -907,7 +911,7 @@
         <script type="text/html" id="userVcardTemplate">
                 <div class="user-vcard-content-module" data-user-guid="{{id}}">
                     <div class="vcard-info">
-                        <p class="name">{{name}}</p>
+                        <p class="name"><a href="#profile/{{id}}">{{name}}</a></p>
                         <p class="headline">{{profile.headline}}</p>
                     </div>
                     <img class="vcard-avatar radius3" src="{{avatar}}">

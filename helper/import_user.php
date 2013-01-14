@@ -21,8 +21,9 @@ $headers = 'From: evrard@coffeepoke.com' . "\r\n" .
 
 foreach($users as $key=>$user) {
 	$user = explode(";",$user);
-	$username = _convert(trim(substr($user[2],0,strpos($user[2],'@'))));
+	$username = _convert(trim($user[2]));
     $username = str_replace(array("-","_",".","@"), '', $username);
+    if (strlen($username) <= $CONFIG->minusername) $username = str_pad ($username, $CONFIG->minusername,'_');
 	$password = substr(md5(rand(1,666)),0,8);
 	$displayname = trim($user[0]) . ' ' . trim($user[1]);
 	$email = trim($user[2]);

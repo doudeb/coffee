@@ -806,7 +806,10 @@ class ElggCoffee {
     }
 
     public static function get_translation_table ($locale) {
-        return $GLOBALS['CONFIG']->translations[$locale];
+        if (!require elgg_get_plugins_path() . 'coffee/languages/' . $locale . '.php') {
+            require elgg_get_plugins_path() . 'coffee/languages/en.php';
+        }
+        return $translation;
     }
 
     public static function get_site_trigger ($type = array(COFFEE_SITE_FEED_UPDATE)) {

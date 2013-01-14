@@ -7,7 +7,7 @@
  * @versiondate 171212
  */
 
-$english = array(
+$translation = array(
 /*menu*/
          'coffee:menu:welcome' => 'Welcome'
         , 'coffee:menu:feedlist' => 'CoffeeWall'
@@ -185,5 +185,3 @@ See you soon on CoffeePoke,
 %6$s',
 
 );
-
-add_translation("en",$english);

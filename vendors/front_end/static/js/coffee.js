@@ -79,7 +79,6 @@
             $.ajax({
                 type: 'GET'
                 , url: location.host?"services/api/rest/json?method=coffee.getTranslationTable":"http://api.coffeepoke.com/services/api/rest/json?method=coffee.getTranslationTable"
-                , cache: true
                 , async: false
                 , data: {
                     locale : App.models.session.get('language')?App.models.session.get('language'):'en'
@@ -673,6 +672,7 @@
                         App.initTypeAhead('#tagsTvAdd', 'coffee.getTagList', self.addTags);
                         $('.del').bind('click', self.removeTag);
                         $('#saveConfig').bind('click', function () {self.saveConfig();elm.popover('destroy');});
+                        $('#closeConfig').bind('click', function () {elm.popover('destroy');});
                         $('#cancelTvConfig').bind('click', function () {elm.popover('destroy');});
                     }
                 });
@@ -2178,6 +2178,11 @@
             , name = element.attr('data-name')
             , key = element.attr('data-key')
             , prevValue = $.trim(element.text());
+
+            if(_.isUndefined(self.model.get(name))) {
+                prevValue = '';
+            };
+            //, prevValue = ($.trim(element.text()) != t['coffee:profile:add:presentation'])?$.trim(element.text()):'';
             var editingTextarea = $('<textarea class="editing editing-'+name+'" data-name="'+name+'" data-key="'+key+'">' + prevValue + '</textarea>')
             .bind('blur', function(){
                 editingTextarea.replaceWith(element);
@@ -2995,6 +3000,7 @@
         events: {
             "click #sendNewPassword" : "sendNewPassword"
             , "click #doResetPassword" : "doResetPassword"
+            , "click #back" : "backToHome"
         },
 
         sendNewPassword: function(e) {
@@ -3046,6 +3052,10 @@
                 }
             });
             return false;
+        },
+
+        backToHome : function () {
+            Backbone.history.navigate('feed', true);
         }
     });
 

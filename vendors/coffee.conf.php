@@ -30,7 +30,7 @@ $exposed[$i]['params']          	= array("guid" => array('type' => 'int'
                                                             , 'required' => false )
                                                 );
 $exposed[$i]['comment']          	= 'Retreive user data.
-                                        @param extended is an array of profil name';
+                                        @param extended is an array of profil name eg : [hobbies, headline, location, introduction, phone, cellphone];';
 $exposed[$i]['call_method']      	= 'GET';
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;

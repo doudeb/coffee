@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
-        id        = "com.phonegap.coffeepokeTV"
-        version   = "1.0.31">
+        id        = "com.coffeepoke.mobileapp"
+        version   = "1.0.33">
     <name>CoffeePoke</name>
 
     <description>
@@ -27,6 +27,8 @@
 	<feature name="http://api.phonegap.com/1.0/media"/>
 	<feature name="http://api.phonegap.com/1.0/network"/>
 	<feature name="http://api.phonegap.com/1.0/notification"/>
+
+    <preference name="splash-screen-duration" value="2000" />
 
 
     <icon src="static/img/mobile/icon.png" />

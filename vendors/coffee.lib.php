@@ -392,15 +392,6 @@ if (is_array($exposed)) {
 
 global $CONFIG;
 
-unset($CONFIG->menus['page'][0]);
-unset($CONFIG->menus['page'][1]);
-unset($CONFIG->menus['page'][2]);
-unset($CONFIG->menus['page'][3]);
-unset($CONFIG->menus['page'][8]);
-unset($CONFIG->menus['page'][9]);
-unset($CONFIG->menus['page'][15]);
-unset($CONFIG->menus['page'][16]);
-unset($CONFIG->menus['page'][17]);
 //setting default file permission mask
 umask(002);
 //lock site navigation

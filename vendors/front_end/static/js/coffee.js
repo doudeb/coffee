@@ -155,8 +155,7 @@
                             , auth_token: App.models.session.get('authToken')
                             , query: query
                             , mode : triggerChar
-                        }
-                        , success: function (response) {
+                        }, success: function (response) {
                             if (response.status != -1) {
                                 responseData = response.result;
                                 //responseData = _.filter(responseData, function(item) { return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1 });
@@ -895,6 +894,7 @@
             }
 
             if (attributes.comment.total > 0) {
+                attributes.comment.hasComment = true;
                 attributes.comment.comments.reverse();
                 attributes.comment.showAllLink = (attributes.comment.total > attributes.comment.comments.length) ? true : false;
                 for (i=0; i < attributes.comment.total; i++) {
@@ -909,6 +909,8 @@
                         attributes.comment.comments[i].text = replaceUrl(attributes.comment.comments[i].text);
                     }
                 }
+            } else {
+                attributes.comment.hasComment = false;
             }
 
             attributes.content.text = replaceUrl(attributes.content.text);
@@ -1097,7 +1099,7 @@
            , 'blur .new-comment-textarea': 'changeComposingFlag'
            , 'click .remove-comment': 'removeComment'
            , 'click .show-all-text': 'toggleAllText'
-           , 'click .update-action-comment-mobile a': 'showMobileCommentForm'
+           , 'click .content-module.clickable': 'showMobileCommentForm'
            , 'click .thumbnail': 'openMobileLink'
            , 'click .title': 'openMobileLink'
         },
@@ -1406,8 +1408,13 @@
         },
 
         showMobileCommentForm: function(e) {
-            guid = $(e.currentTarget).parents('.feed-item').attr('data-guid');
-            Backbone.history.navigate('mobileComment/' + guid, true);
+            console.log(e);
+            if (!_.isUndefined(e.srcElement.hash) || e.srcElement.localName === 'img') {
+                Backbone.history.navigate(e.srcElement.hash, true);
+            } else {
+                guid = $(e.currentTarget).parents('.feed-item').attr('data-guid');
+                Backbone.history.navigate('#mobileComment/' + guid, true);
+            }
         },
 
         getMentions: function () {
@@ -2065,7 +2072,7 @@
             }
             //extraInfo.languages = (extraInfo.hasLanguages) ? JSON.parse(stripslashes(object.languages)): [];
             //extraInfo.socialmedia = (extraInfo.hasSocialmedia) ? JSON.parse(stripslashes(object.socialmedia)) : [];
-            extraInfo.introduction = (extraInfo.introduction) ? stripslashes(object.introduction) : false;
+            extraInfo.introduction = (extraInfo.introduction) ? stripslashes(object.introduction) : undefined;
 
             _.each(extraInfo.socialmedia, function(item){
                 var type = item.service;
@@ -2178,7 +2185,6 @@
             , name = element.attr('data-name')
             , key = element.attr('data-key')
             , prevValue = $.trim(element.text());
-
             if(_.isUndefined(self.model.get(name))) {
                 prevValue = '';
             };

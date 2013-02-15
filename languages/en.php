@@ -195,10 +195,10 @@ Click on the link below to reset your password. Otherwise ignore this email.
 Thanks
 
 Team Coffeepoke'
-    , 'user:resetpassword:yes' => 'Successfully requested a new password, email sent.'
-    , 'user:resetpassword:no' => 'Ooooops... Could not request a new password.'
-    , 'user:password:resetreq:success' => 'Your password has been updated, you should received an email shortly !'
-    , 'user:password:resetreq:fail' => 'Oooops... Password reset fail, please try again.'
+    , 'user:password:resetreq:success' => ' Your password request has been successfully sent by email.'
+    , 'user:password:resetreq:fail' => 'Ooops… Password request has failed'
+    , 'user:resetpassword:yes' => 'Your password has now been updated, you will received an email shortly.'
+    , 'user:resetpassword:no' => 'Oooops… Password reset failed, please try again.'
 );
 
 add_translation('en', $translation);

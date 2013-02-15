@@ -2868,14 +2868,17 @@
         takeApicutre: function () {
             // Retrieve image file location from specified source
             if (_.isObject(navigator.camera)) {
-                navigator.camera.getPicture(this.uploadFile, this.captureError, { destinationType: destinationType.FILE_URI});
+                navigator.camera.getPicture(this.uploadFile, this.captureError, { quality: 75
+                                                                                    , correctOrientation: true
+                                                                                    , destinationType: Camera.DestinationType.FILE_URI
+                                                                                    , targetWidth: 1024});
             } else {
                 alert("Only avaible in native mobile application");
             }
         },
 
         captureError: function () {
-
+            alert("Only avaible in native mobile application");
         },
 
         uploadFile: function(imageURI) {
@@ -2885,7 +2888,6 @@
                 params = new Object();
 
             toggleUploadSpinner();
-
             options.fileKey="upload";
             options.fileName=imageURI.substr(imageURI.lastIndexOf('/')+1);
             options.mimeType="image/jpeg";
@@ -2894,7 +2896,7 @@
             params.auth_token = App.models.session.get('authToken')
 
             options.params = params;
-            options.chunkedMode = false;
+            options.chunkedMode = true;
 
             ft.upload(imageURI,
                 App.resourceUrl,
@@ -2902,9 +2904,11 @@
                     self.updateAttachement(result.response);
                 },
                 function(error) {
-                    alert(error.code);
+                    alert('upload error, code : ' + error.code);
+                    toggleUploadSpinner();
                 },
-                options);
+                options,
+                true);
         }
     });
 
@@ -3049,11 +3053,11 @@
                 , data: data
                 , success: function (response) {
                     if (response.status != -1) {
-                        self.$el.find('.alert').html(t('admin:user:resetpassword:yes'));
+                        self.$el.find('.alert').html(t('user:resetpassword:yes'));
                         setTimeout("window.location.href='#login'", 5000);
 
                     } else {
-                        self.$el.find('.alert').html(t('admin:user:resetpassword:no'));
+                        self.$el.find('.alert').html(t('user:resetpassword:no'));
                     }
                 }
             });

@@ -196,6 +196,13 @@ A tout de suite sur CoffeePoke,
 			,'friendlytime:days' => "il y a %s jours"
 			,'friendlytime:days:singular' => "hier"
 			,'friendlytime:date_format' => 'j F Y à H:i'
+//Lost Password
+            , 'user:password:resetreq:success' => "Merci. Nous venons de vous envoyer un email vous expliquant comment réinitialiser votre mot de passe."
+            , 'user:password:resetreq:fail' => "Désolé, mais cette adresse email n'existe pas."
+            , 'admin:user:resetpassword:yes' => "Votre nouveau mot de passe vous a été envoyé par email."
+            , 'admin:user:resetpassword:no' => "Oups une erreur est survenue. Merci de réessayer plus tard. Si le problème persiste, merci de contacter votre administrateur.
 
 
-);
+");
+
+add_translation('fr', $translation);

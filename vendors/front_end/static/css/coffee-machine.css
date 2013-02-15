@@ -62,7 +62,7 @@ a:hover{color:#005580;text-decoration:none;}
 #microblogging .update-actions .broadcastMessage {margin:3px 5px 0 5px;cursor: pointer}
 #microblogging .update-actions .loader, #login .loader{margin:6px 10px 0 0;display:none;}
 .microblogging-loading .update-actions .loader, .loading .loader{display:block !important;}
-.loading .btn-primary {display: none}
+.loading .btn-primary, #uploadProgress .loader {display: none}
 #search {margin-top: 15px; padding : 10px 0 5px 0; text-align: center;background-color:rgba(255, 255, 255, 0.7);}
 #search .btn-group,#search #hashtagsSelected {text-align: left}
 #search #hashtagsSelected {margin-left: 5px}
@@ -185,13 +185,12 @@ a:hover{color:#005580;text-decoration:none;}
 .mobile .btn {height: 30px;margin-top: 13px;-webkit-tap-highlight-color:rgba(0,0,0,0);}
 .mobile #login, .mobile #profile, .mobile #profile .primary-content .info, .mobile #profile .secondary-content.other .introduction, .mobile #welcome { width: auto; }
 .mobile .feed-item .primary-content .name{font-weight:bold;margin-left: 10px}
-.mobile #watermark {display: none}
 .mobile .feed-item .secondary-content .interactions .comments .comment .comment-content{width: auto}
 .mobile .feed-item .secondary-content .interactions .comments .comment .comment-content .text{min-width: 180px;}
 .mobile #microblogging .attachment{margin: 0 0 10px 0px;}
 .mobile #login { margin: 100px 15px; }
 .mobile #login form legend { width: 94%; padding: 3% 3% 0; }
-.mobile #container .watermark { border-radius: 0; top: 0; left: 0; width: 100%; text-align: center; padding: 5px 0; background-color: rgba(73, 73, 73, 0.5);height: 48px; }
+.mobile #container .watermark { border-radius: 0; left: 0; width: 100%; text-align: center; padding: 5px 0; background-color: rgba(73, 73, 73, 0.5);height: 48px; }
 .mobile .form-item { padding: 0 10px; }
 .mobile .input-large { width: 95%; }
 .mobile .form-horizontal .form-actions { padding: 10px 0; text-align: center;}
@@ -250,8 +249,9 @@ a:hover{color:#005580;text-decoration:none;}
 .mobile #menu ul li.home, .mobile #menu ul li.post {width : 40px}
 .mobile #menu ul li.siteName {width: 72%; text-align: center}
 .mobile #menu ul li.home h2 {font-size: 22px; color: #000;line-height: 5px;}
-
 body.mobile {padding-left: 0px;padding-right: 0px;overflow-x:hidden;width:100%;}
+.mobile #uploadProgress .loader {display: block;margin-left: 23px;}
+.mobile .progress .bar {display: none;}
 
 .mentions-input-box {
   position: relative;

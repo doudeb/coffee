@@ -162,8 +162,8 @@ $translation = array(
 
 /*User add*/
 
-	,'useradd:subject' => '%1$s, welcome to CoffeePoke'
-	,'useradd:body' => '
+        ,'useradd:subject' => '%1$s, welcome to CoffeePoke'
+        ,'useradd:body' => '
 Hi %1$s,
 
 I invite you to join %2$s\'s private community on CoffeePoke.
@@ -182,6 +182,23 @@ Log in now to see what your colleagues are talking about, and tell them what you
 Oh by the way, you can also log in from the web browser of your smartphone while your out of the office.
 See you soon on CoffeePoke,
 
-%6$s',
+%6$s'
+        , 'email:resetreq:body' => '
+Hi %1$s,
 
+You have requested a new password for your account.
+
+Click on the link below to reset your password. Otherwise ignore this email.
+
+%3$s
+
+Thanks
+
+Team Coffeepoke'
+    , 'user:resetpassword:yes' => 'Successfully requested a new password, email sent.'
+    , 'user:resetpassword:no' => 'Ooooops... Could not request a new password.'
+    , 'user:password:resetreq:success' => 'Your password has been updated, you should received an email shortly !'
+    , 'user:password:resetreq:fail' => 'Oooops... Password reset fail, please try again.'
 );
+
+add_translation('en', $translation);

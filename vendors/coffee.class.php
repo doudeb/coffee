@@ -761,9 +761,11 @@ class ElggCoffee {
        $result = get_data($query);
        if ($result) {
            foreach ($result as $tags) {
-               $return[] = array('id' => $tags->id
-                                    , 'type' => 'tag'
-                                    , 'name' => '#'. $tags->tag);
+               if (is_object($tags)) {
+                $return[] = array('id' => $tags->id
+                                     , 'type' => 'tag'
+                                     , 'name' => '#'. $tags->tag);
+               }
            }
            return $return;
        }

@@ -198,3 +198,5 @@ CoffeePoke, nuestro coffee break 2.0'
                     ,'friendlytime:date_format' => 'j F Y à H:i'
 
 );
+
+add_translation('es', $translation);

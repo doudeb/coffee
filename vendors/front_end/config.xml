@@ -28,8 +28,8 @@
 	<feature name="http://api.phonegap.com/1.0/network"/>
 	<feature name="http://api.phonegap.com/1.0/notification"/>
 
-    <preference name="splash-screen-duration" value="2000" />
-
+    <preference name="splash-screen-duration" value="4000" />
+    <preference name="phonegap-version" value="2.2.0" />
 
     <icon src="static/img/mobile/icon.png" />
     <icon src="static/img/mobile/icon-36.png"   gap:platform="android"    gap:density="ldpi" />

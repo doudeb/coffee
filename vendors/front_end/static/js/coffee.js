@@ -175,10 +175,12 @@
                 , source: function (query, process) {
                     return $.getJSON(App.resourceUrl, {method:method,auth_token: App.models.session.get('authToken'), query: query}, function (response) {
                          if (response.status != '-1') {
+                             results = typeAheadResult = [];
                              _.each(response.result, function(item) {
                                  results.push(item.name);
                                  typeAheadResult[item.name] = item.id;
                              });
+                             console.log(results);
                              return process(results);
                          }
                     });
@@ -662,6 +664,8 @@
                             var result = response.result.tvAppSettings
                                 , tags = App.prepareTags(App.getSearchCriteria('tags',result))
                                 , users = App.prepareUsers(App.getSearchCriteria('users',result));
+                        } else {
+                            var users = tags = [];
                         }
                         config = ich.userTvConfigTemplate({tags : tags, users : users});
                         elm.popover({title : "User TV #" + self.model.get('id') +  " config (for TV App)"
@@ -672,7 +676,7 @@
                         $('.del').bind('click', self.removeTag);
                         $('#saveConfig').bind('click', function () {self.saveConfig();elm.popover('destroy');});
                         $('#closeConfig').bind('click', function () {elm.popover('destroy');});
-                        $('#cancelTvConfig').bind('click', function () {elm.popover('destroy');});
+                        //$('#cancelTvConfig').bind('click', function () {elm.popover('destroy');});
                     }
                 });
         },
@@ -724,7 +728,7 @@
 
         addTags: function (item) {
                     data = {name:item
-                            , id:users[item]
+                            , id:item
                             , css:'tag'
                             , del:true};
                     elm = ich.tagTemplate(data);

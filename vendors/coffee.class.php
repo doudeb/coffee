@@ -85,7 +85,8 @@ class ElggCoffee {
             $site_logo = elgg_get_entities($options);
             $options['wheres']   = array("obj_ent.title = 'background'");
             $site_background = elgg_get_entities($options);
-            $custom_css = $site_background[0]->description;
+            $options['wheres']   = array("obj_ent.title = 'css'");
+            $custom_css = elgg_get_entities($options);
             $viewtype = elgg_get_viewtype();
             return array(
                     'user_guid' => elgg_get_logged_in_user_guid()
@@ -93,7 +94,7 @@ class ElggCoffee {
                     , 'name' => $site->name
                     , 'logo_url' => ElggCoffee::_get_dwl_url($site_logo[0]->guid)
                     , 'background_url' => ElggCoffee::_get_dwl_url($site_background[0]->guid)
-                    , 'custom_css' => $custom_css
+                    , 'custom_css' => ElggCoffee::_get_dwl_url($custom_css[0]->guid)
                     , 'system_update' => datalist_get('simplecache_lastupdate_default')
                     , 'corporate_tags' => ElggCoffee::get_corporate_tags()
             );
@@ -703,7 +704,7 @@ class ElggCoffee {
                     $file->access_id = COFFEE_DEFAULT_ACCESS_ID;
                     $prefix = "file/";
                     $filestorename = elgg_strtolower(time().$values['name']);
-                    $mime_type = $file->detectMimeType($values['tmp_name'], $values['type']);
+                    $mime_type = $values['type'];
                     $file->setFilename($prefix . $filestorename);
                     $file->setMimeType($mime_type);
                     $file->originalfilename = $values['name'];
@@ -842,6 +843,44 @@ class ElggCoffee {
         return $return;
     }
 
+    public static function get_tv_channel () {
+        global $CONFIG;
+        $return = array();
+        $user_ent = elgg_get_logged_in_user_entity();
+        if ($user_ent instanceof ElggUser) {
+            $tv_channels = $user_ent->tvChannelsSettings;
+            $tv_channels = json_decode($tv_channels);
+        }
+        $return['site_data'] = ElggCoffee::get_site_data();
+        foreach ($tv_channels as $key => $channel) {
+            switch ($key) {
+                case 'Twitter':
+                    _elgg_autoload($key);
+                    $feed = new Twitter($channel->consumer_key, $channel->consumer_secret);
+                    $feed->setOAuthToken($channel->oauth_token);
+                    $feed->setOAuthTokenSecret($channel->oauth_token_secret);
+                    $post = $feed->searchTweets('obama');
+                    if (is_array($post['statuses'])) {
+                        $return['Twitter'] = array();
+                        foreach ($post['statuses'] as $key=>$row) {
+                            $return['Twitter'][$key] = format_post_array($row['text']
+                                                                            , $row['created_at']
+                                                                            , $row['user']['id']
+                                                                            , $row['user']['name']
+                                                                            , $row['user']['screen_name']
+                                                                            , $row['user']['profile_image_url']
+                                                                            , $row['user']['profile_background_image_url']);
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        return $return;
+    }
+
     private static function _add_attachment ($guid_parent, $attachment) {
         if (!is_array($attachment)) return false;
         $type = COFFEE_POST_ATTACHMENT_RELATIONSHIP;
@@ -870,7 +909,10 @@ class ElggCoffee {
     }
 
     private static function _get_dwl_url ($guid) {
-        return $GLOBALS['CONFIG']->url . 'dwl/' . $GLOBALS['CONFIG']->auth_token . '/' . $guid;
+        if ($guid > 0) {
+            return $GLOBALS['CONFIG']->url . 'dwl/' . $GLOBALS['CONFIG']->auth_token . '/' . $guid;
+        }
+        return false;
     }
 
     private static function _get_thumbnail_url ($guid,$size='medium') {

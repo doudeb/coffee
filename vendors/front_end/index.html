@@ -27,6 +27,7 @@
         <script src="static/js/vendor/jquery.elastic.js"></script>
         <script src="static/js/vendor/jquery.mentionsInput.js"></script>
         <script src="static/js/vendor/bootstrap.min.js"></script>
+        <script src="static/js/vendor/jquery.dragsort-0.4.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
         <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
@@ -44,6 +45,10 @@
               <img class="loader" src="static/img/loader.gif" width="16" height="16" />
             </div>
         </div>
+        <div id="modal-view" class="modal hide fade"></div>
+
+
+        <!-- Templates -->
         <script type="text/html" id="mentionUserTemplate">
             <a class="mentioned user" href="#profile/{{owner_guid}}">{{name}}</a>
         </script>
@@ -385,7 +390,11 @@
             </div>
         </script>
         <script type="text/html" id="userTvConfigTemplate">
-           <div id="tvAppConfig">
+           <div class="tv-channel-setting content-module" id="CoffeePoke">
+               <span class="pull-right lead">
+                  CoffeePoke
+                  <button type="button" class="close remove-channel" aria-hidden="true">&times;</button>
+               </span>
                 <div class="input-prepend users">
                     <span class="add-on">@</span><input id="usersTvAdd" size="16" type="text" placeholder="Username">
                 </div>
@@ -394,7 +403,6 @@
                         {{>tagTemplate}}
                     {{/users}}
                 </div>
-                <p>Hashtags : </p>
                 <div class="input-prepend hashtags ">
                     <span class="add-on">#</span><input id="tagsTvAdd" size="16" type="text" placeholder="Hashtag">
                 </div>
@@ -403,59 +411,166 @@
                         {{>tagTemplate}}
                     {{/tags}}
                 </div>
-                <div class="update-action">
-                    <button class="btn pull-right" id="closeConfig">Cancel</button>
-                    <button class="btn btn-primary" id="saveConfig">Save</button>
-                    <!--<a href="" class="cancel" id="cancelTvConfig">Cancel</a>-->
+           </div>
+        </script>
+        <script type="text/html" id="StaticURLTemplate">
+           <div class="tv-channel-setting content-module" id="StaticURL">
+               <span class="pull-right lead">
+                  StaticURL
+                  <button type="button" class="close remove-channel" aria-hidden="true">&times;</button>
+               </span>
+                <div class="input-prepend">
+                    <span class="add-on">Display name</span><input id="displayName" size="16" type="text" placeholder="Display name" value="{{displayName}}">
+                </div>
+                <div class="input-prepend">
+                    <span class="add-on">URL</span><input id="staticURL" size="16" type="text" placeholder="" value="{{staticURL}}">
+                </div>
+                <p>Duration : </p>
+                <div class="input-prepend">
+                    <span class="add-on">mili sec</span><input id="duration" size="10" type="text" placeholder="" value="{{duration}}">
+                </div>
+           </div>
+        </script>
+        <script type="text/html" id="TwitterTemplate">
+           <div class="tv-channel-setting content-module" id="Twitter">
+               <span class="pull-right lead">
+                  Twitter
+                  <button type="button" class="close remove-channel" aria-hidden="true">&times;</button>
+               </span>
+                <div class="input-prepend">
+                    <span class="add-on">@</span><input id="userName" size="16" type="text" placeholder="Username" value="{{userName}}">
+                </div>
+                <div class="input-prepend">
+                    <span class="add-on">#</span><input id="hashTag" size="16" type="text" placeholder="Hashtag" value="{{hashTag}}">
+                </div>
+                <div class="input-prepend">
+                    <span class="add-on">Consumer Key</span><input id="consumer_key" size="16" type="text" placeholder="Consumer Key" value="{{consumer_key}}">
+                </div>
+                <div class="input-prepend">
+                    <span class="add-on">Consumer Secret</span><input id="consumer_secret" size="16" type="text" placeholder="Consumer Secret" value="{{consumer_secret}}">
+                </div>
+                <div class="input-prepend">
+                    <span class="add-on">Oauth Token</span><input id="oauth_token" size="16" type="text" placeholder="Oauth Token" value="{{oauth_token}}">
+                </div>
+                <div class="input-prepend">
+                    <span class="add-on">Oauth Token Secret</span><input id="oauth_token_secret" size="16" type="text" placeholder="Oauth Token Secret" value="{{oauth_token_secret}}">
+                </div>
+           </div>
+        </script>
+        <script type="text/html" id="FacebookTemplate">
+           <div class="tv-channel-setting content-module" id="Facebook">
+               <span class="pull-right lead">
+                  Facebook
+                  <button type="button" class="close remove-channel" aria-hidden="true">&times;</button>
+               </span>
+                <div class="input-prepend">
+                    <span class="add-on">Profile ID</span><input id="profil_id" size="16" type="text" placeholder="Profil ID" value="{{profil_id}}">
+                </div>
+                <div class="input-prepend">
+                    <span class="add-on">App ID</span><input id="app_id" size="16" type="text" placeholder="App ID" value="{{app_id}}">
+                </div>
+                <div class="input-prepend">
+                    <span class="add-on">App Secret</span><input id="app_secret" size="16" type="text" placeholder="App Secret" value="{{app_secret}}">
+                </div>
+           </div>
+        </script>
+        <script type="text/html" id="RSSTemplate">
+           <div class="tv-channel-setting content-module" id="RSS">
+               <span class="pull-right lead">
+                  RSS
+                  <button type="button" class="close remove-channel" aria-hidden="true">&times;</button>
+               </span>
+                <div class="input-prepend">
+                    <span class="add-on">URL</span><input id="url" size="16" type="text" placeholder="" value="{{url}}">
+                </div>
+           </div>
+        </script>
+        <script type="text/html" id="tvChannelsSettingsTemplate">
+            <div id="tvChannelsSettings">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>#{{guid}} TV Channel's</h3>
+                </div>
+                <div class="modal-body">
+                    <p><label for="newChannel">Add a TV Channel</label>
+                    <select id="newChannel" name="newChannel">
+                      {{^tvChannelsSettings.CoffeePoke}}<option value="CoffeePoke">CoffeePoke</option>{{/tvChannelsSettings.CoffeePoke}}
+                      <option value="Twitter">Twitter</option>
+                      <option value="Facebook">Facebook</option>
+                      <option value="RSS">RSS</option>
+                      <option value="StaticURL">Static URL</option>
+                    </select>
+                    <button class="btn btn-primary add-channel" href="#"><i class="icon-plus icon-white"></i></button></p>
+                    <p class="lead">Channel list</p>
+                    <hr />
+                    <ul class="channelList unstyled" id="channelList">
+                    {{#tvChannelsSettings}}
+                        {{#Twitter}}
+                            <li>{{>TwitterTemplate}}</li>
+                        {{/Twitter}}
+                        {{#CoffeePoke}}
+                            <li>{{>userTvConfigTemplate}}</li>
+                        {{/CoffeePoke}}
+                        {{#StaticURL}}
+                            <li>{{>StaticURLTemplate}}</li>
+                        {{/StaticURL}}
+                        {{#RSS}}
+                            <li>{{>RSSTemplate}}</li>
+                        {{/RSS}}
+                        {{#Facebook}}
+                            <li>{{>FacebookTemplate}}</li>
+                        {{/Facebook}}
+                    {{/tvChannelsSettings}}
+                    {{^tvChannelsSettings}}
+                        No Chanels configured yet !
+                    {{/tvChannelsSettings}}
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn" data-dismiss="modal">Close</a>
+                    <a href="#" class="btn btn-primary" id="saveConfig">Save changes</a>
                 </div>
            </div>
         </script>
         <script type="text/html" id="tvAppConfigTemplate">
-            <div id="tvAppConfig">
-                <div class="content-module">
-                    <div class="primary-content">
-                        <h1>{{#translate}}coffee:tvapp:title{{/translate}}</h1>
-                        <p>{{#translate}}coffee:tvapp:message{{/translate}} {{name}} ?     <button class="btn btn-primary" id="doTvAppConfig">{{#translate}}coffee:tvapp:button{{/translate}}</button></p>
+            <div class="tv-channel-setting content-module">
+                <div class="primary-content">
+                    <h1>{{#translate}}coffee:tvapp:title{{/translate}}</h1>
+                    <p>{{#translate}}coffee:tvapp:message{{/translate}} {{name}} ?     <button class="btn btn-primary" id="doTvAppConfig">{{#translate}}coffee:tvapp:button{{/translate}}</button></p>
+                </div>
+                <div class="secondary-content hide">
+                    <div class="avatar">
+                        <img class="radius3" src="{{iconUrl}}" title="{{name}}" width="40" height="40"/>
                     </div>
-                    <div class="secondary-content hide">
-                        <div class="avatar">
-                            <img class="radius3" src="{{iconUrl}}" title="{{name}}" width="40" height="40"/>
-                        </div>
-                        <div>
-                            <p>{{#translate}}coffee:tvapp:answer1{{/translate}}</p>
-                            <label for="fromUsers">{{#translate}}coffee:tvapp:fromusers{{/translate}}</label>
-                            <select class="input-large" id="fromUsersSelect">
-                                <option value="@all" {{^users}}selected{{/users}}>{{#translate}}coffee:tvapp:fromusersall{{/translate}}</option>
-                                <option value="select" {{#users}}selected {{/users}}>{{#translate}}coffee:tvapp:fromuserselect{{/translate}}</option>
-                            </select>
-                        </div>
-                        <div class="input-prepend users {{^users}}hide{{/users}}">
-                            <span class="add-on">@</span><input class="span2" id="users" size="16" type="text" placeholder="{{#translate}}coffee:tvapp:fromuserselectusername{{/translate}}">
-                        </div>
-                        <div id="usersSelected">
-                            {{#users}}
-                                {{>tagTemplate}}
-                            {{/users}}
-                        </div>
-                        <p>{{#translate}}coffee:tvapp:tagselect{{/translate}}</p>
-                        <div class="input-prepend hashtags ">
-                            <span class="add-on">#</span><input class="span2" id="tags" size="16" type="text" placeholder="{{#translate}}coffee:tvapp:addhashtag{{/translate}}">
-                        </div>
-                        <div id="hashtagsSelected">
-                            {{#tags}}
-                                {{>tagTemplate}}
-                            {{/tags}}
-                        </div>
+                    <div>
+                        <p>{{#translate}}coffee:tvapp:answer1{{/translate}}</p>
+                        <label for="fromUsers">{{#translate}}coffee:tvapp:fromusers{{/translate}}</label>
+                        <select class="input-large" id="fromUsersSelect">
+                            <option value="@all" {{^users}}selected{{/users}}>{{#translate}}coffee:tvapp:fromusersall{{/translate}}</option>
+                            <option value="select" {{#users}}selected {{/users}}>{{#translate}}coffee:tvapp:fromuserselect{{/translate}}</option>
+                        </select>
                     </div>
-                    <div class="update-action hide">
-                        <button class="btn btn-primary btn-large" id="saveConfig">{{#translate}}coffee:tvapp:thanks{{/translate}}</button>
-                        <a href="#tv" class="cancel">{{#translate}}coffee:tvapp:cancel{{/translate}} </a>
+                    <div class="input-prepend users {{^users}}hide{{/users}}">
+                        <span class="add-on">@</span><input class="span2" id="users" size="16" type="text" placeholder="{{#translate}}coffee:tvapp:fromuserselectusername{{/translate}}">
+                    </div>
+                    <div id="usersSelected">
+                        {{#users}}
+                            {{>tagTemplate}}
+                        {{/users}}
+                    </div>
+                    <p>{{#translate}}coffee:tvapp:tagselect{{/translate}}</p>
+                    <div class="input-prepend hashtags ">
+                        <span class="add-on">#</span><input class="span2" id="tags" size="16" type="text" placeholder="{{#translate}}coffee:tvapp:addhashtag{{/translate}}">
+                    </div>
+                    <div id="hashtagsSelected">
+                        {{#tags}}
+                            {{>tagTemplate}}
+                        {{/tags}}
                     </div>
                 </div>
             </div>
         </script>
         <script type="text/html" id="tvAppTemplate">
-            {{>tvAppConfigTemplate}}
             <link href="static/css/style.css" rel="stylesheet" type="text/css">
             {{{scripts}}}
             <div id="cadre">
@@ -835,12 +950,16 @@
                <legend>{{#translate}}coffee:admin:sitesettingstitle{{/translate}}</legend>
                <div class="alert hide" id="registrationResult"/>
                <div class="form-item">
-                   <label for="displayName">{{#translate}}coffee:admin:logo{{/translate}}</label>
+                   <label for="logo">{{#translate}}coffee:admin:logo{{/translate}}</label>
                    <input type="file" class="input-large" id="logo" name="logo"/>
                </div>
                <div class="form-item">
-                   <label for="email">{{#translate}}coffee:admin:background{{/translate}}</label>
+                   <label for="background">{{#translate}}coffee:admin:background{{/translate}}</label>
                    <input type="file" class="input-large" id="background" name="background"/>
+               </div>
+               <div class="form-item">
+                   <label for="email">{{#translate}}coffee:admin:css{{/translate}}</label>
+                   <input type="file" class="input-large" id="css" name="css"/>
                </div>
                <div class="form-item">
                    <label for="language">{{#translate}}coffee:admin:defaultlanguage{{/translate}}</label>

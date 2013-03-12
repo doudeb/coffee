@@ -74,6 +74,14 @@
         $('.watermark').show();
     },
 
+    setCss = function (cssUrl) {
+        $("<link/>", {
+            rel: "stylesheet",
+            type: "text/css",
+            href: cssUrl
+         }).appendTo("head");
+    },
+
     t = function (key) {
         if (translations === null) {
             $.ajax({
@@ -306,7 +314,7 @@
             , siteName: null
             , logoUrl: null
             , backgroundUrl: null
-            , customCss: null
+            , cssUrl: null
             , isAdmin: null
             , language: null
             , accountTime: null
@@ -337,7 +345,7 @@
             $.cookie('siteName', this.get('siteName'), { expires: 365*10 });
             $.cookie('logoUrl', this.get('logoUrl'), { expires: 365*10 });
             $.cookie('backgroundUrl', this.get('backgroundUrl'), { expires: 365*10 });
-            $.cookie('customCss', this.get('customCss'), { expires: 365*10 });
+            $.cookie('cssUrl', this.get('cssUrl'), { expires: 365*10 });
             $.cookie('name', this.get('name'), { expires: 365*10 });
             $.cookie('iconUrl', this.get('iconUrl'), { expires: 365*10 });
             $.cookie('coverUrl', this.get('coverUrl'), { expires: 365*10 });
@@ -360,7 +368,7 @@
 				, siteName: $.cookie('siteName')
 				, logoUrl: $.cookie('logoUrl')
 				, backgroundUrl: $.cookie('backgroundUrl')
-				, customCss: $.cookie('custom_css')
+				, cssUrl: $.cookie('cssUrl')
 				, name: $.cookie('name')
 				, language: $.cookie('language')
 				, iconUrl: $.cookie('iconUrl')
@@ -398,7 +406,7 @@
                             , siteName: result.name
                             , logoUrl: result.logo_url
                             , backgroundUrl: result.background_url
-                            , customCss: result.custom_css
+                            , cssUrl: result.custom_css
                             , translations: result.translations
                             , isAdmin: result.is_admin==='true'?true:''
                             , systemDate: result.system_update
@@ -453,7 +461,7 @@
             $.cookie('siteName',null);
             $.cookie('logoUrl',null);
             $.cookie('backgroundUrl',null);
-            $.cookie('backgroundPos',null);
+            $.cookie('cssUrl',null);
             $.cookie('name',null);
             $.cookie('iconUrl',null);
             $.cookie('coverUrl',null);
@@ -644,11 +652,14 @@
             var self = this
                 , guid = self.model.get('id')
                 , elm = $(e.currentTarget)
+                , modal = $("#modal-view");
+
+                /*
                 , exist = $('body').find('.popover');
                 if (_.isObject(exist) && exist.length > 0) {
                     exist.popover('destroy');
                     return false;
-                }
+                }*/
                 $.ajax({
                     type: 'GET'
                     , url: App.resourceUrl
@@ -657,45 +668,84 @@
                         method: 'coffee.getUserExtraInfo'
                         , auth_token: App.models.session.get('authToken')
                         , guid: self.model.get('id')
-                        , names: ['tvAppSettings']
+                        , names: ['tvChannelsSettings']
                     },
                     success: function (response) {
                         if (response.status == "0") {
-                            var result = response.result.tvAppSettings
-                                , tags = App.prepareTags(App.getSearchCriteria('tags',result))
-                                , users = App.prepareUsers(App.getSearchCriteria('users',result));
+                            var tvChannelsSettings = response.result.tvChannelsSettings;
+                            if (!_.isUndefined(tvChannelsSettings)) {
+                                tvChannelsSettings = JSON.parse(tvChannelsSettings);
+                            } else {
+
+                            }
                         } else {
-                            var users = tags = [];
+                            var tvChannelsSettings = false;
                         }
-                        config = ich.userTvConfigTemplate({tags : tags, users : users});
-                        elm.popover({title : "User TV #" + self.model.get('id') +  " config (for TV App)"
-                                     , content : config.html()});
-                        elm.popover('show');
+
+                        config = ich.tvChannelsSettingsTemplate({tvChannelsSettings:tvChannelsSettings, guid: self.model.get('id')});
+                        modal
+                            .html(config.html())
+                            .modal('show');
+                        $('.add-channel').bind('click', self.addTvChannel);
+                        $('.remove-channel').bind('click', self.removeChannel);
                         App.initTypeAhead('#usersTvAdd', 'coffee.getUserList', self.addUsers);
                         App.initTypeAhead('#tagsTvAdd', 'coffee.getTagList', self.addTags);
                         $('.del').bind('click', self.removeTag);
-                        $('#saveConfig').bind('click', function () {self.saveConfig();elm.popover('destroy');});
-                        $('#closeConfig').bind('click', function () {elm.popover('destroy');});
-                        //$('#cancelTvConfig').bind('click', function () {elm.popover('destroy');});
+                        $('#saveConfig').bind('click', function (elm) {self.saveConfig();});
+                        $("#channelList").dragsort({ dragSelector: "li"});
+                        //$('#cancelTvConfig').bind('click', function () {elm.popover('destroy');});*/
                     }
                 });
         },
 
+        addTvChannel: function (elm) {
+            var channelType = $("#modal-view").find('#newChannel').val()
+                , channelList = $("#modal-view").find('.channelList')
+                , self = this;
+
+            if (!_.isUndefined(channelType)) {
+                switch (channelType) {
+                    default:
+                        return false;
+                        break;
+                    case 'CoffeePoke':
+                        template = ich.userTvConfigTemplate();
+                        break;
+                     case 'StaticURL':
+                        template = ich.StaticURLTemplate();
+                        break;
+                     case 'Twitter':
+                        template = ich.TwitterTemplate();
+                        break;
+                     case 'RSS':
+                        template = ich.RSSTemplate();
+                        break;
+                     case 'Facebook':
+                        template = ich.FacebookTemplate();
+                        break;
+                }
+
+                channelList.prepend(template);
+                App.initTypeAhead('#usersTvAdd', 'coffee.getUserList', self.addUsers);
+                App.initTypeAhead('#tagsTvAdd', 'coffee.getTagList', self.addTags);
+                $('.remove-channel').bind('click', self.removeChannel);
+
+            }
+        },
+
         saveConfig: function () {
+
             self = this
-                , users = []
-                , tags = []
-                , criteria = [];
-            _.each($('#usersTvSelected').find('span.label.user'), function (item, key) {
-                users[key] = $(item).attr('data-id');
-            });
+                , modal = $("#modal-view")
+                , channelList = $("#modal-view").find('.channelList')
+                , channelListConfig = channelList.find('.tv-channel-setting');
 
-            _.each($('#hashtagsTvSelected').find('span.label.tag'), function (item, key) {
-                tags[key] = $(item).attr('data-name').replace('#','');
-            });
+            channelConfig = self.parseAndSerializeTVChannel(channelListConfig);
+            channelConfig = JSON.stringify(channelConfig);
 
-            criteria = {tags:tags,users:users};
-            criteria = JSON.stringify(criteria);
+            if (!_.isString(channelConfig)) {
+                return false;
+            }
             $.ajax({
                 type: 'POST'
                 , url: App.resourceUrl
@@ -703,17 +753,56 @@
                 , data: {
                     method: 'coffee.setUserExtraInfo'
                     , auth_token: App.models.session.get('authToken')
-                    , name: 'tvAppSettings'
-                    , value: criteria
+                    , name: 'tvChannelsSettings'
+                    , value: channelConfig
                     , guid: self.model.get('id')
                 },
                 success: function (response) {
                     if (response.status != -1) {
                         alert("Settings successfuly saved.");
-                        $('#tvAppConfig').popover('destroy');
+                        modal.modal('hide');
                     }
                 }
             });
+        },
+
+        parseAndSerializeTVChannel: function (channelList) {
+            var tvChannel = new Object;
+            _.each(channelList, function(item, key) {
+                var type = $(item).attr('id')
+                    criteria = new Object;
+                switch (type) {
+                    case 'CoffeePoke':
+                        var users = []
+                            ,tags = [];
+                        _.each($(item).find('span.label.user'), function (item, key) {
+                            users[key] = {name:$(item).attr('data-name')
+                                            , id:$(item).attr('data-id')
+                                            , css:'label-info user'
+                                            , del:true};
+                        });
+
+                        _.each($(item).find('span.label.tag'), function (item, key) {
+                            name = $(item).attr('data-id').replace("#", '');
+                            tags[key] = {name:name
+                                            , id:name
+                                            , css:'tag'
+                                            , del:true};
+                        });
+                        criteria.tags = tags,
+                        criteria.users = users;
+                        break;
+                    default:
+                        _.each($(item).find('input'), function (item, key) {
+                            inputName = $(item).attr('id');
+                            criteria[inputName] = $(item).val();
+                        });
+                        tvChannel[type] = criteria;
+                        break;
+                }
+                tvChannel[type] = criteria;
+            });
+            return tvChannel;
         },
 
         addUsers: function (item, id) {
@@ -739,6 +828,11 @@
         removeTag: function (e) {
             elm = $(e.currentTarget);
             elm.parent().remove();
+        },
+
+        removeChannel: function (e) {
+            elm = $(e.currentTarget);
+            elm.parent().parent().remove();
         }
     });
 
@@ -2078,7 +2172,7 @@
             //extraInfo.socialmedia = (extraInfo.hasSocialmedia) ? JSON.parse(stripslashes(object.socialmedia)) : [];
             extraInfo.introduction = (extraInfo.introduction) ? stripslashes(object.introduction) : undefined;
 
-            _.each(extraInfo.socialmedia, function(item){
+            _.each(extraInfo.socialmedia, function(item) {
                 var type = item.service;
 
                 item.isTwitter = (type == 'twitter') ? true : false;
@@ -2183,7 +2277,6 @@
         },
 
         startInlineEdit: function (e) {
-
             var self = this
             , element = $(e.currentTarget)
             , name = element.attr('data-name')
@@ -2656,6 +2749,10 @@
                     App.models.session.set('logoUrl',item.logo);
                     setLogo (item.logo);
                 }
+                if (typeof item.css != 'undefined') {
+                    App.models.session.set('cssUrl',item.css);
+                    setCss (item.css);
+                }
             });
             toggleUploadSpinner();
         },
@@ -3113,6 +3210,7 @@
                 App.views.menuView = new MenuView();
                 setBackground (App.models.session.get('backgroundUrl'));
                 setLogo (App.models.session.get('logoUrl'));
+                setCss (App.models.session.get('cssUrl'));
             } else {
                 Backbone.history.navigate('login', true);
             }

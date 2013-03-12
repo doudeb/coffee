@@ -373,6 +373,21 @@ function render_dwl ($guid) {
     exit;
 }
 
+function format_post_array ($text,$time_created,$user_id,$username,$display_name,$icon_url,$cover_urll) {
+    $return = array();
+    $return['content']['text'] = nl2br($text);
+    $return['content']['time_created'] = $time_created;
+    $return['content']['friendly_time'] = $time_created;
+    $return['user']['guid'] = $user_id;
+    $return['user']['username'] = $username;
+    $return['user']['name'] = $display_name;
+    $return['user']['icon_url'] = $icon_url;
+    $return['user']['icon_url_small'] = $icon_url;
+    $return['user']['cover_url'] = $cover_urll;
+
+    return $return;
+}
+
 /**
 
  * Exposed function for ws api
@@ -394,6 +409,9 @@ global $CONFIG;
 
 //setting default file permission mask
 umask(002);
+//Register external classe
+elgg_register_classes(elgg_get_plugins_path() . 'coffee/vendors/external_api');
+
 //lock site navigation
 if (!in_array(elgg_get_context(), array('rest','coffee','usericon','file','dwl','testapi','thumbnail'))) {
     logout();

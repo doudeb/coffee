@@ -150,8 +150,7 @@
                         </div>
                     </div>
                     <div id="hashtagsSelected" />
-                </div>
-                <div id="feed-items">
+                    <div class="feed-item-on-top"></div>
                 </div>
             </div>
         </script>
@@ -167,7 +166,7 @@
         </script>
 
         <script type="text/html" id="feedItemTemplate">
-            <div class="feed-item" data-guid="{{guid}}">
+            <div class="feed-item{{#onTop}} on-top{{/onTop}}" data-guid="{{guid}}">
                 <div class="content-module">
                     {{#isBroadCastMessage}}
                     <span class="broadcastMessage"></span>
@@ -389,100 +388,147 @@
                 </div>
             </div>
         </script>
+        <script type="text/html" id="TvChannelHeaderTemplate">
+            <p>
+                <button type="button" class="btn" data-toggle="collapse" data-target="#channel{{key}}">
+                    {{ChannelName}}
+                </button>
+                <button type="button" class="close remove-channel" aria-hidden="true">&times;</button>
+            </p>
+        </script>
         <script type="text/html" id="userTvConfigTemplate">
            <div class="tv-channel-setting content-module" id="CoffeePoke">
-               <span class="pull-right lead">
-                  CoffeePoke
-                  <button type="button" class="close remove-channel" aria-hidden="true">&times;</button>
-               </span>
-                <div class="input-prepend users">
-                    <span class="add-on">@</span><input id="usersTvAdd" size="16" type="text" placeholder="Username">
-                </div>
-                <div id="usersTvSelected">
-                    {{#users}}
-                        {{>tagTemplate}}
-                    {{/users}}
-                </div>
-                <div class="input-prepend hashtags ">
-                    <span class="add-on">#</span><input id="tagsTvAdd" size="16" type="text" placeholder="Hashtag">
-                </div>
-                <div id="hashtagsTvSelected">
-                    {{#tags}}
-                        {{>tagTemplate}}
-                    {{/tags}}
-                </div>
+               {{>TvChannelHeaderTemplate}}
+               <div id="channel{{key}}" class="collapse">
+                    <div class="input-prepend users">
+                        <span class="add-on">@</span><input id="usersTvAdd" size="16" type="text" placeholder="Username">
+                    </div>
+                    <div id="usersTvSelected">
+                        {{#users}}
+                            {{>tagTemplate}}
+                        {{/users}}
+                    </div>
+                    <div class="input-prepend hashtags ">
+                        <span class="add-on">#</span><input id="tagsTvAdd" size="16" type="text" placeholder="Hashtag">
+                    </div>
+                    <div id="hashtagsTvSelected">
+                        {{#tags}}
+                            {{>tagTemplate}}
+                        {{/tags}}
+                    </div>
+               </div>
+           </div>
+        </script>
+        <script type="text/html" id="BlueKiwiTemplate">
+           <div class="tv-channel-setting content-module" id="BlueKiwi">
+               {{>TvChannelHeaderTemplate}}
+               <div id="channel{{key}}" class="collapse">
+                    <div class="input-prepend">
+                        <span class="add-on">Url</span><input id="url" size="16" type="text" placeholder="Url" value="{{url}}">
+                    </div>
+                    <div class="input-prepend ">
+                        <span class="add-on">Query</span><input id="query" size="16" type="text" placeholder="Query" value="{{query}}">
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add-on">App ID</span><input id="app_id" size="16" type="text" placeholder="App ID" value="{{app_id}}">
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add-on">App Secret</span><input id="app_secret" size="16" type="text" placeholder="App Secret" value="{{app_secret}}">
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add-on">AccessToken</span><input id="access_token" size="16" type="text" placeholder="AccessToken" value="{{access_token}}">
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add-on">SuperToken</span><input id="super_token" size="16" type="text" placeholder="SuperToken" value="{{super_token}}">
+                    </div>
+               </div>
            </div>
         </script>
         <script type="text/html" id="StaticURLTemplate">
            <div class="tv-channel-setting content-module" id="StaticURL">
-               <span class="pull-right lead">
-                  StaticURL
-                  <button type="button" class="close remove-channel" aria-hidden="true">&times;</button>
-               </span>
-                <div class="input-prepend">
-                    <span class="add-on">Display name</span><input id="displayName" size="16" type="text" placeholder="Display name" value="{{displayName}}">
-                </div>
-                <div class="input-prepend">
-                    <span class="add-on">URL</span><input id="staticURL" size="16" type="text" placeholder="" value="{{staticURL}}">
-                </div>
-                <p>Duration : </p>
-                <div class="input-prepend">
-                    <span class="add-on">mili sec</span><input id="duration" size="10" type="text" placeholder="" value="{{duration}}">
-                </div>
+               {{>TvChannelHeaderTemplate}}
+               <div id="channel{{key}}" class="collapse">
+                    <div class="input-prepend">
+                        <span class="add-on">Display name</span><input id="displayName" size="16" type="text" placeholder="Display name" value="{{displayName}}">
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add-on">URL</span><input id="staticURL" size="16" type="text" placeholder="" value="{{staticURL}}">
+                    </div>
+                    <p>Duration : </p>
+                    <div class="input-prepend">
+                        <span class="add-on">mili sec</span><input id="duration" size="10" type="text" placeholder="" value="{{duration}}">
+                    </div>
+               </div>
            </div>
         </script>
         <script type="text/html" id="TwitterTemplate">
            <div class="tv-channel-setting content-module" id="Twitter">
-               <span class="pull-right lead">
-                  Twitter
-                  <button type="button" class="close remove-channel" aria-hidden="true">&times;</button>
-               </span>
+               {{>TvChannelHeaderTemplate}}
+               <div id="channel{{key}}" class="collapse">
                 <div class="input-prepend">
-                    <span class="add-on">@</span><input id="userName" size="16" type="text" placeholder="Username" value="{{userName}}">
-                </div>
+                     <span class="add-on">Query</span><input id="query" size="16" type="text" placeholder="Query" value="{{query}}">
+                 </div>
                 <div class="input-prepend">
-                    <span class="add-on">#</span><input id="hashTag" size="16" type="text" placeholder="Hashtag" value="{{hashTag}}">
-                </div>
-                <div class="input-prepend">
-                    <span class="add-on">Consumer Key</span><input id="consumer_key" size="16" type="text" placeholder="Consumer Key" value="{{consumer_key}}">
-                </div>
-                <div class="input-prepend">
-                    <span class="add-on">Consumer Secret</span><input id="consumer_secret" size="16" type="text" placeholder="Consumer Secret" value="{{consumer_secret}}">
-                </div>
-                <div class="input-prepend">
-                    <span class="add-on">Oauth Token</span><input id="oauth_token" size="16" type="text" placeholder="Oauth Token" value="{{oauth_token}}">
-                </div>
-                <div class="input-prepend">
-                    <span class="add-on">Oauth Token Secret</span><input id="oauth_token_secret" size="16" type="text" placeholder="Oauth Token Secret" value="{{oauth_token_secret}}">
-                </div>
+                     <span class="add-on">Consumer Key</span><input id="consumer_key" size="16" type="text" placeholder="Consumer Key" value="{{consumer_key}}">
+                 </div>
+                 <div class="input-prepend">
+                     <span class="add-on">Consumer Secret</span><input id="consumer_secret" size="16" type="text" placeholder="Consumer Secret" value="{{consumer_secret}}">
+                 </div>
+                 <div class="input-prepend">
+                     <span class="add-on">Oauth Token</span><input id="oauth_token" size="16" type="text" placeholder="Oauth Token" value="{{oauth_token}}">
+                 </div>
+                 <div class="input-prepend">
+                     <span class="add-on">Oauth Token Secret</span><input id="oauth_token_secret" size="16" type="text" placeholder="Oauth Token Secret" value="{{oauth_token_secret}}">
+                 </div>
+               </div>
            </div>
         </script>
         <script type="text/html" id="FacebookTemplate">
            <div class="tv-channel-setting content-module" id="Facebook">
-               <span class="pull-right lead">
-                  Facebook
-                  <button type="button" class="close remove-channel" aria-hidden="true">&times;</button>
-               </span>
-                <div class="input-prepend">
-                    <span class="add-on">Profile ID</span><input id="profil_id" size="16" type="text" placeholder="Profil ID" value="{{profil_id}}">
-                </div>
-                <div class="input-prepend">
-                    <span class="add-on">App ID</span><input id="app_id" size="16" type="text" placeholder="App ID" value="{{app_id}}">
-                </div>
-                <div class="input-prepend">
-                    <span class="add-on">App Secret</span><input id="app_secret" size="16" type="text" placeholder="App Secret" value="{{app_secret}}">
+               {{>TvChannelHeaderTemplate}}
+               <div id="channel{{key}}" class="collapse">
+                    <div class="input-prepend">
+                        <span class="add-on">Query</span><input id="query" size="16" type="text" placeholder="Query" value="{{query}}">
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add-on">App ID</span><input id="app_id" size="16" type="text" placeholder="App ID" value="{{app_id}}">
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add-on">App Secret</span><input id="app_secret" size="16" type="text" placeholder="App Secret" value="{{app_secret}}">
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add-on">AccessToken</span><input id="access_token" size="16" type="text" placeholder="AccessToken" value="{{access_token}}">
+                    </div>
+               </div>
+           </div>
+        </script>
+        <script type="text/html" id="YammerTemplate">
+           <div class="tv-channel-setting content-module" id="Yammer">
+               {{>TvChannelHeaderTemplate}}
+               <div id="channel{{key}}" class="collapse">
+                    <div class="input-prepend">
+                        <span class="add-on">Query</span><input id="query" size="16" type="text" placeholder="Query" value="{{query}}">
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add-on">Consumer Key</span><input id="consumer_key" size="16" type="text" placeholder="Consumer Key" value="{{consumer_key}}">
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add-on">Consumer Secret</span><input id="consumer_secret" size="16" type="text" placeholder="Consumer Secret" value="{{consumer_secret}}">
+                    </div>
+                    <div class="input-prepend">
+                        <span class="add-on">Oauth Token</span><input id="oauth_token" size="16" type="text" placeholder="Oauth Token" value="{{oauth_token}}">
+                    </div>
                 </div>
            </div>
         </script>
         <script type="text/html" id="RSSTemplate">
            <div class="tv-channel-setting content-module" id="RSS">
-               <span class="pull-right lead">
-                  RSS
-                  <button type="button" class="close remove-channel" aria-hidden="true">&times;</button>
-               </span>
-                <div class="input-prepend">
-                    <span class="add-on">URL</span><input id="url" size="16" type="text" placeholder="" value="{{url}}">
-                </div>
+               {{>TvChannelHeaderTemplate}}
+               <div id="channel{{key}}" class="collapse">
+                    <div class="input-prepend">
+                        <span class="add-on">URL</span><input id="url" size="16" type="text" placeholder="" value="{{url}}">
+                    </div>
+               </div>
            </div>
         </script>
         <script type="text/html" id="tvChannelsSettingsTemplate">
@@ -497,6 +543,8 @@
                       {{^tvChannelsSettings.CoffeePoke}}<option value="CoffeePoke">CoffeePoke</option>{{/tvChannelsSettings.CoffeePoke}}
                       <option value="Twitter">Twitter</option>
                       <option value="Facebook">Facebook</option>
+                      <option value="Yammer">Yammer</option>
+                      <option value="BlueKiwi">BlueKiwi</option>
                       <option value="RSS">RSS</option>
                       <option value="StaticURL">Static URL</option>
                     </select>
@@ -520,6 +568,12 @@
                         {{#Facebook}}
                             <li>{{>FacebookTemplate}}</li>
                         {{/Facebook}}
+                        {{#Yammer}}
+                            <li>{{>YammerTemplate}}</li>
+                        {{/Yammer}}
+                        {{#BlueKiwi}}
+                            <li>{{>BlueKiwiTemplate}}</li>
+                        {{/BlueKiwi}}
                     {{/tvChannelsSettings}}
                     {{^tvChannelsSettings}}
                         No Chanels configured yet !
@@ -1068,20 +1122,20 @@
             <script src="static/js/coffee.js"></script>
             <script>
 
-                //document.addEventListener('touchstart', function(e){ e.preventDefault(); });
-                var pictureSource;   // picture source
-                var destinationType; // sets the format of returned value
+                    //document.addEventListener('touchstart', function(e){ e.preventDefault(); });
+                    var pictureSource;   // picture source
+                    var destinationType; // sets the format of returned value
 
-                // Wait for Cordova to connect with the device
-                //
-                document.addEventListener("deviceready",onDeviceReady,false);
+                    // Wait for Cordova to connect with the device
+                    //
+                    document.addEventListener("deviceready",onDeviceReady,false);
 
-                // Cordova is ready to be used!
-                //
-                function onDeviceReady() {
-                    pictureSource=navigator.camera.PictureSourceType;
-                    destinationType=navigator.camera.DestinationType;
-                }
+                    // Cordova is ready to be used!
+                    //
+                    function onDeviceReady() {
+                        pictureSource=navigator.camera.PictureSourceType;
+                        destinationType=navigator.camera.DestinationType;
+                    }
                 $('body').delegate('[rel*=tooltip]', 'mouseenter mouseleave mousedown', function(e) {
                     var element = $(this);
 

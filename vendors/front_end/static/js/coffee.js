@@ -473,7 +473,30 @@
             $.cookie('corporateHashtags',null);
 
             Backbone.history.navigate('login', true);
+        },
+
+        isAdmin : function () {
+            var self = this;
+            $.ajax({
+                type: 'GET',
+                url: App.resourceUrl,
+                dataType: 'json',
+                data: {
+                    method: 'coffee.getSiteData',
+                    auth_token: self.get('authToken')
+                },
+                success: function (response) {
+                    if (response.status != -1) {
+                        var result = response.result;
+                        self.set({isAdmin: result.is_admin==='true'?true:''});
+                        if (result.is_admin!=='true') {
+                            Backbone.history.navigate('feed', true);
+                        }
+                    }
+                }
+            });
         }
+
     });
 
     /* !View: LoginView */
@@ -686,14 +709,13 @@
                         modal
                             .html(config.html())
                             .modal('show');
+                        $("#channelList").dragsort({ dragSelector: "li",dragSelectorExclude: ".del,.remove-channel,button,input"});
                         $('.add-channel').bind('click', self.addTvChannel);
                         $('.remove-channel').bind('click', self.removeChannel);
                         App.initTypeAhead('#usersTvAdd', 'coffee.getUserList', self.addUsers);
                         App.initTypeAhead('#tagsTvAdd', 'coffee.getTagList', self.addTags);
                         $('.del').bind('click', self.removeTag);
                         $('#saveConfig').bind('click', function (elm) {self.saveConfig();});
-                        $("#channelList").dragsort({ dragSelector: "li"});
-                        //$('#cancelTvConfig').bind('click', function () {elm.popover('destroy');});*/
                     }
                 });
         },
@@ -704,30 +726,39 @@
                 , self = this;
 
             if (!_.isUndefined(channelType)) {
+                data = new Object();
+                data.ChannelName = channelType;
                 switch (channelType) {
                     default:
                         return false;
                         break;
                     case 'CoffeePoke':
-                        template = ich.userTvConfigTemplate();
+                        template = ich.userTvConfigTemplate(data);
                         break;
                      case 'StaticURL':
-                        template = ich.StaticURLTemplate();
+                        template = ich.StaticURLTemplate(data);
                         break;
                      case 'Twitter':
-                        template = ich.TwitterTemplate();
+                        template = ich.TwitterTemplate(data);
                         break;
                      case 'RSS':
-                        template = ich.RSSTemplate();
+                        template = ich.RSSTemplate(data);
                         break;
                      case 'Facebook':
-                        template = ich.FacebookTemplate();
+                        template = ich.FacebookTemplate(data);
+                        break;
+                     case 'Yammer':
+                        template = ich.YammerTemplate(data);
+                        break;
+                     case 'BlueKiwi':
+                        template = ich.BlueKiwiTemplate(data);
                         break;
                 }
 
                 channelList.prepend(template);
                 App.initTypeAhead('#usersTvAdd', 'coffee.getUserList', self.addUsers);
                 App.initTypeAhead('#tagsTvAdd', 'coffee.getTagList', self.addTags);
+                $('.del').bind('click', self.removeTag);
                 $('.remove-channel').bind('click', self.removeChannel);
 
             }
@@ -771,6 +802,8 @@
             _.each(channelList, function(item, key) {
                 var type = $(item).attr('id')
                     criteria = new Object;
+                    criteria.ChannelName = type;
+                    criteria.order = key;
                 switch (type) {
                     case 'CoffeePoke':
                         var users = []
@@ -1014,6 +1047,12 @@
             attributes.content.text = replaceUrl(attributes.content.text);
 
             attributes.isBroadCastMessage = (attributes.content.type === 'coffee_broadcast_message') ? true : false;
+            if (attributes.isBroadCastMessage && attributes.content.time_created + (24*60*60) > (Math.round(new Date().getTime()) / 1000)) {
+                attributes.onTop = false;
+            } else {
+                attributes.onTop = false;
+            }
+
             Backbone.Model.prototype.set.call(this, attributes, options);
         },
 
@@ -2655,6 +2694,7 @@
             this.limit = 0;
             this.username = '';
             this.tags = App.prepareTags(App.models.session.get('corporateHashtags'));
+            App.models.session.isAdmin();
         },
 
         events: {

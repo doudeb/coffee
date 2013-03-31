@@ -853,15 +853,16 @@ class ElggCoffee {
         }
         $return['site_data'] = ElggCoffee::get_site_data();
         foreach ($tv_channels as $key => $channel) {
+            $return[$key]['order'] = $channel->order;
+            $return[$key]['template_type'] = 'feed';
             switch ($key) {
                 case 'Twitter':
                     _elgg_autoload($key);
                     $feed = new Twitter($channel->consumer_key, $channel->consumer_secret);
                     $feed->setOAuthToken($channel->oauth_token);
                     $feed->setOAuthTokenSecret($channel->oauth_token_secret);
-                    $post = $feed->searchTweets('obama');
+                    $post = $feed->searchTweets($channel->query);
                     if (is_array($post['statuses'])) {
-                        $return['Twitter'] = array();
                         foreach ($post['statuses'] as $key=>$row) {
                             $return['Twitter'][$key] = format_post_array($row['text']
                                                                             , $row['created_at']
@@ -873,7 +874,88 @@ class ElggCoffee {
                         }
                     }
                     break;
+                case 'Facebook':
+                    _elgg_autoload($key);
+                    $feed = new Facebook(array('appId'  => $channel->app_id,'secret' => $channel->app_secret));
+                    $post = $feed->api($channel->query, array('access_token' => $channel->access_token,'limit'=>10));
+                    if (is_array($post['data'])) {
+                        foreach ($post['data'] as $key=>$row) {
+                            $profile  = $feed->api('/' . $row['from']['id'] . '?fields=picture,cover', array('access_token' => $channel->access_token));
+                            $return['Facebook'][$key] = format_post_array($row['message']
+                                                                            , $row['created_time']
+                                                                            , $row['from']['id']
+                                                                            , $row['from']['name']
+                                                                            , $row['from']['name']
+                                                                            , $profile['picture']['data']['url']
+                                                                            , $profile['cover']['source']);
+                        }
+                    }
+                    break;
+                case 'Yammer':
+                    _elgg_autoload($key);
+                    $feed = new Yammer(array('consumer_key'  => $channel->consumer_key,'consumer_secret' => $channel->consumer_secret,'oauth_token' => $channel->oauth_token));
+                    $post = $feed->get($channel->query);
+                    if (is_array($post->messages)) {
+                        foreach ($post->messages as $key=>$row) {
+                            $profile  = $feed->get('/users/' . $row->sender_id . '.json');
+                            $return['Yammer'][$key] = format_post_array($row->body->plain
+                                                                            , $row->created_at
+                                                                            , $row->sender_id
+                                                                            , $profile->name
+                                                                            , $profile->full_name
+                                                                            , $profile->mugshot_url
+                                                                            , false);
+                        }
+                    }
+                    break;
+                case 'BlueKiwi':
+                    $super_token = $channel->super_token;
+                    // Sign the request
+                    $time = time();
+                    $strParams = "access_token=".$super_token."&oauth_timestamp=".$time;
+                    $signature = sha1($channel->app_id."&".$strParams."&".$channel->app_secret);
+                    $data['access_token'] = $super_token;
+                    //$data['a_parameter'] = 'parameter_value';
+                    $data['oauth_timestamp'] = $time;
+                    $data['oauth_signature'] = $signature;
+                    $data_stream = $channel->url . $channel->query . '?' . http_build_query($data);
 
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, $data_stream);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                    $post = @json_decode(curl_exec($ch));
+
+                    if (is_array($post->items)) {
+                        foreach ($post->items as $key=>$row) {
+                            $return['BlueKiwi'][$key] = format_post_array($row->object->content
+                                                                            , $row->object->published
+                                                                            , $row->actor->id
+                                                                            , $row->actor->displayName
+                                                                            , $row->actor->displayName
+                                                                            , $row->actor->image->url
+                                                                            , false);
+                        }
+                    }
+                    break;
+
+                case 'CoffeePoke':
+                    $tags = $owner_guid = array();
+                    $tv_filters_users = $channel->users;
+                    foreach ($tv_filters_users as $user) {
+                        $owner_guid [] = $user->id;
+                    }
+                    $tv_filters_tags = $channel->tags;
+                    foreach ($tv_filters_tags as $tag) {
+                        $tags [] = $tag->name;
+                    }
+                    foreach (ElggCoffee::get_posts(0,0,10,$owner_guid,FALSE,FALSE,$tags) as $key=>$row) {
+                            $return['CoffeePoke'][$key] = $row;
+                    }
+                    break;
+                case 'StaticURL':
+                    $return[$key]['template_type'] = 'feed';
+                    $return['StaticURL'][] = array('url' => $channel->staticURL, 'duration' => $channel->duration, 'display_name' => $channel->displayName);
+                    break;
                 default:
                     break;
             }

@@ -1047,7 +1047,13 @@
             attributes.content.text = replaceUrl(attributes.content.text);
 
             attributes.isBroadCastMessage = (attributes.content.type === 'coffee_broadcast_message') ? true : false;
-            if (attributes.isBroadCastMessage && attributes.content.time_created + (24*60*60) > (Math.round(new Date().getTime()) / 1000)) {
+            if (attributes.isBroadCastMessage && (parseInt(attributes.content.time_created) + (24*60*60) > Math.round(new Date().getTime() / 1000))) {
+                _.each(this.collection.models, function (model) {
+                    if (model.get('onTop') === true) {
+                        model.set('onTop',false);
+                        console.log(model);
+                    }
+                });
                 attributes.onTop = false;
             } else {
                 attributes.onTop = false;

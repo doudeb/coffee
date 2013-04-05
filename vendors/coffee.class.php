@@ -852,9 +852,13 @@ class ElggCoffee {
             $tv_channels = json_decode($tv_channels);
         }
         $return['site_data'] = ElggCoffee::get_site_data();
+        $return['feed_data'] = array();
+        $i = 0;
         foreach ($tv_channels as $key => $channel) {
-            $return[$key]['order'] = $channel->order;
-            $return[$key]['template_type'] = 'feed';
+            $return['feed_data'][$i]['feed_name'] = $key;
+            $return['feed_data'][$i]['feed_type'] = 'social_feed';
+            $return['feed_data'][$i]['feed_url_icon'] = 'http://' . $key;
+            $return['feed_data'][$i]['feed_url_background'] = 'http://' . $key;
             switch ($key) {
                 case 'Twitter':
                     _elgg_autoload($key);
@@ -864,7 +868,7 @@ class ElggCoffee {
                     $post = $feed->searchTweets($channel->query);
                     if (is_array($post['statuses'])) {
                         foreach ($post['statuses'] as $key=>$row) {
-                            $return['Twitter'][$key] = format_post_array($row['text']
+                            $return['feed_data'][$i]['feeds'][$key] = format_post_array($row['text']
                                                                             , $row['created_at']
                                                                             , $row['user']['id']
                                                                             , $row['user']['name']
@@ -881,7 +885,7 @@ class ElggCoffee {
                     if (is_array($post['data'])) {
                         foreach ($post['data'] as $key=>$row) {
                             $profile  = $feed->api('/' . $row['from']['id'] . '?fields=picture,cover', array('access_token' => $channel->access_token));
-                            $return['Facebook'][$key] = format_post_array($row['message']
+                            $return['feed_data'][$i]['feeds'][$key] = format_post_array($row['message']
                                                                             , $row['created_time']
                                                                             , $row['from']['id']
                                                                             , $row['from']['name']
@@ -898,7 +902,7 @@ class ElggCoffee {
                     if (is_array($post->messages)) {
                         foreach ($post->messages as $key=>$row) {
                             $profile  = $feed->get('/users/' . $row->sender_id . '.json');
-                            $return['Yammer'][$key] = format_post_array($row->body->plain
+                            $return['feed_data'][$i]['feeds'][$key] = format_post_array($row->body->plain
                                                                             , $row->created_at
                                                                             , $row->sender_id
                                                                             , $profile->name
@@ -927,7 +931,7 @@ class ElggCoffee {
 
                     if (is_array($post->items)) {
                         foreach ($post->items as $key=>$row) {
-                            $return['BlueKiwi'][$key] = format_post_array($row->object->content
+                            $return['feed_data'][$i]['feeds'][$key] = format_post_array($row->object->content
                                                                             , $row->object->published
                                                                             , $row->actor->id
                                                                             , $row->actor->displayName
@@ -949,16 +953,17 @@ class ElggCoffee {
                         $tags [] = $tag->name;
                     }
                     foreach (ElggCoffee::get_posts(0,0,10,$owner_guid,FALSE,FALSE,$tags) as $key=>$row) {
-                            $return['CoffeePoke'][$key] = $row;
+                            $return['feed_data'][$i]['feeds'][$key] = $row;
                     }
                     break;
                 case 'StaticURL':
-                    $return[$key]['template_type'] = 'feed';
-                    $return['StaticURL'][] = array('url' => $channel->staticURL, 'duration' => $channel->duration, 'display_name' => $channel->displayName);
+                    $return['feed_data'][$i]['feed_type'] = 'static_url';
+                    $return['feed_data'][$i]['feeds'] = array('url' => $channel->staticURL, 'duration' => $channel->duration, 'display_name' => $channel->displayName);
                     break;
                 default:
                     break;
             }
+            $i++;
         }
         return $return;
     }

@@ -20,7 +20,7 @@
         }
     },
 
-    isOLderIE = function () {
+    isOlderIE = function () {
         return navigator.userAgent.match(/MSIE 8./i) ? true : false;
     },
 
@@ -1048,13 +1048,7 @@
 
             attributes.isBroadCastMessage = (attributes.content.type === 'coffee_broadcast_message') ? true : false;
             if (attributes.isBroadCastMessage && (parseInt(attributes.content.time_created) + (24*60*60) > Math.round(new Date().getTime() / 1000))) {
-                _.each(this.collection.models, function (model) {
-                    if (model.get('onTop') === true) {
-                        model.set('onTop',false);
-                        console.log(model);
-                    }
-                });
-                attributes.onTop = false;
+                attributes.onTop = true;
             } else {
                 attributes.onTop = false;
             }
@@ -1261,7 +1255,6 @@
                 var element = ich.feedItemTemplate(data);
             }
             //      var element = ich.mobileFeedItemTemplate(data);
-
             $(this.el).replaceWith(element);
             this.setElement(element);
             App.initMention(element.find('textarea.mention'));
@@ -1699,8 +1692,7 @@
         postUpdate: function () {
             var self = this;
             if (! self.isSending && ! self.isAttaching) {
-                var updateText = self.$el.find('.update-text').eq(0).val()
-                    , mentionedUser = self.getMentions();
+                var updateText = self.$el.find('.update-text').eq(0).val();
                 if (! self.attachmentGuid && updateText.length == 0) {
                     alert('No update!');
                 } else {
@@ -1713,7 +1705,7 @@
                         auth_token: App.models.session.get('authToken'),
                         post: updateText,
                         type: this.isBroadCastMessage?'coffee_broadcast_message':'',
-                        mentionedUser: mentionedUser
+                        mentionedUser: self.getMentions()
                     };
                     if (self.attachmentGuid != false) data.attachment = [self.attachmentGuid];
 
@@ -1832,7 +1824,7 @@
             var self = this
             , upload = $('#upload')
             , uploadForm = $('#uploadForm')
-            if (isOLderIE()) {
+            if (isOlderIE()) {
                 return uploadForm.toggleClass('out');
             }
 
@@ -1854,7 +1846,7 @@
                 self.attachmentElement
                 .insertBefore(self.$el.find('.update-actions').eq(0));
                 self.$el.find('.add-media').hide();
-                if (isOLderIE()) {
+                if (isOlderIE()) {
                     self.$el.find('#uploadForm').toggleClass('out');
                 }
             } else {
@@ -1886,11 +1878,11 @@
 
         getMentions: function () {
             var mentionedUsers = new Array();
+            if (isOlderIE()) {
+                $('#microblogging .update-text').css('height','100px');
+            }
             try {
-                if (isOlderIE()) {
-                    $('#microblogging .update-text').css('height','100px');
-                }
-                $('#microblogging .update-text')
+                $('textarea.update-text')
                     .mentionsInput('getMentions', function(data) {
                         _.each(data, function(user, key){
                             mentionedUsers[key] = user.id;
@@ -1898,8 +1890,10 @@
                     })
                     .mentionsInput('reset')
                     .css('height','50px');
+                alert(self.$el.find('div .mentions').html());
                 return mentionedUsers;
             } catch (e) {
+                console.log(e);
                 return [];
             }
         },
@@ -2425,7 +2419,7 @@
             , avatarForm = $('#avatarUpload')
             , avatarCrop = $('#avatarCrop');
 
-            if (isOLderIE()) {
+            if (isOlderIE()) {
                 return avatarForm.toggleClass('out');
             }
 
@@ -2463,7 +2457,7 @@
             , coverForm = $('#coverUpload')
             , coverCrop = $('#coverCrop');
 
-             if (isOLderIE()) {
+             if (isOlderIE()) {
                 return coverForm.toggleClass('out');
             }
 

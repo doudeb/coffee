@@ -46,7 +46,7 @@ a:hover{color:#005580;text-decoration:none;}
 #microblogging{-webkit-border-radius:0 0 3px 3px;-moz-border-radius:0 0 3px 3px;border-radius:0 0 3px 3px;}#microblogging .update-content,#microblogging .update-actions{*zoom:1;}#microblogging .update-content:before,#microblogging .update-actions:before,#microblogging .update-content:after,#microblogging .update-actions:after{display:table;content:"";}
 #microblogging .update-content:after,#microblogging .update-actions:after{clear:both;}
 #microblogging .update-content .avatar{float:left;width:60px;height:60px;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;overflow:hidden;}
-#microblogging .update-content {min-height: 60px;  background-repeat: no-repeat; background-size: 60px;height: 60px; width: 60px}
+#microblogging .update-content {min-height: 60px; min-width: 60px; background-repeat: no-repeat; background-size: 60px;}
 #microblogging .update-content .new-post {margin-left:70px}
 #microblogging .update-content .update-text{width:420px;height:50px}
 #microblogging .attachment{margin:0 0 10px 70px;background-color:#f0f0f0;padding:5px;*zoom:1;position:relative;}#microblogging .attachment:before,#microblogging .attachment:after{display:table;content:"";}

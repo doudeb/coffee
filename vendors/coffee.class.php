@@ -832,17 +832,29 @@ class ElggCoffee {
     public static function get_tv_post () {
         $return = array();
         $return = ElggCoffee::get_tv_channel();
-        $items = count($return['feed_data'])-1;
-        $randomChannel = rand(0,$items);
-        if ($return['feed_data'][$randomChannel]['feed_type'] === 'static_url') {
-            return ElggCoffee::get_tv_post();
-        }
-        $return['posts'] = $return['feed_data'][$randomChannel]['feeds'];
-        unset($return['feed_data']);
-        //In case of to many post (>10)
-        if (count($return['posts']) > 9) {
-            $tmp = array_chunk($return['posts'],10,true);
-            $return['posts'] = $tmp[0];
+        if (empty($return['feed_data'])) {
+            $user_ent = elgg_get_logged_in_user_entity();
+            if ($user_ent instanceof ElggUser) {
+                $tv_filters = $user_ent->tvAppSettings;
+                $tv_filters = json_decode($tv_filters);
+                $tv_filters_tags = $tv_filters->tags;
+                $tv_filters_users = $tv_filters->users;
+            }
+            $return['site_data'] = ElggCoffee::get_site_data();
+            $return['posts'] = ElggCoffee::get_posts(0,0,10,$tv_filters_users,FALSE,FALSE,$tv_filters_tags);
+        } else {
+            $items = count($return['feed_data'])-1;
+            $randomChannel = rand(0,$items);
+            if ($return['feed_data'][$randomChannel]['feed_type'] === 'static_url') {
+                return ElggCoffee::get_tv_post();
+            }
+            $return['posts'] = $return['feed_data'][$randomChannel]['feeds'];
+            unset($return['feed_data']);
+            //In case of to many post (>10)
+            if (count($return['posts']) > 9) {
+                $tmp = array_chunk($return['posts'],10,true);
+                $return['posts'] = $tmp[0];
+            }
         }
         return $return;
     }

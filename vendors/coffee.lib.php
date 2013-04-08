@@ -384,6 +384,7 @@ function format_post_array ($text,$time_created,$user_id,$username,$display_name
     $return['user']['icon_url'] = $icon_url;
     $return['user']['icon_url_small'] = $icon_url;
     $return['user']['cover_url'] = $cover_urll;
+    $return['attachment'] = false;
 
     return $return;
 }

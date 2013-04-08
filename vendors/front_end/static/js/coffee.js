@@ -804,6 +804,7 @@
                     criteria = new Object;
                     criteria.ChannelName = type;
                     criteria.order = key;
+                    criteria.key = key;
                 switch (type) {
                     case 'CoffeePoke':
                         var users = []
@@ -963,7 +964,9 @@
         },
 
         set: function (attributes, options) {
-            attributes.isOwner = (attributes.user.guid == App.models.session.get('userId')) || (App.models.session.get('isAdmin')) ? true : false;
+            if (_.isObject(attributes.user)) {
+                attributes.isOwner = (attributes.user.guid == App.models.session.get('userId')) || (App.models.session.get('isAdmin')) ? true : false;
+            }
 
             attributes.isLong =  (attributes.content.text.length > 500) ? true : false;
             if (attributes.isLong) {
@@ -1052,7 +1055,6 @@
             } else {
                 attributes.onTop = false;
             }
-
             Backbone.Model.prototype.set.call(this, attributes, options);
         },
 
@@ -1126,7 +1128,7 @@
                                     if (exist.length > 0) {
                                         if (!exist[0].get('isComposing')) {
                                             exist[0].set(feedItem);
-                                        latestTimestamp = feedItem.content.time_updated;
+                                            latestTimestamp = feedItem.content.time_updated;
                                         }
                                     } else {
                                         self.unshift(feedItem);
@@ -1564,7 +1566,7 @@
                     });
                 })
                 .mentionsInput('reset')
-                .css('height','35px');
+                .css('height','50px');
             return mentionedUsers;
         },
 
@@ -1884,13 +1886,12 @@
             try {
                 $('textarea.update-text')
                     .mentionsInput('getMentions', function(data) {
-                        _.each(data, function(user, key){
+                        _.each(data, function(user, key) {
                             mentionedUsers[key] = user.id;
                         });
                     })
                     .mentionsInput('reset')
                     .css('height','50px');
-                alert(self.$el.find('div .mentions').html());
                 return mentionedUsers;
             } catch (e) {
                 console.log(e);
@@ -2103,6 +2104,7 @@
                     if (update.feed_last_update > App.models.session.get('lastFeedUpdate') &&!_.isUndefined(App.views.microbloggingView)) {
                         App.views.microbloggingView.feedItemsView.collection.loadFeed(0,20,App.models.session.get('lastFeedUpdate'));
                         App.setMostUsedHashtags();
+                        self.removeOnTopMessage();
                     }
                 }
                 if (!_.isUndefined(update.system_update)) {
@@ -2125,6 +2127,17 @@
                 clearTimeout(App.updaterId);
             }
             this.$el.remove();
+        },
+
+        removeOnTopMessage: function () {
+            var self = this;
+            if (App.views.microbloggingView.feedItemsView.collection.length > 0) {
+                _.each(App.views.microbloggingView.feedItemsView.collection.models, function (feedItem,key) {
+                    if(feedItem.get('onTop') && (parseInt(feedItem.attributes.content.time_created) + (24*60*60) < Math.round(new Date().getTime() / 1000)) ) {
+                        feedItem.set(feedItem.attributes);
+                    }
+                });
+            }
         }
     });
 

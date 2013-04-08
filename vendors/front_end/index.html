@@ -295,7 +295,7 @@
                                 <!--{{#hasDepartment}}<span class="department"><span {{#isOwnProfile}}class="editable" data-name="department"{{/isOwnProfile}}>{{department}}</span></span>{{/hasDepartment}}
                                 {{^hasDepartment}}{{#isOwnProfile}}<span class="department"> <span class="editable editable-hover" data-name="department">[Specify your department]</span></span>{{/isOwnProfile}}{{/hasDepartment}}-->
                                 {{#hasLocation}}<span class="location"><span {{#isOwnProfile}}class="editable" data-name="location"{{/isOwnProfile}}>{{location}}</span></span>{{/hasLocation}}
-                                {{^hasLocation}}{{#isOwnProfile}}<span class="location"><span class="editable editable-hover" data-name="location">coffee:profile:addlocation</span></span>{{/isOwnProfile}}{{/hasLocation}}
+                                {{^hasLocation}}{{#isOwnProfile}}<span class="location"><span class="editable editable-hover" data-name="location">{{#translate}}coffee:profile:addlocation{{/translate}}</span></span>{{/isOwnProfile}}{{/hasLocation}}
                                 {{#isOwnProfile}}
                                 <span class="pull-right"><button class="btn btn-small" rel="profile-edit tooltip" title="{{#translate}}coffee:profile:title:changecoverpic{{/translate}}" data-edit="userCover" id="cover-edit"><i class="icon-picture"></i> {{#translate}}coffee:profile:button:background{{/translate}}</button></span>
                                 {{/isOwnProfile}}

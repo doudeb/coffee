@@ -831,15 +831,19 @@ class ElggCoffee {
 
     public static function get_tv_post () {
         $return = array();
-        $user_ent = elgg_get_logged_in_user_entity();
-        if ($user_ent instanceof ElggUser) {
-            $tv_filters = $user_ent->tvAppSettings;
-            $tv_filters = json_decode($tv_filters);
-            $tv_filters_tags = $tv_filters->tags;
-            $tv_filters_users = $tv_filters->users;
+        $return = ElggCoffee::get_tv_channel();
+        $items = count($return['feed_data'])-1;
+        $randomChannel = rand(0,$items);
+        if ($return['feed_data'][$randomChannel]['feed_type'] === 'static_url') {
+            return ElggCoffee::get_tv_post();
         }
-        $return['site_data'] = ElggCoffee::get_site_data();
-        $return['posts'] = ElggCoffee::get_posts(0,0,10,$tv_filters_users,FALSE,FALSE,$tv_filters_tags);
+        $return['posts'] = $return['feed_data'][$randomChannel]['feeds'];
+        unset($return['feed_data']);
+        //In case of to many post (>10)
+        if (count($return['posts']) > 9) {
+            $tmp = array_chunk($return['posts'],10,true);
+            $return['posts'] = $tmp[0];
+        }
         return $return;
     }
 
@@ -861,7 +865,7 @@ class ElggCoffee {
             $return['feed_data'][$i]['feed_url_background'] = 'http://' . $key;
             switch ($key) {
                 case 'Twitter':
-                    _elgg_autoload($key);
+                    if (!class_exists($key)) _elgg_autoload($key);
                     $feed = new Twitter($channel->consumer_key, $channel->consumer_secret);
                     $feed->setOAuthToken($channel->oauth_token);
                     $feed->setOAuthTokenSecret($channel->oauth_token_secret);
@@ -879,7 +883,7 @@ class ElggCoffee {
                     }
                     break;
                 case 'Facebook':
-                    _elgg_autoload($key);
+                    if (!class_exists($key)) _elgg_autoload($key);
                     $feed = new Facebook(array('appId'  => $channel->app_id,'secret' => $channel->app_secret));
                     $post = $feed->api($channel->query, array('access_token' => $channel->access_token,'limit'=>10));
                     if (is_array($post['data'])) {
@@ -896,7 +900,7 @@ class ElggCoffee {
                     }
                     break;
                 case 'Yammer':
-                    _elgg_autoload($key);
+                    if (!class_exists($key)) _elgg_autoload($key);
                     $feed = new Yammer(array('consumer_key'  => $channel->consumer_key,'consumer_secret' => $channel->consumer_secret,'oauth_token' => $channel->oauth_token));
                     $post = $feed->get($channel->query);
                     if (is_array($post->messages)) {

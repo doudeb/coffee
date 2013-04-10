@@ -873,8 +873,8 @@ class ElggCoffee {
         foreach ($tv_channels as $key => $channel) {
             $return['feed_data'][$i]['feed_name'] = $key;
             $return['feed_data'][$i]['feed_type'] = 'social_feed';
-            $return['feed_data'][$i]['feed_url_icon'] = 'http://' . $key;
-            $return['feed_data'][$i]['feed_url_background'] = 'http://' . $key;
+            $return['feed_data'][$i]['feed_url_icon'] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($key) . '_small.png';
+            $return['feed_data'][$i]['feed_url_background'] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($key) . '_big.png';
             switch ($key) {
                 case 'Twitter':
                     if (!class_exists($key)) _elgg_autoload($key);

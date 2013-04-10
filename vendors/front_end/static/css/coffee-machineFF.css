@@ -1,0 +1,32 @@
+body {
+    height:100%;
+    width:100%;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale');
+    -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale')";
+}
+
+#container #menu{
+    background-color: #ffffff;
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=90);
+}
+#navigation li a {
+    background-color: #000000;
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=40);
+}
+
+#microblogging .update-content {
+    width:100px;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale');
+    -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale')";
+}
+
+#microblogging .update-content .update-text{width:380px;height:100px}
+
+#microblogging .update-content .new-post {margin-left: 105px;}
+
+.feed-item .primary-content .update .time i, .update-actions .update-action a i, #microblogging .update-actions .broadcastMessage i, #microblogging .attachment .remove i{filter:none;}
+.update-actions .update-action a:hover i,  #microblogging .update-actions .broadcastMessage:hover i, #microblogging .update-actions .broadcastMessage.on i{opacity:1;filter:none}
+#microblogging .update-actions .broadcastMessage.on i{border: 2px solid #000000}
+.feed-item .attachment a.thumbnail img { max-height: 200px;}
+
+#tvApp {display: none}

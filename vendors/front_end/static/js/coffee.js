@@ -3223,6 +3223,94 @@
         }
     });
 
+    /* !View: PeopleListView */
+    var PeopleListView = Backbone.View.extend({
+        tagName: 'div',
+        initialize: function () {
+            _.bindAll(this);
+            this.$el
+                .attr('id', 'user-list')
+                .attr('class', 'user-list');
+
+            this.offset = 0;
+            this.usrname = '';
+            this.render();
+            this.collection = new UserItemList();
+            this.collection.bind('userReady', this.showUsers);
+
+        },
+
+        events: {
+            'click #manageUser .nav li' : 'manageUserNav'
+            , 'keyup #manageUser #username' : 'manageUserNav'
+        },
+
+        render: function () {
+            var self = this
+                , data = new Object();
+                data.translate = function() {
+                return function(text) {
+                    return t(text);
+                }
+            };
+                data.isAdmin = App.models.session.get('isAdmin');
+            element = ich.peopleTemplate(data);
+            self.setElement(element);
+            self.$el
+            .prependTo('#container')
+            .hide()
+            .fadeIn(500);
+        },
+
+        addUser: function (item) {
+            var self = this;
+            var userItemView = new UserItemView ({
+                model: item
+            });
+
+            var element = $(userItemView.render().el);
+            $('#peopleList').append(element);
+
+            //self.$el.appendTo('#peopleList');
+        },
+
+        showUsers: function () {
+            var self = this
+                , count = 0;
+            _.each(this.collection.models, function(userItem) {
+                self.addUser(userItem);
+                count = userItem.get('count');
+            }, this);
+            self.$el.find('#offset').html(self.offset);
+            self.$el.find('#count').html(count);
+        },
+
+        manageUserNav: function(e) {
+            elm = $(e.currentTarget);
+            action = $(e.currentTarget).attr('id');
+            this.username = $(e.currentTarget).parent().parent().find('#username').val();
+            this.resetUserList();
+            switch (action) {
+                case 'next' :
+                    this.offset = this.offset + 10;
+                    this.collection.loadUser(this.username,this.offset);
+                    break;
+                 case 'prev' :
+                    this.offset = this.offset - 10;
+                    this.collection.loadUser(this.username,this.offset);
+                    break;
+                 case 'username' :
+                    this.collection.loadUser(this.username,this.offset);
+                    break;
+            }
+            return false;
+        },
+
+        resetUserList: function () {
+            this.collection.remove(this.collection.models);
+        }
+    });
+
     /* !Router: WorkspaceRouter */
     var WorkspaceRouter = Backbone.Router.extend({
         routes: {
@@ -3231,6 +3319,7 @@
             , "feed/:tag":              "feed"
             , "profile":				"myProfile"
             , "profile/:user_id":		"profile"
+            , "people":         		"people"
             , "tv":                     "tv"
             , "tv/:authToken":          "tv"
             , "welcome":                "welcome"
@@ -3290,6 +3379,19 @@
                 });
                 App.views.menuView = new MenuView();
                 setLogo (App.models.session.get('logoUrl'));
+            } else {
+                Backbone.history.navigate('login', true);
+            }
+        },
+
+        people: function () {
+            App.removeAllViews();
+            if (App.models.session.authenticated()) {
+                App.views.peopleView = new PeopleListView();
+                App.views.menuView = new MenuView();
+                setBackground (App.models.session.get('backgroundUrl'));
+                setLogo (App.models.session.get('logoUrl'));
+                setCss (App.models.session.get('cssUrl'));
             } else {
                 Backbone.history.navigate('login', true);
             }

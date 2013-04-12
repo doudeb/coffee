@@ -120,7 +120,7 @@ a:hover{color:#005580;text-decoration:none;}
 #welcome .content-module .primary-content .stepN {font-size: 500%; font-weight: bold;display: block;}
 #welcome .content-module .primary-content .instruction {display: block;margin: -37px 0px 0px 5px;}
 #admin .tab-content {overflow: visible}
-
+#peopleList {background-color:#fff;display: block;min-height: 500px;padding-left: 20px}
 
 .tv-channel-setting {padding: 5px; margin-bottom: 10px}
 #newChannel {margin-bottom: 0px;}

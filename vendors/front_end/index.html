@@ -1043,6 +1043,8 @@
                             <li class="divider-vertical"></li>
                             <li id="next"><a href="">&rarr;</a></li>
                             <li class="divider-vertical"></li>
+                            <li><a><span id="offset"> </span> / <span id="count"> </span></a></li>
+
                         </ul>
                     </div>
                 </div>
@@ -1057,8 +1059,9 @@
                     </div>
                     <img class="vcard-avatar radius3" src="{{avatar}}">
                     <ul class="update-actions">
-                        <li class="update-action update-action-remove"><a href="#" rel="tooltip" title="{{#translate}}coffee:feeditem:action:removecomment{{/translate}}" data-action="remove" data-placement="right"><i class="icon-trash"></i></a></li>
-                        <li class="update-action update-action-set-tv-settings"><a href="#" rel="tooltip" title="{{#translate}}coffee:useradmin:action:settvsettings{{/translate}}" data-action="setTvSettings" data-placement="right"><i class="icon-tv"></i></a></li>
+                        {{#isAdmin}}<li class="update-action update-action-remove"><a href="#" rel="tooltip" title="{{#translate}}coffee:feeditem:action:removecomment{{/translate}}" data-action="remove" data-placement="right"><i class="icon-trash"></i></a></li>{{/isAdmin}}
+                        {{#isAdmin}}<li class="update-action update-action-set-tv-settings"><a href="#" rel="tooltip" title="{{#translate}}coffee:useradmin:action:settvsettings{{/translate}}" data-action="setTvSettings" data-placement="right"><i class="icon-tv"></i></a></li>{{/isAdmin}}
+                        <li class="update-action update-action-poke"><a href="mailto:{{email}}?subject={{#translate}}coffee:poke:subject{{/translate}}&body={{#translate}}coffee:poke:body{{/translate}}" rel="tooltip" title="{{#translate}}coffee:poke:action{{/translate}}" data-placement="right"><i class="icon-coffeepoke"></i></a></li>
                     </ul>
                 </div>
         </script>
@@ -1117,7 +1120,16 @@
                     <button class="btn btn-primary" id="saveCorporateHashtags">{{#translate}}coffee:admin:corporatehashtagssave{{/translate}}</button>
                 </div>
             </script>
-
+            <script type="text/html" id="peopleTemplate">
+                <div id="content">
+                    <div id="people">
+                        <div class="content-module">
+                            <div>{{>manageUserTemplate}}</div>
+                            <div id="peopleList"></div>
+                        </div>
+                    </div>
+                </div>
+            </script>
 
 
             <script src="static/js/coffee.js"></script>

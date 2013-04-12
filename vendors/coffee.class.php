@@ -200,6 +200,7 @@ class ElggCoffee {
                                                             , 'owner_guid' => $user->guid
                                                             , 'name' => $user->name
                                                             , 'icon_url' => ElggCoffee::_get_user_icon_url($user,'small')
+                                                            , 'icon_medium' => ElggCoffee::_get_user_icon_url($user,'medium')
                                                             , 'time_created' => $comment->time_created
                                                             , 'friendly_time' => elgg_get_friendly_time($comment->time_created)
                                                             , 'text' => $comment->value
@@ -628,7 +629,7 @@ class ElggCoffee {
 
     public static function get_user_list ($query, $offset = 0, $limit = 10) {
         $return = array();
-        $results = elgg_trigger_plugin_hook('search','user',array('query' => $query, 'offset' => $offset, 'limit'=> $limit));
+        $results = search_users($query, $offset, $limit);
         $return['count'] = $results['count'];
         if ($return['count'] > 0) {
             $return['users'] = array();
@@ -644,6 +645,7 @@ class ElggCoffee {
                         , 'cover_url' => ElggCoffee::_get_user_cover_url($user)
                         , 'type' => 'user'
                         , 'profile' => ElggCoffee::get_user_extra_info(array('headline','cellphone','phone','location'),$user->guid)
+                        , 'count' => $return['count']
 
                     );
                 }

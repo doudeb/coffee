@@ -16,6 +16,7 @@ $translation = array(
         , 'coffee:menu:admin' => 'Administration'
         , 'coffee:menu:settings' => 'Settings'
         , 'coffee:menu:logout' => 'Log out'
+        , 'coffee:menu:notifications' => 'My notifications'
 
 /*welcome*/
         , 'coffee:welcome:headline' => '<h3>Hi,</h3>
@@ -199,6 +200,17 @@ Team Coffeepoke'
     , 'user:password:resetreq:fail' => 'Ooops… Password request has failed'
     , 'user:resetpassword:yes' => 'Your password has now been updated, you will received an email shortly.'
     , 'user:resetpassword:no' => 'Oooops… Password reset failed, please try again.'
+    #Notifications
+    , 'notification::like' => 'has liked your post'
+    , 'notification::like2' => 'has also liked this post'
+    , 'notification::post::mentioned' => 'has liked this post you were quoted in'
+    , 'hoho' => 'has liked the post you commented'
+    , 'notification::comment' => 'has commented your post'
+    , 'notification::comment2' => 'has also commented this post'
+    , 'notification::comment::mentioned' => 'has commented this post you were quoted in'
+    , 'notification::post::mentioned' => 'You have been quoted in a post from'
+    , 'notification::comment::mentioned' => 'You have been quoted in a comment from'
+    , 'notification::post::mention::comment' => 'has commented this post you were quoted in '
 );
 
 add_translation('en', $translation);

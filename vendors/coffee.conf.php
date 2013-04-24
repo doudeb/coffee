@@ -446,4 +446,17 @@ $exposed[$i]['call_method']      	= "GET";
 $exposed[$i]['require_api_auth']    = false;
 $exposed[$i]['require_user_auth']   = true;
 
+$exposed[++$i]['method']            = "coffee.getNotifications";
+$exposed[$i]['function']            = "ElggCoffee::get_notifications";
+$exposed[$i]['params']          	= array("until" => array('type' => 'int'
+                                                            , 'required' => true
+                                                            , 'default' => false)
+                                            , "limit" => array('type' => 'int'
+                                                            , 'required' => true
+                                                            , 'default' => 10));
+$exposed[$i]['comment']          	= "Retreive all notifications for the logged in user";
+$exposed[$i]['call_method']      	= "GET";
+$exposed[$i]['require_api_auth']    = false;
+$exposed[$i]['require_user_auth']   = true;
+
 $GLOBALS['CONFIG']->exposed                    = $exposed;

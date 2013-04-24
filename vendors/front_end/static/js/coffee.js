@@ -151,8 +151,8 @@
         initMention : function (elm) {
             $(elm).mentionsInput({
                 elastic : true
-                //, triggerChar:['@','#']
-                , triggerChar:['#']
+                , triggerChar:['@','#']
+                //, triggerChar:['#']
                 , onDataRequest:function (mode, query, triggerChar,callback) {
                     $.ajax({
                         type: 'GET'
@@ -301,6 +301,27 @@
                     }
                 },
                 error: function () {
+                }
+            });
+        },
+
+        removePopover: function () {
+            $('#notifications').popover('destroy');
+        },
+
+        countNewNotifications: function () {
+            var notifications = new Notifications ();
+            notifications.on('ready', function () {
+                var newNotifications = 0;
+                _.each(notifications.models, function (notification) {
+                    if (notification.attributes.time_created > parseInt(App.models.session.get('lastNotifChecked'))) {
+                        newNotifications = newNotifications+1;
+                    }
+                });
+                if (newNotifications > 0) {
+                    elm = $('#notifications');
+                    elm.attr('title', t('coffee:menu:notifications') + ' (' + newNotifications + ')')
+                        .parent().addClass('active newNotification')
                 }
             });
         }
@@ -2040,6 +2061,9 @@
                 case 'profile':
                     Backbone.history.navigate('profile', true);
                     break;
+                case 'notifications':
+                    this.toggleNotificationsList(e);
+                    break;
                 case 'tv':
                     Backbone.history.navigate('tv', true);
                     break;
@@ -2063,6 +2087,44 @@
             $('#profile').hide();
             $('#feed-items').hide();
             $('#microblogging').show();
+        },
+
+        toggleNotificationsList: function (e) {
+            var notifications = new NotificationsView (0,10)
+                , options = new Object();
+            if ($('body').find('div.popover:visible').length) {
+                $('#notifications').popover('destroy')
+                return true;
+            }
+            notifications.on('notificationsViewReady', function() {
+                options.content = new Date().getTime();
+                options.content = notifications.el;
+                options.trigger = 'manual';
+                options.container = '#notifications';
+                $(e.currentTarget).popover(options);
+                $(e.currentTarget)
+                    .removeClass('active newNotification')
+                    .popover('show');
+                $('.popover')
+                    .css('top','0px')
+                    .css('position','fixed')
+                    .css('width','auto');
+                $('.arrow')
+                    .css('margin-top', '0px')
+                    .css('top', '60px');
+                $('.notifications li').bind('click',notifications.navigate);
+                $.ajax({
+                    type: 'POST'
+                    , url: App.resourceUrl
+                    , dataType: 'json'
+                    , data: {
+                        method: 'coffee.setUserExtraInfo'
+                        , auth_token: App.models.session.get('authToken')
+                        , name: 'lastNotifChecked'
+                        , value: Math.round(new Date().getTime() / 1000)
+                    }
+                });
+            });
         },
 
         checkForSiteUpdate: function () {
@@ -2117,6 +2179,15 @@
                     if (_.isUndefined(App.models.session.get('corporateTagsUpdate')) || update.corporate_tags_update > App.models.session.get('corporateTagsUpdate')) {
                         App.setCorporateHashtags();
                         App.models.session.set('corporateTagsUpdate', update.corporate_tags_update);
+                    }
+                }
+                if (!_.isUndefined(update.lastNotifChecked)) {
+                    if (App.models.session.get('lastFeedUpdate') > update.lastNotifChecked) {
+                        elm = self.$el.find('#notifications');
+                        if (!elm.parent().hasClass('active newNotification')) {
+                            App.models.session.set('lastNotifChecked',update.lastNotifChecked);
+                            App.countNewNotifications();
+                        }
                     }
                 }
             });
@@ -2728,7 +2799,7 @@
                     }
                 }
             };
-
+            data.isAdmin = App.models.session.get('isAdmin');
             var element = ich.adminTemplate(data);
             this.setElement(element);
 
@@ -3234,6 +3305,7 @@
 
             this.offset = 0;
             this.usrname = '';
+            this.isLoading = false;
             this.render();
             this.collection = new UserItemList();
             this.collection.bind('userReady', this.showUsers);
@@ -3253,7 +3325,7 @@
                     return t(text);
                 }
             };
-                data.isAdmin = App.models.session.get('isAdmin');
+            data.isAdmin = App.models.session.get('isAdmin');
             element = ich.peopleTemplate(data);
             self.setElement(element);
             self.$el
@@ -3286,6 +3358,8 @@
         },
 
         manageUserNav: function(e) {
+            if (this.isLoading) return false;
+            this.isLoading = true;
             elm = $(e.currentTarget);
             action = $(e.currentTarget).attr('id');
             this.username = $(e.currentTarget).parent().parent().find('#username').val();
@@ -3303,12 +3377,104 @@
                     this.collection.loadUser(this.username,this.offset);
                     break;
             }
+            this.isLoading = false;
             return false;
         },
 
         resetUserList: function () {
             this.collection.remove(this.collection.models);
         }
+    });
+
+
+    /* !Model: Notification */
+    var Notification = Backbone.Model.extend({
+        set: function (attributes, options) {
+            attributes.notificationLabel = t(attributes.type);
+            attributes.isMentioned = attributes.type.match(/mentioned/i);
+            attributes.isNew = App.models.session.get('lastNotifChecked') < attributes.time_created;
+            Backbone.Model.prototype.set.call(this, attributes, options);
+        }
+
+    });
+
+    /* !Collection: Notifications */
+    var Notifications = Backbone.Collection.extend({
+        model: Notification
+        , url: App.resourceUrl
+        , initialize: function () {
+            _.bindAll(this);
+            this.loadNotifications(0,10);
+
+        },
+
+        loadNotifications: function (since,limit) {
+            var self = this;
+
+            $.ajax({
+                type: 'GET',
+                url: App.resourceUrl,
+                dataType: 'json',
+                data: {
+                    method: 'coffee.getNotifications'
+                    , auth_token: App.models.session.get('authToken')
+                    , since: since
+                    , limit: limit
+                },
+                success: function (response) {
+                    if (response.status != -1) {
+                        var result = response.result;
+                        self.add(result);
+                        self.trigger('ready');
+                    } else {
+                        localStorage.clear();
+                        App.models.session.end();
+                        Backbone.history.navigate('login', true);
+                    }
+                }
+            });
+        }
+
+    });
+
+    /* !Collection: Notifications */
+    var NotificationsView = Backbone.View.extend({
+        tagName: "ul"
+        , className: "notifications unstyled"
+        , initialize: function () {
+            _.bindAll(this);
+            this.collection = new Notifications(0,10);
+            this.collection.bind("ready", this.render);
+
+        },
+
+        events: {
+          "click .close"    : "close"
+        },
+
+        render: function () {
+            var self = this;
+            _.each(this.collection.models, function (notification) {
+                var notificationView = ich.notificationTemplate({notification : notification.toJSON()},true);
+                self.$el.append(notificationView);
+            });
+            this.trigger('notificationsViewReady');
+        },
+
+        navigate: function (e) {
+            var self = this
+                , elm = $(e.currentTarget);
+            guid = elm.data('guid');
+            App.removePopover();
+            this.remove();
+            Backbone.history.navigate('feed/' + guid, true);
+        },
+
+        close: function (e) {
+            App.removePopover();
+            this.remove();
+        }
+
     });
 
     /* !Router: WorkspaceRouter */

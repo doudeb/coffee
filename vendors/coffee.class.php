@@ -107,7 +107,9 @@ class ElggCoffee {
         $join = $where = $return = array();
         $db_prefix = elgg_get_config('dbprefix');
         $where[] = 'e.time_updated > ' . $newer_than;
-        if (is_array($tags) && count($tags) > 0) {
+        if (preg_match('/\d{1,7}/', $tags[0])) {
+            $guid = $tags[0];
+        } else if (is_array($tags) && count($tags) > 0) {
             $tags_string = "'" . implode("','", $tags) . "'";
             $tags_meta_id = get_metastring_id('tags')?get_metastring_id('tags'):0;
             $join[] = "Left Join {$db_prefix}metadata tag_used On tag_used.name_id = $tags_meta_id And tag_used.entity_guid = e.guid
@@ -821,6 +823,7 @@ class ElggCoffee {
         $return = false;
         $site_guid = $GLOBALS['CONFIG']->site_guid;
         $site_ent = get_entity($site_guid);
+        $user_ent = elgg_get_logged_in_user_entity();
         if ($site_ent instanceof ElggSite && is_array($type)) {
             foreach ($type as $key=>$type) {
                 $return[$key] = array($type => $site_ent->$type);
@@ -828,6 +831,7 @@ class ElggCoffee {
         }
         $return[++$key] = array('system_update' => datalist_get('simplecache_lastupdate_default'));
         $return[++$key] = array('corporate_tags_update' => $site_ent->corporate_tags_update);
+        $return[++$key] = array('lastNotifChecked' => $user_ent->lastNotifChecked);
         return $return;
     }
 
@@ -891,7 +895,7 @@ class ElggCoffee {
                                                                             , $row['user']['id']
                                                                             , $row['user']['name']
                                                                             , $row['user']['screen_name']
-                                                                            , $row['user']['profile_image_url']
+                                                                            , str_replace('_normal','', $row['user']['profile_image_url'])
                                                                             , $row['user']['profile_background_image_url']);
                         }
                     }
@@ -986,6 +990,120 @@ class ElggCoffee {
         return $return;
     }
 
+    public static function get_notifications ($until, $limit = 10) {
+        $user_guid = elgg_get_logged_in_user_guid();
+        $return = array();
+        $query = "
+        (
+             Select from_unixtime(rel.time_created) as created,'notification::like' as action, rel.guid_one as user, ent.guid as entity
+             From {$GLOBALS['CONFIG']->dbprefix}entity_relationships rel
+             Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On rel.guid_two = ent.guid
+             Where ent.owner_guid = $user_guid
+             And rel.guid_one != $user_guid
+             And rel.relationship = '" . COFFEE_LIKE_RELATIONSHIP . "'
+             Order By rel.time_created Desc
+             Limit $limit
+         )
+             Union All
+         (
+             Select from_unixtime(a.time_created) as created,'notification::comment' as action, a.owner_guid as user, a.id as entity
+             From {$GLOBALS['CONFIG']->dbprefix}annotations a
+             Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On a.entity_guid = ent.guid
+             Where ent.owner_guid = $user_guid
+             And a.owner_guid != $user_guid
+             Order By a.time_created Desc
+             Limit $limit
+         )
+             Union All
+         (
+             Select from_unixtime(ent.time_created) as created,'notification::post::mentioned' as action, ent.owner_guid as user, ent.guid as entity
+             From {$GLOBALS['CONFIG']->dbprefix}entity_relationships rel
+             Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On rel.guid_one = ent.guid
+             Where rel.guid_two = $user_guid
+             And rel.relationship = '" . COFFEE_POST_MENTIONED_RELATIONSHIP . "'
+             Order By ent.time_created Desc
+             Limit $limit
+         )
+             Union All
+         (
+             Select from_unixtime(a.time_created) as created,'notification::comment::mentioned' as action, a.owner_guid as user, a.id as entity
+             From {$GLOBALS['CONFIG']->dbprefix}entity_relationships rel
+             Inner Join {$GLOBALS['CONFIG']->dbprefix}annotations a On rel.guid_one = a.entity_guid
+             Where rel.guid_two = $user_guid
+             And rel.relationship = '" . COFFEE_COMMENT_MENTIONED_RELATIONSHIP . "'
+             Order By a.time_created Desc
+             Limit $limit
+         )
+             Union All
+         (
+
+             Select from_unixtime(likes.time_created) as created,'notification::mentioned::liked' as action, likes.guid_one as user, ent.guid as entity
+             From {$GLOBALS['CONFIG']->dbprefix}entity_relationships rel
+             Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On rel.guid_one = ent.guid
+             Inner Join {$GLOBALS['CONFIG']->dbprefix}entity_relationships likes On likes.guid_two = ent.guid And likes.relationship = '" . COFFEE_LIKE_RELATIONSHIP . "'
+             Where rel.guid_two = $user_guid
+             And rel.relationship = '" . COFFEE_POST_MENTIONED_RELATIONSHIP . "'
+             Order By likes.time_created Desc
+             Limit $limit
+         )
+         Union All
+         (
+             Select from_unixtime(a.time_created) as created,'notification::post::mention::comment' as action, a.owner_guid as user, a.id as entity
+             From {$GLOBALS['CONFIG']->dbprefix}entity_relationships rel
+             Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On rel.guid_one = ent.guid
+             Inner Join {$GLOBALS['CONFIG']->dbprefix}annotations a On rel.guid_one = a.entity_guid
+             Where rel.guid_two = $user_guid
+             And rel.relationship = 'post::mentioned'
+             And a.owner_guid != $user_guid
+             Order By a.time_created Desc
+             Limit $limit
+         )
+         Order By created Desc
+         Limit $limit;";
+        $notifications = get_data($query);
+        if (is_array($notifications)) {
+            foreach ($notifications as $key => $notification) {
+                $user = get_user($notification->user);
+                switch ($notification->action) {
+                    case 'notification::comment':
+                    case 'notification::post::mention::comment':
+                    case 'notification::comment::mentioned':
+                        $annotation = get_annotation($notification->entity);
+                        $entity = get_entity($annotation->entity_guid);
+                        break;
+                    default:
+                        $entity = get_entity($notification->entity);
+                        break;
+                }
+                if ($entity instanceof ElggEntity) {
+                    $guid = $entity->guid;
+                    if (!empty($entity->title)) {
+                        $text = $entity->title;
+                    }
+                    if ($annotation instanceof ElggAnnotation) {
+                        if (empty($text)) {
+                           $text = $annotation->value;
+                        } else {
+                            $text .= "<br />\n - " . $annotation->value;
+                        }
+                    }
+                }
+                $return[$key] = array('guid' => $guid
+                                        , 'owner_guid' => $entity->owner_guid
+                                        , 'text' => $text
+                                        , 'type' => $notification->action
+                                        , 'time_created' => $entity->time_created
+                                        , 'friendly_time' => elgg_get_friendly_time($entity->time_created));
+                $return[$key]['user']['username']       = $user->username;
+                $return[$key]['user']['name']           = $user->name;
+                $return[$key]['user']['icon_url']       = ElggCoffee::_get_user_icon_url($user,'medium');
+                $return[$key]['user']['icon_url_small'] = ElggCoffee::_get_user_icon_url($user,'small');
+                unset($entity,$annotation);
+            }
+        }
+        return $return;
+
+    }
     private static function _add_attachment ($guid_parent, $attachment) {
         if (!is_array($attachment)) return false;
         $type = COFFEE_POST_ATTACHMENT_RELATIONSHIP;

@@ -1070,7 +1070,7 @@ class ElggCoffee {
              Select Distinct from_unixtime(also.time_created) as created,'notification::comment::alsocommented' as action, also.owner_guid as user, also.id as entity
              From {$GLOBALS['CONFIG']->dbprefix}annotations a
              Inner Join {$GLOBALS['CONFIG']->dbprefix}annotations also On a.entity_guid = also.entity_guid
-             Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On a.entity_guid = ent.guid And ent.owner_guid != $user_guid
+             Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On a.entity_guid = ent.guid And ent.owner_guid != $user_guid And also.time_created > a.time_created
              Where also.owner_guid != $user_guid
              And a.owner_guid = $user_guid
              Order By also.time_created Desc
@@ -1080,7 +1080,7 @@ class ElggCoffee {
          (
              Select from_unixtime(also.time_created) as created,'notification::like::alsoliked' as action, also.guid_one as user, rel.guid_two as entity
              From {$GLOBALS['CONFIG']->dbprefix}entity_relationships rel
-             Inner Join {$GLOBALS['CONFIG']->dbprefix}entity_relationships also On rel.guid_two = also.guid_two
+             Inner Join {$GLOBALS['CONFIG']->dbprefix}entity_relationships also On rel.guid_two = also.guid_two And also.time_created > rel.time_created
              Where rel.guid_one = $user_guid
              And also.guid_one != $user_guid
              And rel.relationship = '" . COFFEE_LIKE_RELATIONSHIP . "'

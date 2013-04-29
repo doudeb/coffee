@@ -3396,6 +3396,9 @@
             attributes.notificationLabel = t(attributes.type);
             attributes.isMentioned = attributes.type.match(/mentioned/i);
             attributes.isNew = App.models.session.get('lastNotifChecked') < attributes.time_created;
+            if (attributes.text.length > 90) {
+                attributes.text = attributes.text.substr(0, 90) + '...';
+            }
             Backbone.Model.prototype.set.call(this, attributes, options);
         }
 

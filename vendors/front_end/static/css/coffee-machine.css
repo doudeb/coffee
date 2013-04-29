@@ -127,6 +127,7 @@ a:hover{color:#005580;text-decoration:none;}
 .notifications li {border-bottom:1px  solid #ddd;margin: 2px;padding: 2px;cursor: pointer}
 .notifications li:hover, .notifications li.new {background-color:#e5e5e5;}/*#3B5998*/
 .notifications {overflow-y: auto;height:500px}
+.notifications .notificationsText {line-height: 13px;}
 
 #notificationsCount {display: none;position: absolute;margin: -26px 0 0 15px;background-color: red; border: 1px solid #e5e5e5}
 ul#navigation li.newNotification #notificationsCount {display: block;}

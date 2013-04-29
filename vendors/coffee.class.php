@@ -1094,6 +1094,7 @@ class ElggCoffee {
         if (is_array($notifications)) {
             foreach ($notifications as $key => $notification) {
                 $user = get_user($notification->user);
+                $text = '';
                 switch ($notification->action) {
                     case 'notification::comment':
                     case 'notification::post::mention::comment':
@@ -1113,7 +1114,7 @@ class ElggCoffee {
                     if (!empty($entity->title)) {
                         $text = $entity->title;
                     }
-                    if ($annotation instanceof ElggAnnotation) {
+                    if (0 && $annotation instanceof ElggAnnotation) {
                         if (empty($text)) {
                            $text = $annotation->value;
                         } else {

@@ -16,6 +16,7 @@ $translation = array(
         , 'coffee:menu:admin' => 'Administration'
         , 'coffee:menu:settings' => 'Préférences'
         , 'coffee:menu:logout' => 'Déconnexion'
+        , 'coffee:menu:people' => 'Trombinoscope'
         , 'coffee:menu:notifications' => 'Mes notifications'
 
 /*welcome*/
@@ -213,6 +214,10 @@ A tout de suite sur CoffeePoke,
     , 'notification::post::mentioned' => 'You have been quoted in a post from'
     , 'notification::comment::mentioned' => 'You have been quoted in a comment from'
     , 'notification::post::mention::comment' => 'has commented this post you were quoted in '
+    #New Label
+    , 'notification::like' => 'aime le post '
+    , 'notification::comment' => 'a commenté le post '
+    , 'notification::mention' => 'a mentionné votre nom dans le post '
 
 );
 

@@ -2080,6 +2080,9 @@
                 case 'settings':
                     Backbone.history.navigate('userSettings', true);
                     break;
+                case 'people':
+                    Backbone.history.navigate('people', true);
+                    break;
             }
             return false;
         },
@@ -3393,7 +3396,27 @@
     /* !Model: Notification */
     var Notification = Backbone.Model.extend({
         set: function (attributes, options) {
-            attributes.notificationLabel = t(attributes.type);
+            switch (attributes.type) {
+                case 'notification::like' :
+                case 'notification::like::alsoliked' :
+                case 'notification::mentioned::liked' :
+                    attributes.notificationLabel = t('notification::like');
+                    attributes.icon = 'icon-thumbs-up';
+                    break;
+                case 'notification::comment' :
+                case 'notification::comment::alsocommented' :
+                case 'notification::comment::mentioned' :
+                case 'notification::post::mention::comment' :
+                    attributes.notificationLabel = t('notification::comment');
+                    attributes.icon = 'icon-comment';
+                    break;
+                case 'notification::post::mentioned' :
+                case 'notification::comment::mentioned' :
+                    attributes.notificationLabel = t('notification::mention');
+                    attributes.icon = 'icon-user';
+                    break;
+            }
+            //attributes.notificationLabel = t(attributes.type);
             attributes.isMentioned = attributes.type.match(/mentioned/i);
             attributes.isNew = App.models.session.get('lastNotifChecked') < attributes.time_created;
             if (attributes.text.length > 90) {

@@ -126,10 +126,12 @@ a:hover{color:#005580;text-decoration:none;}
 
 .notifications li {border-bottom:1px  solid #ddd;margin: 2px;padding: 2px;cursor: pointer}
 .notifications li:hover, .notifications li.new {background-color:#e5e5e5;}/*#3B5998*/
-.notifications {overflow-y: auto;height:500px}
+.notifications {overflow-y: auto;max-height:350px;overflow-x: hidden}
 .notifications .notificationsText {line-height: 13px;}
+.notifications .comment-content {margin-left: 20px;width: 310px;word-wrap: break-word;}
+.notifications [class^="icon-"], [class*=" icon-"] {margin-top: 3px;}
 
-#notificationsCount {display: none;position: absolute;margin: -26px 0 0 15px;background-color: red; border: 1px solid #e5e5e5}
+#notificationsCount {display: none;position: absolute;margin: -26px 0 0 13px;background-color: red; border: 1px solid #e5e5e5;padding: 2px 4px;}
 ul#navigation li.newNotification #notificationsCount {display: block;}
 
 

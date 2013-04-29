@@ -16,6 +16,7 @@ $translation = array(
         , 'coffee:menu:admin' => 'Administration'
         , 'coffee:menu:settings' => 'Settings'
         , 'coffee:menu:logout' => 'Log out'
+        , 'coffee:menu:people' => 'People'
         , 'coffee:menu:notifications' => 'My notifications'
 
 /*welcome*/
@@ -211,6 +212,10 @@ Team Coffeepoke'
     , 'notification::post::mentioned' => 'You have been quoted in a post from'
     , 'notification::comment::mentioned' => 'You have been quoted in a comment from'
     , 'notification::post::mention::comment' => 'has commented this post you were quoted in '
+    #New Label
+    , 'notification::like' => 'likes the post '
+    , 'notification::comment' => 'has commented the post '
+    , 'notification::mention' => 'has quoted your name in '
 );
 
 add_translation('en', $translation);

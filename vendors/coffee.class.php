@@ -1055,7 +1055,7 @@ class ElggCoffee {
          )
          Union All
          (
-             Select from_unixtime(a.time_created) as created,'notification::post::mention::comment' as action, a.owner_guid as user, a.id as entity
+             Select from_unixtime(a.time_created) as created,   'notification::post::mention::comment' as action, a.owner_guid as user, a.id as entity
              From {$GLOBALS['CONFIG']->dbprefix}entity_relationships rel
              Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On rel.guid_one = ent.guid
              Inner Join {$GLOBALS['CONFIG']->dbprefix}annotations a On rel.guid_one = a.entity_guid
@@ -1063,6 +1063,29 @@ class ElggCoffee {
              And rel.relationship = 'post::mentioned'
              And a.owner_guid != $user_guid
              Order By a.time_created Desc
+             Limit $limit
+         )
+         Union All
+         (
+             Select Distinct from_unixtime(also.time_created) as created,'notification::comment::alsocommented' as action, also.owner_guid as user, also.id as entity
+             From {$GLOBALS['CONFIG']->dbprefix}annotations a
+             Inner Join {$GLOBALS['CONFIG']->dbprefix}annotations also On a.entity_guid = also.entity_guid
+             Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On a.entity_guid = ent.guid And ent.owner_guid != $user_guid
+             Where also.owner_guid != $user_guid
+             And a.owner_guid = $user_guid
+             Order By also.time_created Desc
+             Limit $limit
+         )
+         Union All
+         (
+             Select from_unixtime(also.time_created) as created,'notification::like::alsoliked' as action, also.guid_one as user, rel.guid_two as entity
+             From {$GLOBALS['CONFIG']->dbprefix}entity_relationships rel
+             Inner Join {$GLOBALS['CONFIG']->dbprefix}entity_relationships also On rel.guid_two = also.guid_two
+             Where rel.guid_one = $user_guid
+             And also.guid_one != $user_guid
+             And rel.relationship = '" . COFFEE_LIKE_RELATIONSHIP . "'
+             And also.relationship ='" . COFFEE_LIKE_RELATIONSHIP . "'
+             Order By also.time_created Desc
              Limit $limit
          )
          Order By created Desc
@@ -1075,6 +1098,7 @@ class ElggCoffee {
                     case 'notification::comment':
                     case 'notification::post::mention::comment':
                     case 'notification::comment::mentioned':
+                    case 'notification::comment::alsocommented':
                         $annotation = get_annotation($notification->entity);
                         $entity = get_entity($annotation->entity_guid);
                         $created = $annotation->time_created;

@@ -204,11 +204,11 @@ A tout de suite sur CoffeePoke,
             , 'admin:user:resetpassword:no' => "Oups une erreur est survenue. Merci de réessayer plus tard. Si le problème persiste, merci de contacter votre administrateur."
     #Notifications
     , 'notification::like' => 'a aimé votre publication'
-    , 'notification::like2' => 'a aussi aimé votre publication'
+    , 'notification::like::alsoliked' => 'a aussi aimé votre publication'
     , 'notification::mentioned::liked' => 'has liked this post you were quoted in'
     , 'hoho' => 'has liked the post you commented'
     , 'notification::comment' => 'a commenté votre publication'
-    , 'notification::comment2' => 'has also commented this post'
+    , 'notification::comment::alsocommented' => 'has also commented this post'
     , 'notification::comment::mentioned' => 'has commented this post you were quoted in'
     , 'notification::post::mentioned' => 'You have been quoted in a post from'
     , 'notification::comment::mentioned' => 'You have been quoted in a comment from'

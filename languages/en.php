@@ -203,7 +203,7 @@ Team Coffeepoke'
     #Notifications
     , 'notification::like' => 'has liked your post'
     , 'notification::like2' => 'has also liked this post'
-    , 'notification::post::mentioned' => 'has liked this post you were quoted in'
+    , 'notification::mentioned::liked' => 'has liked this post you were quoted in'
     , 'hoho' => 'has liked the post you commented'
     , 'notification::comment' => 'has commented your post'
     , 'notification::comment2' => 'has also commented this post'

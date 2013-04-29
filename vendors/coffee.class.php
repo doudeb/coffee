@@ -403,12 +403,15 @@ class ElggCoffee {
         require_once elgg_get_plugins_path() . "coffee/vendors/link_data/Embedly.php";
         require_once elgg_get_plugins_path() . "coffee/vendors/link_data/EmbedUrl.php";
         $return = false;
+        $type = 'url';
         if (preg_match("/\.(bmp|jpeg|gif|png|jpg|pdf)$/i", $url)) {
             $title = parse_url($url,PHP_URL_PATH);
             $title = basename($title);
             $return = array('title' => $title
                                 , 'thumbnail' => $url);
+            $type = 'url_document';
         } elseif (preg_match("/(dailymotion|vimeo|youtu|slide|scrib)/", $url)) {
+            $type = 'url_media';
             try {
                 $api = new Embedly_API(array('user_agent' => 'Mozilla/5.0 (compatible; embedly/example-app; support@embed.ly)'));
                 $oembed = $api->oembed(array('url' => $url, 'maxwidth' => 530));
@@ -419,10 +422,12 @@ class ElggCoffee {
                                     , 'width' => $oembed[0]->width
                                     , 'height' => $oembed[0]->height
                                     , 'html' => $oembed[0]->html);
+                    if (preg_match("/(youtu)/", $oembed[0]->html)) $type = 'youtube';
                 }
             } catch (Exception $e) {}
         }
         if (!is_array($return)) {
+            $type = 'url_article';
             require_once elgg_get_plugins_path() . "coffee/vendors/Readability.inc.php";
             $embedUrl = new Embed_url(array('url' => $url));
             $embedUrl->embed();
@@ -441,7 +446,7 @@ class ElggCoffee {
             $link->title = $return['title'];
             $link->description = $return['description'];
             $link->thumbnail = $return['thumbnail'];
-            $link->simpletype = 'url';
+            $link->simpletype = $type;
             $link->html = $return['html'];
             $link->url = $url;
             $link->save();
@@ -893,8 +898,8 @@ class ElggCoffee {
                             $return['feed_data'][$i]['feeds'][$key] = format_post_array($row['text']
                                                                             , $row['created_at']
                                                                             , $row['user']['id']
-                                                                            , $row['user']['name']
                                                                             , $row['user']['screen_name']
+                                                                            , $row['user']['name']
                                                                             , str_replace('_normal','', $row['user']['profile_image_url'])
                                                                             , $row['user']['profile_background_image_url']);
                         }
@@ -1030,6 +1035,7 @@ class ElggCoffee {
              From {$GLOBALS['CONFIG']->dbprefix}entity_relationships rel
              Inner Join {$GLOBALS['CONFIG']->dbprefix}annotations a On rel.guid_one = a.entity_guid
              Where rel.guid_two = $user_guid
+             And a.owner_guid != $user_guid
              And rel.relationship = '" . COFFEE_COMMENT_MENTIONED_RELATIONSHIP . "'
              Order By a.time_created Desc
              Limit $limit
@@ -1042,6 +1048,7 @@ class ElggCoffee {
              Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On rel.guid_one = ent.guid
              Inner Join {$GLOBALS['CONFIG']->dbprefix}entity_relationships likes On likes.guid_two = ent.guid And likes.relationship = '" . COFFEE_LIKE_RELATIONSHIP . "'
              Where rel.guid_two = $user_guid
+             And likes.guid_one != $user_guid
              And rel.relationship = '" . COFFEE_POST_MENTIONED_RELATIONSHIP . "'
              Order By likes.time_created Desc
              Limit $limit
@@ -1070,9 +1077,11 @@ class ElggCoffee {
                     case 'notification::comment::mentioned':
                         $annotation = get_annotation($notification->entity);
                         $entity = get_entity($annotation->entity_guid);
+                        $created = $annotation->time_created;
                         break;
                     default:
                         $entity = get_entity($notification->entity);
+                        $created = $entity->time_created;
                         break;
                 }
                 if ($entity instanceof ElggEntity) {
@@ -1092,8 +1101,8 @@ class ElggCoffee {
                                         , 'owner_guid' => $entity->owner_guid
                                         , 'text' => $text
                                         , 'type' => $notification->action
-                                        , 'time_created' => $entity->time_created
-                                        , 'friendly_time' => elgg_get_friendly_time($entity->time_created));
+                                        , 'time_created' => $created
+                                        , 'friendly_time' => elgg_get_friendly_time($created));
                 $return[$key]['user']['username']       = $user->username;
                 $return[$key]['user']['name']           = $user->name;
                 $return[$key]['user']['icon_url']       = ElggCoffee::_get_user_icon_url($user,'medium');
@@ -1199,14 +1208,21 @@ class ElggCoffee {
         //if (!$attached_ent instanceof ElggFile) return false;
         switch ($attached_ent->simpletype) {
             case 'url':
+            case 'url_media':
+            case 'url_article':
+            case 'url_document':
+            case 'youtube':
                 $thumbnail = $attached_ent->thumbnail;
+                $url = $attached_ent->url;
                 break;
             case 'image':
                 $thumbnail = static::_get_thumbnail_url($attached_ent->guid,'medium');
+                $url = static::_get_dwl_url($attached_ent->guid);
                 break;
             case 'document':
             default:
                 $thumbnail = $attached_ent->getIconURL();
+                $url = static::_get_dwl_url($attached_ent->guid);
                 break;
         }
         $return = array(
@@ -1218,7 +1234,7 @@ class ElggCoffee {
                             , 'html' => $attached_ent->html
                             , 'type' => $attached_ent->simpletype
                             , 'mime' => $attached_ent->mimetype
-                            , 'url' => $attached_ent->simpletype === 'url'?$attached_ent->url:static::_get_dwl_url($attached_ent->guid)
+                            , 'url' => $url
                             , 'thumbnail' => $thumbnail
             );
        return $return;

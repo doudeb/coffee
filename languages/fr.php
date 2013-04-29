@@ -16,6 +16,7 @@ $translation = array(
         , 'coffee:menu:admin' => 'Administration'
         , 'coffee:menu:settings' => 'Préférences'
         , 'coffee:menu:logout' => 'Déconnexion'
+        , 'coffee:menu:notifications' => 'Mes notifications'
 
 /*welcome*/
         , 'coffee:welcome:headline' => '<h3>Bonjour,</h3>
@@ -200,9 +201,19 @@ A tout de suite sur CoffeePoke,
             , 'user:password:resetreq:success' => "Merci. Nous venons de vous envoyer un email vous expliquant comment réinitialiser votre mot de passe."
             , 'user:password:resetreq:fail' => "Désolé, mais cette adresse email n'existe pas."
             , 'admin:user:resetpassword:yes' => "Votre nouveau mot de passe vous a été envoyé par email."
-            , 'admin:user:resetpassword:no' => "Oups une erreur est survenue. Merci de réessayer plus tard. Si le problème persiste, merci de contacter votre administrateur.
+            , 'admin:user:resetpassword:no' => "Oups une erreur est survenue. Merci de réessayer plus tard. Si le problème persiste, merci de contacter votre administrateur."
+    #Notifications
+    , 'notification::like' => 'a aimé votre publication'
+    , 'notification::like2' => 'a aussi aimé votre publication'
+    , 'notification::mentioned::liked' => 'has liked this post you were quoted in'
+    , 'hoho' => 'has liked the post you commented'
+    , 'notification::comment' => 'a commenté votre publication'
+    , 'notification::comment2' => 'has also commented this post'
+    , 'notification::comment::mentioned' => 'has commented this post you were quoted in'
+    , 'notification::post::mentioned' => 'You have been quoted in a post from'
+    , 'notification::comment::mentioned' => 'You have been quoted in a comment from'
+    , 'notification::post::mention::comment' => 'has commented this post you were quoted in '
 
-
-");
+);
 
 add_translation('fr', $translation);

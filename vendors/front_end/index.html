@@ -230,7 +230,7 @@
                             {{/likes}}
                             <ul class="comments">
                                 {{#comment.showAllLink}}
-                                <li class="show-all"><a class="show-all-link" href="#">{{#translate}}coffee:feeditem:showall{{/translate}}&nbsp;{{comment.total}}&nbsp;{{#translate}}coffee:feeditem:comments{{/translate}}</a></li>
+                                <li class="show-all"><a class="show-all-link" href="#feed">{{#translate}}coffee:feeditem:showall{{/translate}}&nbsp;{{comment.total}}&nbsp;{{#translate}}coffee:feeditem:comments{{/translate}}</a></li>
                                 {{/comment.showAllLink}}
                                 {{#comment.comments}}
                                 <li class="comment">
@@ -265,7 +265,12 @@
                     {{#displayWelcome}}<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:welcome{{/translate}}" data-action="welcome" data-placement="right"><i class="icon-flag icon-white"></i></a></li>{{/displayWelcome}}
                     <li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:feedlist{{/translate}}" data-action="feed" data-placement="right"><i class="icon-home icon-white"></i></a></li>
                     <li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:profile{{/translate}}" data-action="profile" data-placement="right"><i class="icon-user icon-white"></i></a></li>
-                    <li class=""><a href="" rel="tooltip" title="{{#translate}}coffee:menu:notifications{{/translate}}" data-action="notifications" data-placement="right" data-lastNotifChecked="" id="notifications"><i class="icon-list icon-white"></i></a></li>
+                    <li class="">
+                        <a href="" rel="tooltip" title="{{#translate}}coffee:menu:notifications{{/translate}}" data-action="notifications" data-placement="right" data-lastNotifChecked="" id="notifications">
+                            <i class="icon-list icon-white"></i>
+                            <span id="notificationsCount" class="label label-important">2</span>
+                        </a>
+                    </li>
                     {{#isAdmin}}<li id="tvApp"><a href="" rel="tooltip" title="{{#translate}}coffee:menu:tvapp{{/translate}}" data-action="tv" data-placement="right"><i class="icon-tv icon-white"></i></a></li>{{/isAdmin}}
                     {{#isAdmin}}<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:admin{{/translate}}" data-action="admin" data-placement="right"><i class="icon-wrench icon-white"></i></a></li>{{/isAdmin}}
                     {{^isAdmin}}<li><a href="" rel="tooltip" title="{{#translate}}coffee:menu:settings{{/translate}}" data-action="settings" data-placement="right"><i class="icon-wrench icon-white"></i></a></li>{{/isAdmin}}

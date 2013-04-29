@@ -260,7 +260,7 @@
                             App.views.adminView.refreshCorporateHashtags(corporateHashtags)
                         }
                         if(_.isObject(App.views.microbloggingView)) {
-                            App.views.microbloggingView.refreshHashtags(corporateHashtags,'#corporateHashtags', 'corporate')
+                            App.views.microbloggingView.refreshHashtags(corporateHashtags,'#corporateHashtags', 'corporate');
                         }
 
                     } else if (response.message == 'pam_auth_userpass:failed') {
@@ -314,14 +314,15 @@
             notifications.on('ready', function () {
                 var newNotifications = 0;
                 _.each(notifications.models, function (notification) {
-                    if (notification.attributes.time_created > parseInt(App.models.session.get('lastNotifChecked'))) {
+                    if (notification.attributes.time_created > App.models.session.get('lastNotifChecked')) {
                         newNotifications = newNotifications+1;
                     }
                 });
                 if (newNotifications > 0) {
                     elm = $('#notifications');
-                    elm.attr('title', t('coffee:menu:notifications') + ' (' + newNotifications + ')')
+                    elm
                         .parent().addClass('active newNotification')
+                        .find('#notificationsCount').html(newNotifications);
                 }
             });
         }
@@ -2091,20 +2092,22 @@
 
         toggleNotificationsList: function (e) {
             var notifications = new NotificationsView (0,10)
-                , options = new Object();
+                , options = new Object()
+                , elm = $('#notifications');
             if ($('body').find('div.popover:visible').length) {
-                $('#notifications').popover('destroy')
+                $('#notifications').popover('destroy');
                 return true;
             }
+            elm
+                .parent().removeClass('active newNotification')
+                .find('#notificationsCount').html('');
             notifications.on('notificationsViewReady', function() {
                 options.content = new Date().getTime();
                 options.content = notifications.el;
                 options.trigger = 'manual';
                 options.container = '#notifications';
                 $(e.currentTarget).popover(options);
-                $(e.currentTarget)
-                    .removeClass('active newNotification')
-                    .popover('show');
+                $(e.currentTarget).popover('show');
                 $('.popover')
                     .css('top','0px')
                     .css('position','fixed')
@@ -2182,12 +2185,12 @@
                     }
                 }
                 if (!_.isUndefined(update.lastNotifChecked)) {
-                    if (App.models.session.get('lastFeedUpdate') > update.lastNotifChecked) {
-                        elm = self.$el.find('#notifications');
-                        if (!elm.parent().hasClass('active newNotification')) {
-                            App.models.session.set('lastNotifChecked',update.lastNotifChecked);
-                            App.countNewNotifications();
-                        }
+                    if (!App.models.session.get('lastNotifChecked')) {
+                        App.models.session.set('lastNotifChecked',update.lastNotifChecked);
+                    }
+                    if (App.models.session.get('lastFeedUpdate') > App.models.session.get('lastNotifChecked')) {
+                        App.models.session.set('lastNotifChecked',update.lastNotifChecked);
+                        App.countNewNotifications();
                     }
                 }
             });

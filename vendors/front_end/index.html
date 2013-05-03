@@ -230,7 +230,7 @@
                             {{/likes}}
                             <ul class="comments">
                                 {{#comment.showAllLink}}
-                                <li class="show-all"><a class="show-all-link" href="">{{#translate}}coffee:feeditem:showall{{/translate}}&nbsp;{{comment.total}}&nbsp;{{#translate}}coffee:feeditem:comments{{/translate}}</a></li>
+                                <li class="show-all"><a class="show-all-link" href="javascript:void(0)">{{#translate}}coffee:feeditem:showall{{/translate}}&nbsp;{{comment.total}}&nbsp;{{#translate}}coffee:feeditem:comments{{/translate}}</a></li>
                                 {{/comment.showAllLink}}
                                 {{#comment.comments}}
                                 <li class="comment">
@@ -1066,9 +1066,9 @@
                     </div>
                     <img class="vcard-avatar radius3" src="{{avatar}}">
                     <ul class="update-actions">
-                        {{^isAdmin}}<li class="update-action update-action-remove"><a href="#" rel="tooltip" title="{{#translate}}coffee:feeditem:action:removecomment{{/translate}}" data-action="remove" data-placement="right"><i class="icon-trash"></i></a></li>{{/isAdmin}}
-                        {{^isAdmin}}<li class="update-action update-action-set-tv-settings"><a href="#" rel="tooltip" title="{{#translate}}coffee:useradmin:action:settvsettings{{/translate}}" data-action="setTvSettings" data-placement="right"><i class="icon-tv"></i></a></li>{{/isAdmin}}
-                        <li class="update-action update-action-poke"><a href="mailto:{{email}}?subject={{#translate}}coffee:poke:subject{{/translate}}&body={{#translate}}coffee:poke:body{{/translate}}" rel="tooltip" title="{{#translate}}coffee:poke:action{{/translate}}" data-placement="right"><i class="icon-coffeepoke"></i></a></li>
+                        {{#isAdmin}}<li class="update-action update-action-remove"><a href="#" rel="tooltip" title="{{#translate}}coffee:feeditem:action:removecomment{{/translate}}" data-action="remove" data-placement="right"><i class="icon-trash"></i></a></li>{{/isAdmin}}
+                        {{#isAdmin}}<li class="update-action update-action-set-tv-settings"><a href="#" rel="tooltip" title="{{#translate}}coffee:useradmin:action:settvsettings{{/translate}}" data-action="setTvSettings" data-placement="right"><i class="icon-tv"></i></a></li>{{/isAdmin}}
+                        <li class="update-action update-action-poke"><a href="mailto:{{email}}?subject={{#translate}}coffee:poke:subject{{/translate}}&body={{#translate}}coffee:poke:body{{/translate}}" data-action="poke" rel="tooltip" title="{{#translate}}coffee:poke:action{{/translate}}" data-placement="right"><i class="icon-coffeepoke"></i></a></li>
                     </ul>
                 </div>
         </script>

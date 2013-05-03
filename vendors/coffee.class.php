@@ -107,6 +107,7 @@ class ElggCoffee {
         $join = $where = $return = array();
         $db_prefix = elgg_get_config('dbprefix');
         $where[] = 'e.time_updated > ' . $newer_than;
+        $lastTimeUpdated = false;
         if (preg_match('/\d{1,7}/', $tags[0])) {
             $guid = $tags[0];
         } else if (is_array($tags) && count($tags) > 0) {
@@ -130,6 +131,10 @@ class ElggCoffee {
                             , 'wheres' => $where);
         if ($guid && $guid > 0) {
             $posts = array(get_entity($guid));
+            $site = elgg_get_site_entity();
+            if ($site instanceof ElggSite) {
+                $lastTimeUpdated = $site->{COFFEE_SITE_FEED_UPDATE};
+            }
         } else {
             $posts = elgg_get_entities($options);
         }
@@ -141,7 +146,7 @@ class ElggCoffee {
                     $return[$key]['content']['text'] = nl2br($post->title);
                     $return[$key]['content']['time_created'] = $post->time_created;
                     $return[$key]['content']['friendly_time'] = elgg_get_friendly_time($post->time_created);
-                    $return[$key]['content']['time_updated'] = $post->time_updated;
+                    $return[$key]['content']['time_updated'] = $lastTimeUpdated?$lastTimeUpdated:$post->time_updated;
                     $user = get_user($post->owner_guid);
                     if ($user instanceof ElggUser) {
                         $return[$key]['user']['guid'] = $user->guid;
@@ -1004,6 +1009,8 @@ class ElggCoffee {
              From {$GLOBALS['CONFIG']->dbprefix}entity_relationships rel
              Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On rel.guid_two = ent.guid
              Where ent.owner_guid = $user_guid
+             And ent.enabled = 'yes'
+             And ent.site_guid = {$GLOBALS['CONFIG']->site_guid}
              And rel.guid_one != $user_guid
              And rel.relationship = '" . COFFEE_LIKE_RELATIONSHIP . "'
              Order By rel.time_created Desc
@@ -1015,6 +1022,8 @@ class ElggCoffee {
              From {$GLOBALS['CONFIG']->dbprefix}annotations a
              Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On a.entity_guid = ent.guid
              Where ent.owner_guid = $user_guid
+             And ent.enabled = 'yes'
+             And ent.site_guid = {$GLOBALS['CONFIG']->site_guid}
              And a.owner_guid != $user_guid
              Order By a.time_created Desc
              Limit $limit
@@ -1025,6 +1034,8 @@ class ElggCoffee {
              From {$GLOBALS['CONFIG']->dbprefix}entity_relationships rel
              Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On rel.guid_one = ent.guid
              Where rel.guid_two = $user_guid
+             And ent.enabled = 'yes'
+             And ent.site_guid = {$GLOBALS['CONFIG']->site_guid}
              And rel.relationship = '" . COFFEE_POST_MENTIONED_RELATIONSHIP . "'
              Order By ent.time_created Desc
              Limit $limit
@@ -1036,6 +1047,7 @@ class ElggCoffee {
              Inner Join {$GLOBALS['CONFIG']->dbprefix}annotations a On rel.guid_one = a.entity_guid
              Where rel.guid_two = $user_guid
              And a.owner_guid != $user_guid
+             And a.enabled = 'yes'
              And rel.relationship = '" . COFFEE_COMMENT_MENTIONED_RELATIONSHIP . "'
              Order By a.time_created Desc
              Limit $limit
@@ -1048,6 +1060,8 @@ class ElggCoffee {
              Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On rel.guid_one = ent.guid
              Inner Join {$GLOBALS['CONFIG']->dbprefix}entity_relationships likes On likes.guid_two = ent.guid And likes.relationship = '" . COFFEE_LIKE_RELATIONSHIP . "'
              Where rel.guid_two = $user_guid
+             And ent.enabled = 'yes'
+             And ent.site_guid = {$GLOBALS['CONFIG']->site_guid}
              And likes.guid_one != $user_guid
              And rel.relationship = '" . COFFEE_POST_MENTIONED_RELATIONSHIP . "'
              Order By likes.time_created Desc
@@ -1060,7 +1074,9 @@ class ElggCoffee {
              Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On rel.guid_one = ent.guid
              Inner Join {$GLOBALS['CONFIG']->dbprefix}annotations a On rel.guid_one = a.entity_guid
              Where rel.guid_two = $user_guid
-             And rel.relationship = 'post::mentioned'
+             And ent.enabled = 'yes'
+             And ent.site_guid = {$GLOBALS['CONFIG']->site_guid}
+             And rel.relationship = '" . COFFEE_POST_MENTIONED_RELATIONSHIP . "'
              And a.owner_guid != $user_guid
              Order By a.time_created Desc
              Limit $limit
@@ -1073,6 +1089,7 @@ class ElggCoffee {
              Inner Join {$GLOBALS['CONFIG']->dbprefix}entities ent On a.entity_guid = ent.guid And ent.owner_guid != $user_guid And also.time_created > a.time_created
              Where also.owner_guid != $user_guid
              And a.owner_guid = $user_guid
+             And a.enabled = 'yes'
              Order By also.time_created Desc
              Limit $limit
          )

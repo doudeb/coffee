@@ -636,6 +636,7 @@
 
         render: function () {
             data = this.model.toJSON();
+            data.isAdmin = App.models.session.get('isAdmin') || false;
 
             element = ich.userVcardTemplate(data);
             $(this.el).replaceWith(element);
@@ -650,13 +651,15 @@
         updateAction: function (e) {
             var self = this;
             var action = $(e.currentTarget).attr('data-action');
-
             switch (action) {
                 case 'remove' :
                     self.removeUser();
                     break;
                 case 'setTvSettings' :
                     self.setTvSettings(e);
+                    break;
+                case 'poke' :
+                    $(e.currentTarget).click();
                     break;
                 default:
                     return false;
@@ -1304,6 +1307,7 @@
                         var update = self.model.toJSON();
                         update.comment = response.result;
                         self.model.set(update);
+                        return true;
                     }
                     if (response.message == 'pam_auth_userpass:failed') {
                         localStorage.clear();
@@ -1314,7 +1318,6 @@
                     }
                 }
             });
-            return false;
         },
 
         textareaKeydown: function (e) {
@@ -2046,7 +2049,7 @@
         handleClick: function (e) {
             var target = $(e.currentTarget);
             var action = target.attr('data-action');
-
+            App.removePopover();
             switch (action) {
                 case 'logout':
                     App.models.session.end();
@@ -3312,6 +3315,7 @@
             this.offset = 0;
             this.usrname = '';
             this.isLoading = false;
+            this.count = 0;
             this.render();
             this.collection = new UserItemList();
             this.collection.bind('userReady', this.showUsers);
@@ -3355,34 +3359,39 @@
         showUsers: function () {
             var self = this
                 , count = 0;
-            _.each(this.collection.models, function(userItem) {
-                self.addUser(userItem);
-                count = userItem.get('count');
-            }, this);
+            if (this.collection.models.length >0) {
+                _.each(this.collection.models, function(userItem) {
+                    self.addUser(userItem);
+                    count = userItem.get('count');
+                }, this);
+                this.count = count;
+            }
             self.$el.find('#offset').html(self.offset);
-            self.$el.find('#count').html(count);
+            self.$el.find('#count').html(this.count);
         },
 
         manageUserNav: function(e) {
-            if (this.isLoading) return false;
-            this.isLoading = true;
             elm = $(e.currentTarget);
             action = $(e.currentTarget).attr('id');
             this.username = $(e.currentTarget).parent().parent().find('#username').val();
-            this.resetUserList();
+            console.log(this.offset,this.count);
             switch (action) {
                 case 'next' :
+                    if (this.offset + 10 >= this.count) return false;
                     this.offset = this.offset + 10;
-                    this.collection.loadUser(this.username,this.offset);
                     break;
                  case 'prev' :
+                    if (this.offset === 0) return false;
                     this.offset = this.offset - 10;
-                    this.collection.loadUser(this.username,this.offset);
                     break;
                  case 'username' :
-                    this.collection.loadUser(this.username,this.offset);
+                    this.offset = 0;
                     break;
             }
+            if (this.isLoading) return false;
+            this.isLoading = true;
+            this.resetUserList();
+            this.collection.loadUser(this.username,this.offset);
             this.isLoading = false;
             return false;
         },

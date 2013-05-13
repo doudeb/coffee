@@ -373,7 +373,7 @@ function render_dwl ($guid) {
     exit;
 }
 
-function format_post_array ($text,$time_created,$user_id,$username,$display_name,$icon_url,$cover_urll) {
+function format_post_array ($text,$time_created,$user_id,$username,$display_name,$icon_url,$cover_url,$baseline=false,$crawled=false) {
     $return = array();
     $return['content']['text'] = nl2br($text);
     $return['content']['time_created'] = $time_created;
@@ -381,10 +381,11 @@ function format_post_array ($text,$time_created,$user_id,$username,$display_name
     $return['user']['guid'] = $user_id;
     $return['user']['username'] = $username;
     $return['user']['name'] = $display_name;
+    $return['user']['baseline'] = $baseline;
     $return['user']['icon_url'] = $icon_url;
     $return['user']['icon_url_small'] = $icon_url;
-    $return['user']['cover_url'] = $cover_urll;
-    $return['attachment'] = false;
+    $return['user']['cover_url'] = $cover_url;
+    $return['attachment'] = $crawled;
 
     return $return;
 }
@@ -477,6 +478,25 @@ function search_users($query, $offset, $limit) {
 		'entities' => $entities,
 		'count' => $count,
 	);
+}
+
+
+function getDuration($url){
+
+    $pattern = '/(?<=(?:v|i)=)[a-zA-Z0-9-]+(?=&)|(?<=(?:v|i)\/)[^&\n]+|(?<=embed\/)[^"&\n]+|(?<=(?:v|i)=)[^&\n]+|(?<=youtu.be\/)[^&\n]+/';
+    $result = preg_match($pattern, $url, $matches);
+
+    if (false == $result) {
+        return false;
+    }
+    $video_id = $matches[0];
+
+    $data=@file_get_contents('http://gdata.youtube.com/feeds/api/videos/'.$video_id.'?v=2&alt=jsonc');
+    if (false===$data) return false;
+
+    $obj=json_decode($data);
+
+    return $obj->data->duration;
 }
 
 /**

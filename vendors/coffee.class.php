@@ -152,6 +152,7 @@ class ElggCoffee {
                         $return[$key]['user']['guid'] = $user->guid;
                         $return[$key]['user']['username'] = $user->username;
                         $return[$key]['user']['name'] = $user->name;
+                        $return[$key]['user']['baseline'] = $user->headline;
                         $return[$key]['user']['icon_url'] = ElggCoffee::_get_user_icon_url($user,'medium');
                         $return[$key]['user']['icon_url_small'] = ElggCoffee::_get_user_icon_url($user,'small');
                         $return[$key]['user']['cover_url'] = ElggCoffee::_get_user_cover_url($user);
@@ -408,6 +409,7 @@ class ElggCoffee {
         require_once elgg_get_plugins_path() . "coffee/vendors/link_data/Embedly.php";
         require_once elgg_get_plugins_path() . "coffee/vendors/link_data/EmbedUrl.php";
         $return = false;
+        $duration = false;
         $type = 'url';
         if (preg_match("/\.(bmp|jpeg|gif|png|jpg|pdf)$/i", $url)) {
             $title = parse_url($url,PHP_URL_PATH);
@@ -427,7 +429,10 @@ class ElggCoffee {
                                     , 'width' => $oembed[0]->width
                                     , 'height' => $oembed[0]->height
                                     , 'html' => $oembed[0]->html);
-                    if (preg_match("/(youtu)/", $oembed[0]->html)) $type = 'youtube';
+                    if (preg_match("/(youtu)/", $oembed[0]->html)) {
+                            $type = 'youtube';
+                            $duration = getDuration($url);
+                    }
                 }
             } catch (Exception $e) {}
         }
@@ -454,6 +459,7 @@ class ElggCoffee {
             $link->simpletype = $type;
             $link->html = $return['html'];
             $link->url = $url;
+            if ($duration) $link->duration = $duration;
             $link->save();
             $return['guid'] = $link->guid;
         }
@@ -906,7 +912,8 @@ class ElggCoffee {
                                                                             , $row['user']['screen_name']
                                                                             , $row['user']['name']
                                                                             , str_replace('_normal','', $row['user']['profile_image_url'])
-                                                                            , $row['user']['profile_background_image_url']);
+                                                                            , $row['user']['profile_background_image_url']
+                                                                            , $row['user']['description']);
                         }
                     }
                     break;
@@ -916,14 +923,59 @@ class ElggCoffee {
                     $post = $feed->api($channel->query, array('access_token' => $channel->access_token,'limit'=>10));
                     if (is_array($post['data'])) {
                         foreach ($post['data'] as $key=>$row) {
+                            $crawled = array();
+                            switch ($row['type']) {
+                                case 'photo':
+                                    $attachment  = $feed->api('/' . $row['object_id'] . '?fields=images', array('access_token' => $channel->access_token));
+                                    $crawled = array(
+                                                        'time_created' => $attachment['created_time']
+                                                        , 'friendly_time' => $attachment['created_time']
+                                                        , 'title' => $row['name']
+                                                        , 'description' => $row['caption']
+                                                        , 'html' => null
+                                                        , 'type' => 'image'
+                                                        , 'mime' => 'image/jpg'
+                                                        , 'url' => $attachment['images'][0]['source']
+                                                        , 'thumbnail' => $row['picture']);
+                                    break;
+                                case 'video':
+                                    $crawled = array(
+                                                        'time_created' => $row['created_time']
+                                                        , 'friendly_time' => $row['created_time']
+                                                        , 'title' => $row['name']
+                                                        , 'description' => $row['description']
+                                                        , 'html' => null
+                                                        , 'type' => preg_match("/(youtu)/", $row['source'])?'youtube':'url_media'
+                                                        , 'duration' => getDuration($row['source'])
+                                                        , 'mime' => null
+                                                        , 'url' => $row['source']
+                                                        , 'thumbnail' => $row['picture']);
+                                    break;
+                                case 'link':
+                                    $crawled = array(
+                                                        'time_created' => $row['created_time']
+                                                        , 'friendly_time' => $row['created_time']
+                                                        , 'title' => $row['name']
+                                                        , 'description' => $row['description']
+                                                        , 'html' => null
+                                                        , 'type' => preg_match("/(youtu)/", $row['source'])?'youtube':'url'
+                                                        , 'mime' => null
+                                                        , 'url' => $row['link']
+                                                        , 'thumbnail' => $row['picture']);
+                                    break;
+
+                            }
                             $profile  = $feed->api('/' . $row['from']['id'] . '?fields=picture,cover', array('access_token' => $channel->access_token));
+
                             $return['feed_data'][$i]['feeds'][$key] = format_post_array($row['message']
                                                                             , $row['created_time']
                                                                             , $row['from']['id']
                                                                             , $row['from']['name']
                                                                             , $row['from']['name']
                                                                             , $profile['picture']['data']['url']
-                                                                            , $profile['cover']['source']);
+                                                                            , $profile['cover']['source']
+                                                                            , false
+                                                                            , $crawled);
                         }
                     }
                     break;
@@ -1130,6 +1182,11 @@ class ElggCoffee {
                     $guid = $entity->guid;
                     if (!empty($entity->title)) {
                         $text = $entity->title;
+                    } else {
+                        $coffeePokePost = ElggCoffee::get_post($guid);
+                        if (isset($coffeePokePost[0]['attachment'])) {
+                            $text = $coffeePokePost[0]['attachment'][0]['title'];
+                        }
                     }
                     if (0 && $annotation instanceof ElggAnnotation) {
                         if (empty($text)) {
@@ -1278,6 +1335,7 @@ class ElggCoffee {
                             , 'mime' => $attached_ent->mimetype
                             , 'url' => $url
                             , 'thumbnail' => $thumbnail
+                            , 'duration' => $attached_ent->duration
             );
        return $return;
     }

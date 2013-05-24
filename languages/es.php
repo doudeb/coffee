@@ -16,6 +16,8 @@ $translation = array(
         , 'coffee:menu:admin' => 'Administración'
         , 'coffee:menu:settings' => 'Ajustes'
         , 'coffee:menu:logout' => 'Salir'
+        , 'coffee:menu:people' => 'Directorio'
+        , 'coffee:menu:notifications' => 'Notificaciones'
 
 /*welcome*/
         , 'coffee:welcome:headline' => '<h3>Hola!</h3>
@@ -196,6 +198,12 @@ CoffeePoke, nuestro coffee break 2.0'
                     ,'friendlytime:days' => "hace %s días"
                     ,'friendlytime:days:singular' => "ayer"
                     ,'friendlytime:date_format' => 'j F Y à H:i'
+
+    , 'coffee:people:legend' => 'Directorio. Encuentra los perfiles de tus colaboradores.'
+    , 'notification::like' => 'le gusta esto '
+    , 'notification::comment' => 'ha comentado esta publicación '
+    , 'notification::mention' => 'ha citado tu nombre en '
+
 
 );
 

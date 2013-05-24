@@ -1021,6 +1021,7 @@
             }
 
             if (attributes.mentioned && attributes.mentioned.length>0) {
+                console.log(attributes);
                 attributes.content.text = this.replaceMentions(attributes.content.text,attributes.mentioned, 'user');
             }
 
@@ -2115,11 +2116,11 @@
                 $(e.currentTarget).popover(options);
                 $(e.currentTarget).popover('show');
                 $('.popover')
-                    .css('top','0px')
+                    .css('top','10px')
                     .css('position','fixed')
                     .css('width','auto');
                 $('.arrow')
-                    .css('margin-top', '0px')
+                    .css('margin-top', '-10px')
                     .css('top', '60px');
                 $('.notifications li').bind('click',notifications.navigate);
                 $.ajax({

@@ -218,6 +218,8 @@ A tout de suite sur CoffeePoke,
     , 'notification::like' => 'aime le post '
     , 'notification::comment' => 'a commenté le post '
     , 'notification::mention' => 'a mentionné votre nom dans le post '
+    #People
+    , 'coffee:people:legend' => 'Trombinoscope. Retrouvez les profils de vos collaborateurs.'
 
 );
 

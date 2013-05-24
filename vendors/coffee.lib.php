@@ -385,7 +385,11 @@ function format_post_array ($text,$time_created,$user_id,$username,$display_name
     $return['user']['icon_url'] = $icon_url;
     $return['user']['icon_url_small'] = $icon_url;
     $return['user']['cover_url'] = $cover_url;
-    $return['attachment'] = $crawled;
+    if (is_array($crawled)) {
+        $return['attachment'][] = $crawled;
+    } else {
+        $return['attachment'] = false;
+    }
 
     return $return;
 }
@@ -481,8 +485,7 @@ function search_users($query, $offset, $limit) {
 }
 
 
-function getDuration($url){
-
+function getYoutubeData($url){
     $pattern = '/(?<=(?:v|i)=)[a-zA-Z0-9-]+(?=&)|(?<=(?:v|i)\/)[^&\n]+|(?<=embed\/)[^"&\n]+|(?<=(?:v|i)=)[^&\n]+|(?<=youtu.be\/)[^&\n]+/';
     $result = preg_match($pattern, $url, $matches);
 
@@ -491,12 +494,14 @@ function getDuration($url){
     }
     $video_id = $matches[0];
 
-    $data=@file_get_contents('http://gdata.youtube.com/feeds/api/videos/'.$video_id.'?v=2&alt=jsonc');
+    $data_stream='http://gdata.youtube.com/feeds/api/videos/'.$video_id.'?v=2&alt=jsonc';
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $data_stream);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    $data = curl_exec($ch);
     if (false===$data) return false;
-
     $obj=json_decode($data);
-
-    return $obj->data->duration;
+    return array('id' =>$video_id, 'duration' => $obj->data->duration);
 }
 
 /**

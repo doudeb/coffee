@@ -213,9 +213,11 @@ Team Coffeepoke'
     , 'notification::comment::mentioned' => 'You have been quoted in a comment from'
     , 'notification::post::mention::comment' => 'has commented this post you were quoted in '
     #New Label
-    , 'notification::like' => 'likes the post '
-    , 'notification::comment' => 'has commented the post '
+    , 'notification::like' => 'likes this post '
+    , 'notification::comment' => 'has commented this post '
     , 'notification::mention' => 'has quoted your name in '
+    #People
+    , 'coffee:people:legend' => 'Directory. Find your colleagues\' profiles'
 );
 
 add_translation('en', $translation);

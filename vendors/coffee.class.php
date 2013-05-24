@@ -254,9 +254,9 @@ class ElggCoffee {
         return $return;
     }
 
-    public static function get_mentioned ($guid, $type = COFFEE_POST_MENTIONED_RELATIONSHIP,$offset = 0, $limit = 3) {
+    public static function get_mentioned ($guid, $type = COFFEE_POST_MENTIONED_RELATIONSHIP,$offset = 0, $limit = 30) {
         $return = array();
-        $mentioned = coffee_get_relationships($guid, $type);
+        $mentioned = coffee_get_relationships($guid, $type, false,$offset, $limit);
         if (is_array($mentioned)) {
             foreach ($mentioned as $mention) {
                 $user = get_user($mention->guid_two);
@@ -406,6 +406,10 @@ class ElggCoffee {
     }
 
     public static function get_url_data ($url) {
+        $file = elgg_get_entities_from_metadata(array('metadata_names' => 'url', 'metadata_values' => $url));
+        if ($file) {
+            return ElggCoffee::_get_file_details($file->guid);
+        }
         require_once elgg_get_plugins_path() . "coffee/vendors/link_data/Embedly.php";
         require_once elgg_get_plugins_path() . "coffee/vendors/link_data/EmbedUrl.php";
         $return = false;
@@ -429,14 +433,10 @@ class ElggCoffee {
                                     , 'width' => $oembed[0]->width
                                     , 'height' => $oembed[0]->height
                                     , 'html' => $oembed[0]->html);
-                    if (preg_match("/(youtu)/", $oembed[0]->html)) {
-                            $type = 'youtube';
-                            $duration = getDuration($url);
-                    }
                 }
             } catch (Exception $e) {}
         }
-        if (!is_array($return)) {
+        if (is_null($return['title'])) {
             $type = 'url_article';
             require_once elgg_get_plugins_path() . "coffee/vendors/Readability.inc.php";
             $embedUrl = new Embed_url(array('url' => $url));
@@ -450,6 +450,10 @@ class ElggCoffee {
                                     , 'html' => $content['content']);
         }
         if (is_array($return)) {
+            if (preg_match("/(youtu)/", $url)) {
+                    $type = 'youtube';
+                    $youtubeData = getYoutubeData($url);
+            }
             $link = new ElggObject();
             $link->subtype = COFFEE_LINK_SUBTYPE;
             $link->access_id = COFFEE_DEFAULT_ACCESS_ID;
@@ -459,7 +463,8 @@ class ElggCoffee {
             $link->simpletype = $type;
             $link->html = $return['html'];
             $link->url = $url;
-            if ($duration) $link->duration = $duration;
+            if ($youtubeData['duration']) $link->duration = $youtubeData['duration'];
+            if ($youtubeData['id']) $link->video_id = $youtubeData['id'];
             $link->save();
             $return['guid'] = $link->guid;
         }
@@ -923,7 +928,7 @@ class ElggCoffee {
                     $post = $feed->api($channel->query, array('access_token' => $channel->access_token,'limit'=>10));
                     if (is_array($post['data'])) {
                         foreach ($post['data'] as $key=>$row) {
-                            $crawled = array();
+                            $crawled = false;
                             switch ($row['type']) {
                                 case 'photo':
                                     $attachment  = $feed->api('/' . $row['object_id'] . '?fields=images', array('access_token' => $channel->access_token));
@@ -939,6 +944,7 @@ class ElggCoffee {
                                                         , 'thumbnail' => $row['picture']);
                                     break;
                                 case 'video':
+                                    $youtubeData = getYoutubeData($row['source']);
                                     $crawled = array(
                                                         'time_created' => $row['created_time']
                                                         , 'friendly_time' => $row['created_time']
@@ -946,7 +952,8 @@ class ElggCoffee {
                                                         , 'description' => $row['description']
                                                         , 'html' => null
                                                         , 'type' => preg_match("/(youtu)/", $row['source'])?'youtube':'url_media'
-                                                        , 'duration' => getDuration($row['source'])
+                                                        , 'duration' => $youtubeData['duration']
+                                                        , 'video_id' => $youtubeData['id']
                                                         , 'mime' => null
                                                         , 'url' => $row['source']
                                                         , 'thumbnail' => $row['picture']);
@@ -958,7 +965,7 @@ class ElggCoffee {
                                                         , 'title' => $row['name']
                                                         , 'description' => $row['description']
                                                         , 'html' => null
-                                                        , 'type' => preg_match("/(youtu)/", $row['source'])?'youtube':'url'
+                                                        , 'type' => 'url_article'
                                                         , 'mime' => null
                                                         , 'url' => $row['link']
                                                         , 'thumbnail' => $row['picture']);
@@ -1336,6 +1343,7 @@ class ElggCoffee {
                             , 'url' => $url
                             , 'thumbnail' => $thumbnail
                             , 'duration' => $attached_ent->duration
+                            , 'video_id' => $attached_ent->video_id
             );
        return $return;
     }

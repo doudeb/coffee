@@ -25,6 +25,7 @@ function coffee_init() {
     elgg_register_page_handler('userIcon','coffee_page_handler');
     elgg_register_page_handler('userCover','coffee_page_handler');
     elgg_register_page_handler('dwl','coffee_page_handler');
+    elgg_register_page_handler('dwlLarge','coffee_page_handler');
     elgg_register_page_handler('upl','coffee_page_handler');
     elgg_register_page_handler('testApi','coffee_page_handler');
     elgg_register_page_handler('coffee','coffee_page_handler');

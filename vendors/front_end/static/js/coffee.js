@@ -3262,11 +3262,11 @@
                 , data: data
                 , success: function (response) {
                     if (response.status != -1) {
-                        self.$el.find('.alert').html(t('user:password:resetreq:success'));
+                        self.$el.find('.alert').html(t('Your password request has been successfully sent by email.'));
                         setTimeout("window.location.href='#login'", 5000);
 
                     } else {
-                        self.$el.find('.alert').html(t('user:password:resetreq:fail'));
+                        self.$el.find('.alert').html(t('Ooops… Password request has failed.'));
                     }
                 }
             });

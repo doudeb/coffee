@@ -61,7 +61,7 @@ function coffee_api_set_site_id () {
  *
  */
 function coffee_api_public_pages($hook, $handler, $return, $params) {
-	$pages = array('userIcon/.*','dwl/.*','upl/.*', 'testApi','userCover/.*','thumbnail/*');
+	$pages = array('userIcon/.*','dwl/.*','upl/.*', 'testApi','userCover/.*','thumbnail/*','dwlLarge/*');
 	return array_merge($pages, $return);
 }
 
@@ -109,6 +109,7 @@ function coffee_page_handler($page,$handler) {
             exit();
 			break;
  		case "dwl":
+ 		case "dwlLarge":
             set_input('auth_token', $page[0]);
             set_input('file_guid', $page[1]);
             if (!coffee_api_set_site_id ()) break;
@@ -529,6 +530,6 @@ umask(002);
 elgg_register_classes(elgg_get_plugins_path() . 'coffee/vendors/external_api');
 
 //lock site navigation
-if (!in_array(elgg_get_context(), array('rest','coffee','usericon','file','dwl','testapi','thumbnail'))) {
-    logout();
+if (!in_array(elgg_get_context(), array('rest','coffee','usericon','file','dwl','testapi','thumbnail','dwlLarge'))) {
+    //logout();
 }

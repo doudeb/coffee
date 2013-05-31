@@ -1044,7 +1044,11 @@ class ElggCoffee {
                         $tags [] = $tag->name;
                     }
                     foreach (ElggCoffee::get_posts(0,0,10,$owner_guid,FALSE,FALSE,$tags) as $key=>$row) {
-                            $return['feed_data'][$i]['feeds'][$key] = $row;
+                        $row['user']['cover_url'] = str_replace("?icontime", "/2000x2000?icontime", $row['user']['cover_url']);
+                        if(is_array($row['attachment']) && $row['attachment']['type'] === 'image') {
+                            $row['attachment']['url'] .= "/2000x2000/";
+                        }
+                        $return['feed_data'][$i]['feeds'][$key] = $row;
                     }
                     break;
                 case 'StaticURL':
@@ -1246,11 +1250,19 @@ class ElggCoffee {
         }
     }
 
-    private static function _get_dwl_url ($guid) {
+    private static function _get_dwl_url ($guid,$type) {
         if ($guid > 0) {
-            return $GLOBALS['CONFIG']->url . 'dwl/' . $GLOBALS['CONFIG']->auth_token . '/' . $guid;
+            switch ($type) {
+                case 'document':
+                    $url = $GLOBALS['CONFIG']->url . 'dwlLarge/' . $GLOBALS['CONFIG']->auth_token . '/' . $guid;
+                    break;
+                case 'image':
+                default:
+                    $url = $GLOBALS['CONFIG']->url . 'dwl/' . $GLOBALS['CONFIG']->auth_token . '/' . $guid;
+                    break;
+            }
+        return $url;
         }
-        return false;
     }
 
     private static function _get_thumbnail_url ($guid,$size='medium') {
@@ -1328,7 +1340,7 @@ class ElggCoffee {
             case 'document':
             default:
                 $thumbnail = $attached_ent->getIconURL();
-                $url = static::_get_dwl_url($attached_ent->guid);
+                $url = static::_get_dwl_url($attached_ent->guid,'document');
                 break;
         }
         $return = array(

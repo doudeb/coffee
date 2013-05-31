@@ -198,7 +198,7 @@ Thanks
 
 Team Coffeepoke'
     , 'user:password:resetreq:success' => ' Your password request has been successfully sent by email.'
-    , 'user:password:resetreq:fail' => 'Ooops… Password request has failed'
+    , 'user:password:resetreq:fail' => 'Ooops… Password request has failed.'
     , 'user:resetpassword:yes' => 'Your password has now been updated, you will received an email shortly.'
     , 'user:resetpassword:no' => 'Oooops… Password reset failed, please try again.'
     #Notifications

@@ -61,7 +61,7 @@
     setLogo = function (logoUrl) {
         $('.watermark').hide();
         if (logoUrl && logoUrl.length > 0) {
-            $('#watermark').attr('src',logoUrl);
+            $('#watermark').attr('src',logoUrl + "/300x100/");
             if (isMobile.any()) {
                 return;
                 $('.watermark')
@@ -729,12 +729,18 @@
                         } else {
                             var tvChannelsSettings = false;
                         }
-
-                        config = ich.tvChannelsSettingsTemplate({tvChannelsSettings:tvChannelsSettings, guid: self.model.get('id')});
+                        config = ich.tvChannelsSettingsTemplate({guid: self.model.get('id')});
+                        //channelList
                         modal
                             .html(config.html())
                             .modal('show');
-                        $("#channelList").dragsort({ dragSelector: "li",dragSelectorExclude: ".del,.remove-channel,button,input"});
+                        channelList = $("#modal-view").find('.channelList');
+                        _.each(tvChannelsSettings, function(channel,key) {
+                            templateName = channel.ChannelName + "Template";
+                            channelData = ich[templateName](channel);
+                            channelList.append(channelData);
+                        });
+                        channelList.dragsort({ dragSelector: "li",dragSelectorExclude: ".del,.remove-channel,button,input"});
                         $('.add-channel').bind('click', self.addTvChannel);
                         $('.remove-channel').bind('click', self.removeChannel);
                         App.initTypeAhead('#usersTvAdd', 'coffee.getUserList', self.addUsers);
@@ -758,7 +764,7 @@
                         return false;
                         break;
                     case 'CoffeePoke':
-                        template = ich.userTvConfigTemplate(data);
+                        template = ich.CoffeePokeTemplate(data);
                         break;
                      case 'StaticURL':
                         template = ich.StaticURLTemplate(data);
@@ -790,7 +796,6 @@
         },
 
         saveConfig: function () {
-
             self = this
                 , modal = $("#modal-view")
                 , channelList = $("#modal-view").find('.channelList')
@@ -798,7 +803,6 @@
 
             channelConfig = self.parseAndSerializeTVChannel(channelListConfig);
             channelConfig = JSON.stringify(channelConfig);
-
             if (!_.isString(channelConfig)) {
                 return false;
             }
@@ -856,10 +860,10 @@
                             inputName = $(item).attr('id');
                             criteria[inputName] = $(item).val();
                         });
-                        tvChannel[type] = criteria;
+                        //tvChannel[type] = criteria;
                         break;
                 }
-                tvChannel[type] = criteria;
+                tvChannel[key] = criteria;
             });
             return tvChannel;
         },
@@ -3288,11 +3292,11 @@
                 , data: data
                 , success: function (response) {
                     if (response.status != -1) {
-                        self.$el.find('.alert').html(t('user:resetpassword:yes'));
+                        self.$el.find('.alert').html(t('Your password has now been updated, you will received an email shortly.'));
                         setTimeout("window.location.href='#login'", 5000);
 
                     } else {
-                        self.$el.find('.alert').html(t('user:resetpassword:no'));
+                        self.$el.find('.alert').html(t('Oooops… Password reset failed, please try again'));
                     }
                 }
             });

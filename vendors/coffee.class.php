@@ -408,7 +408,7 @@ class ElggCoffee {
     public static function get_url_data ($url) {
         $file = elgg_get_entities_from_metadata(array('metadata_names' => 'url', 'metadata_values' => $url));
         if ($file) {
-            return ElggCoffee::_get_file_details($file->guid);
+            return ElggCoffee::_get_file_details($file[0]->guid);
         }
         require_once elgg_get_plugins_path() . "coffee/vendors/link_data/Embedly.php";
         require_once elgg_get_plugins_path() . "coffee/vendors/link_data/EmbedUrl.php";
@@ -898,19 +898,33 @@ class ElggCoffee {
         $return['feed_data'] = array();
         $i = 0;
         foreach ($tv_channels as $key => $channel) {
-            $return['feed_data'][$i]['feed_name'] = $key;
+            $return['feed_data'][$i]['feed_name'] = $channel->ChannelName;
             $return['feed_data'][$i]['feed_type'] = 'social_feed';
-            $return['feed_data'][$i]['feed_url_icon'] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($key) . '_small.png';
-            $return['feed_data'][$i]['feed_url_background'] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($key) . '_big.png';
-            switch ($key) {
+            $return['feed_data'][$i]['feed_url_icon'] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($channel->ChannelName) . '_small.png';
+            $return['feed_data'][$i]['feed_url_background'] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($channel->ChannelName) . '_big.png';
+            switch ($channel->ChannelName) {
                 case 'Twitter':
-                    if (!class_exists($key)) _elgg_autoload($key);
+                    if (!class_exists($channel->ChannelName)) _elgg_autoload($channel->ChannelName);
                     $feed = new Twitter($channel->consumer_key, $channel->consumer_secret);
                     $feed->setOAuthToken($channel->oauth_token);
                     $feed->setOAuthTokenSecret($channel->oauth_token_secret);
-                    $post = $feed->searchTweets($channel->query);
+                    $post = $feed->searchTweets($channel->query,null,null,null,'recent',10,false,false,false,true);
+                    //$post = $feed->statusesUserTimeline(null,'antoinepic',null,10);
                     if (is_array($post['statuses'])) {
                         foreach ($post['statuses'] as $key=>$row) {
+                            $crawled = false;
+                            if(isset($row['entities']['media'])) {
+                                $crawled = array(
+                                                'time_created' => $row['created_at']
+                                                , 'friendly_time' => $row['created_at']
+                                                , 'title' => $row['entities']['media'][0]['media_url']
+                                                , 'description' => ''
+                                                , 'html' => null
+                                                , 'type' => 'image'
+                                                , 'mime' => 'image/jpg'
+                                                , 'url' => $row['entities']['media'][0]['media_url']
+                                                , 'thumbnail' => $row['entities']['media'][0]['media_url']. ':thumb');
+                            }
                             $return['feed_data'][$i]['feeds'][$key] = format_post_array($row['text']
                                                                             , $row['created_at']
                                                                             , $row['user']['id']
@@ -918,12 +932,13 @@ class ElggCoffee {
                                                                             , $row['user']['name']
                                                                             , str_replace('_normal','', $row['user']['profile_image_url'])
                                                                             , $row['user']['profile_background_image_url']
-                                                                            , $row['user']['description']);
+                                                                            , $row['user']['description']
+                                                                            , $crawled);
                         }
                     }
                     break;
                 case 'Facebook':
-                    if (!class_exists($key)) _elgg_autoload($key);
+                    if (!class_exists($channel->ChannelName)) _elgg_autoload($channel->ChannelName);
                     $feed = new Facebook(array('appId'  => $channel->app_id,'secret' => $channel->app_secret));
                     $post = $feed->api($channel->query, array('access_token' => $channel->access_token,'limit'=>10));
                     if (is_array($post['data'])) {
@@ -987,7 +1002,7 @@ class ElggCoffee {
                     }
                     break;
                 case 'Yammer':
-                    if (!class_exists($key)) _elgg_autoload($key);
+                    if (!class_exists($channel->ChannelName)) _elgg_autoload($channel->ChannelName);
                     $feed = new Yammer(array('consumer_key'  => $channel->consumer_key,'consumer_secret' => $channel->consumer_secret,'oauth_token' => $channel->oauth_token));
                     $post = $feed->get($channel->query);
                     if (is_array($post->messages)) {
@@ -1254,7 +1269,7 @@ class ElggCoffee {
         if ($guid > 0) {
             switch ($type) {
                 case 'document':
-                    $url = $GLOBALS['CONFIG']->url . 'dwlLarge/' . $GLOBALS['CONFIG']->auth_token . '/' . $guid;
+                    $url = $GLOBALS['CONFIG']->url . 'dwl/' . $GLOBALS['CONFIG']->auth_token . '/' . $guid;
                     break;
                 case 'image':
                 default:

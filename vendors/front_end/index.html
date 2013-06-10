@@ -404,8 +404,8 @@
                 <button type="button" class="close remove-channel" aria-hidden="true">&times;</button>
             </p>
         </script>
-        <script type="text/html" id="userTvConfigTemplate">
-           <div class="tv-channel-setting content-module" id="CoffeePoke">
+        <script type="text/html" id="CoffeePokeTemplate">
+           <li class="tv-channel-setting content-module" id="CoffeePoke">
                {{>TvChannelHeaderTemplate}}
                <div id="channel{{key}}" class="collapse">
                     <div class="input-prepend users">
@@ -425,10 +425,10 @@
                         {{/tags}}
                     </div>
                </div>
-           </div>
+           </li>
         </script>
         <script type="text/html" id="BlueKiwiTemplate">
-           <div class="tv-channel-setting content-module" id="BlueKiwi">
+           <li class="tv-channel-setting content-module" id="BlueKiwi">
                {{>TvChannelHeaderTemplate}}
                <div id="channel{{key}}" class="collapse">
                     <div class="input-prepend">
@@ -450,10 +450,10 @@
                         <span class="add-on">SuperToken</span><input id="super_token" size="16" type="text" placeholder="SuperToken" value="{{super_token}}">
                     </div>
                </div>
-           </div>
+           </li>
         </script>
         <script type="text/html" id="StaticURLTemplate">
-           <div class="tv-channel-setting content-module" id="StaticURL">
+           <li class="tv-channel-setting content-module" id="StaticURL">
                {{>TvChannelHeaderTemplate}}
                <div id="channel{{key}}" class="collapse">
                     <div class="input-prepend">
@@ -467,10 +467,10 @@
                         <span class="add-on">mili sec</span><input id="duration" size="10" type="text" placeholder="" value="{{duration}}">
                     </div>
                </div>
-           </div>
+           </li>
         </script>
         <script type="text/html" id="TwitterTemplate">
-           <div class="tv-channel-setting content-module" id="Twitter">
+           <li class="tv-channel-setting content-module" id="Twitter">
                {{>TvChannelHeaderTemplate}}
                <div id="channel{{key}}" class="collapse">
                 <div class="input-prepend">
@@ -489,10 +489,10 @@
                      <span class="add-on">Oauth Token Secret</span><input id="oauth_token_secret" size="16" type="text" placeholder="Oauth Token Secret" value="{{oauth_token_secret}}">
                  </div>
                </div>
-           </div>
+           </li>
         </script>
         <script type="text/html" id="FacebookTemplate">
-           <div class="tv-channel-setting content-module" id="Facebook">
+           <li class="tv-channel-setting content-module" id="Facebook">
                {{>TvChannelHeaderTemplate}}
                <div id="channel{{key}}" class="collapse">
                     <div class="input-prepend">
@@ -508,10 +508,10 @@
                         <span class="add-on">AccessToken</span><input id="access_token" size="16" type="text" placeholder="AccessToken" value="{{access_token}}">
                     </div>
                </div>
-           </div>
+           </li>
         </script>
         <script type="text/html" id="YammerTemplate">
-           <div class="tv-channel-setting content-module" id="Yammer">
+           <li class="tv-channel-setting content-module" id="Yammer">
                {{>TvChannelHeaderTemplate}}
                <div id="channel{{key}}" class="collapse">
                     <div class="input-prepend">
@@ -527,17 +527,17 @@
                         <span class="add-on">Oauth Token</span><input id="oauth_token" size="16" type="text" placeholder="Oauth Token" value="{{oauth_token}}">
                     </div>
                 </div>
-           </div>
+           </li>
         </script>
         <script type="text/html" id="RSSTemplate">
-           <div class="tv-channel-setting content-module" id="RSS">
+           <li class="tv-channel-setting content-module" id="RSS">
                {{>TvChannelHeaderTemplate}}
                <div id="channel{{key}}" class="collapse">
                     <div class="input-prepend">
                         <span class="add-on">URL</span><input id="url" size="16" type="text" placeholder="" value="{{url}}">
                     </div>
                </div>
-           </div>
+           </li>
         </script>
         <script type="text/html" id="tvChannelsSettingsTemplate">
             <div id="tvChannelsSettings">
@@ -548,7 +548,7 @@
                 <div class="modal-body">
                     <p><label for="newChannel">Add a TV Channel</label>
                     <select id="newChannel" name="newChannel">
-                      {{^tvChannelsSettings.CoffeePoke}}<option value="CoffeePoke">CoffeePoke</option>{{/tvChannelsSettings.CoffeePoke}}
+                      <option value="CoffeePoke">CoffeePoke</option>
                       <option value="Twitter">Twitter</option>
                       <option value="Facebook">Facebook</option>
                       <option value="Yammer">Yammer</option>
@@ -560,32 +560,6 @@
                     <p class="lead">Channel list</p>
                     <hr />
                     <ul class="channelList unstyled" id="channelList">
-                    {{#tvChannelsSettings}}
-                        {{#Twitter}}
-                            <li>{{>TwitterTemplate}}</li>
-                        {{/Twitter}}
-                        {{#CoffeePoke}}
-                            <li>{{>userTvConfigTemplate}}</li>
-                        {{/CoffeePoke}}
-                        {{#StaticURL}}
-                            <li>{{>StaticURLTemplate}}</li>
-                        {{/StaticURL}}
-                        {{#RSS}}
-                            <li>{{>RSSTemplate}}</li>
-                        {{/RSS}}
-                        {{#Facebook}}
-                            <li>{{>FacebookTemplate}}</li>
-                        {{/Facebook}}
-                        {{#Yammer}}
-                            <li>{{>YammerTemplate}}</li>
-                        {{/Yammer}}
-                        {{#BlueKiwi}}
-                            <li>{{>BlueKiwiTemplate}}</li>
-                        {{/BlueKiwi}}
-                    {{/tvChannelsSettings}}
-                    {{^tvChannelsSettings}}
-                        No Chanels configured yet !
-                    {{/tvChannelsSettings}}
                     </ul>
                 </div>
                 <div class="modal-footer">
@@ -1140,7 +1114,7 @@
             </script>
             <script type="text/html" id="notificationTemplate">
                 <li data-time="{{notification.time_created}}" data-guid="{{notification.guid}}"{{#notification.isNew}} class="new"{{/notification.isNew}}>
-                    <i class="icon-list {{notification.icon}} avatar"></i>
+                    <i class="{{notification.icon}} avatar"></i>
                     <!--<img src="{{notification.user.icon_url_small}}" class="avatar"/>-->
                     <div class="comment-content">
                         <!--{{#notification.isMentioned}}{{notification.notificationLabel}} {{/notification.isMentioned}}-->

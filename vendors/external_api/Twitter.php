@@ -1156,7 +1156,6 @@ class Twitter
         if ($includeEntities !== null) {
             $parameters['include_entities'] = ($includeEntities) ? 'true' : 'false';
         }
-
         return (array) $this->doCall(
             'search/tweets.json',
             $parameters

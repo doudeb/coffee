@@ -502,7 +502,8 @@ function getYoutubeData($url){
     $data = curl_exec($ch);
     if (false===$data) return false;
     $obj=json_decode($data);
-    return array('id' =>$video_id, 'duration' => $obj->data->duration);
+    $duration = $obj->data->duration*1.10;
+    return array('id' =>$video_id, 'duration' => $duration);
 }
 
 /**
@@ -531,5 +532,5 @@ elgg_register_classes(elgg_get_plugins_path() . 'coffee/vendors/external_api');
 
 //lock site navigation
 if (!in_array(elgg_get_context(), array('rest','coffee','usericon','file','dwl','testapi','thumbnail','dwlLarge'))) {
-    //logout();
+    logout();
 }

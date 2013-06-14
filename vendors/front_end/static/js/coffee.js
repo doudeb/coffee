@@ -854,6 +854,7 @@
                         });
                         criteria.tags = tags,
                         criteria.users = users;
+                        criteria.broadcastMessages = $('input[name=isBroadcastMessage][checked]')?true:false;
                         break;
                     default:
                         _.each($(item).find('input'), function (item, key) {

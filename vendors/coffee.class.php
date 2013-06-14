@@ -912,6 +912,7 @@ class ElggCoffee {
                     //$post = $feed->statusesUserTimeline(null,'antoinepic',null,10);
                     if (is_array($post['statuses'])) {
                         foreach ($post['statuses'] as $key=>$row) {
+                            //var_dump($row['entities']);
                             $crawled = false;
                             if(isset($row['entities']['media'])) {
                                 $crawled = array(
@@ -924,6 +925,9 @@ class ElggCoffee {
                                                 , 'mime' => 'image/jpg'
                                                 , 'url' => $row['entities']['media'][0]['media_url']
                                                 , 'thumbnail' => $row['entities']['media'][0]['media_url']. ':thumb');
+                            }
+                            if(is_array($row['entities']['urls']) && isset($row['entities']['urls'][0]['expanded_url'])) {
+                               $crawled = ElggCoffee::get_url_data($row['entities']['urls'][0]['expanded_url']);
                             }
                             $return['feed_data'][$i]['feeds'][$key] = format_post_array($row['text']
                                                                             , $row['created_at']
@@ -1058,7 +1062,7 @@ class ElggCoffee {
                     foreach ($tv_filters_tags as $tag) {
                         $tags [] = $tag->name;
                     }
-                    foreach (ElggCoffee::get_posts(0,0,10,$owner_guid,FALSE,FALSE,$tags) as $key=>$row) {
+                    foreach (ElggCoffee::get_posts(0,0,10,$owner_guid,($channel->broadcastMessages?array(COFFEE_SUBTYPE_BROADCAST_MESSAGE):false),FALSE,$tags) as $key=>$row) {
                         $row['user']['cover_url'] = str_replace("?icontime", "/2000x2000?icontime", $row['user']['cover_url']);
                         if(is_array($row['attachment']) && $row['attachment']['type'] === 'image') {
                             $row['attachment']['url'] .= "/2000x2000/";

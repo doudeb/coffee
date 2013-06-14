@@ -160,6 +160,8 @@ class Embed_url {
         curl_setopt($ch, CURLOPT_BUFFERSIZE, 4096);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
     }
 
     private function curlExec(&$ch) {

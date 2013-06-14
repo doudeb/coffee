@@ -502,7 +502,7 @@ function getYoutubeData($url){
     $data = curl_exec($ch);
     if (false===$data) return false;
     $obj=json_decode($data);
-    $duration = $obj->data->duration*1.10;
+    $duration = round($obj->data->duration*1.10);
     return array('id' =>$video_id, 'duration' => $duration);
 }
 

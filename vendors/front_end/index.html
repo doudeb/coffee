@@ -408,6 +408,11 @@
            <li class="tv-channel-setting content-module" id="CoffeePoke">
                {{>TvChannelHeaderTemplate}}
                <div id="channel{{key}}" class="collapse">
+                    <div id="isBroadcastMessage">
+                        <label class="checkbox">
+                             <input type="checkbox" name="isBroadcastMessage" value="1"{{#broadcastMessages}} checked{{/broadcastMessages}}> Officials messages only.
+                        </label>
+                    </div>
                     <div class="input-prepend users">
                         <span class="add-on">@</span><input id="usersTvAdd" size="16" type="text" placeholder="Username">
                     </div>

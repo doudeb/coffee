@@ -1,15 +1,15 @@
 <?php
-$sitename = 'dmcompanies';
+$sitename = 'technocentre';
 $_SERVER['REQUEST_URI'] = '/';
 //$_SERVER['SERVER_PORT'] = '443';
 $_SERVER['SERVER_PORT'] = '80';
-$_SERVER['HTTP_HOST'] = $sitename . 'api.coffeepoke.com';
+$_SERVER['HTTP_HOST'] = $sitename . '.api.coffeepoke.com';
 //$_SERVER['HTTP_HOST'] = 'http://api.coffee.enlightn.doudeb/';
 
 include_once(dirname(dirname(dirname(dirname(__FILE__)))) . "/engine/start.php");
 
 global $CONFIG;
-
+var_dump($CONFIG->site_guid);
 if (php_sapi_name() !== 'cli') exit("To be runned under commande line");
 $users = file_get_contents('./user.csv');
 $users = explode(chr(10), $users);
@@ -21,16 +21,23 @@ $headers = 'From: evrard@coffeepoke.com' . "\r\n" .
 
 foreach($users as $key=>$user) {
 	$user = explode(";",$user);
+	$temp = explode(".",$user[0]);
+	$user = array(0=> ucfirst($temp[0])
+			, 1=> ucfirst(substr($temp[1],0,strpos($temp[1],'@')))
+			, 2=> $user[0]
+		);
 	$username = _convert(trim($user[2]));
-    $username = str_replace(array("-","_",".","@"), '', $username);
-    if (strlen($username) <= $CONFIG->minusername) $username = str_pad ($username, $CONFIG->minusername,'_');
+    	$username = str_replace(array("-","_",".","@"), '', $username);
+    	if (strlen($username) <= $CONFIG->minusername) $username = str_pad ($username, $CONFIG->minusername,'_');
 	$password = substr(md5(rand(1,666)),0,8);
 	$displayname = trim($user[0]) . ' ' . trim($user[1]);
 	$email = trim($user[2]);
-    $headline = $user[3];
-    $location = $user[4] . ', ' . $user[5];
-    $phone = $user[6];
-    $cellphone = $user[7];
+    	$headline = $user[3];
+    	$location = $user[4] . ', ' . $user[5];
+    	$phone = $user[6];
+    	$cellphone = $user[7];
+	$exist = get_user_by_email($email);
+	if ($exist) continue;
 	echo $username . ";";
 	echo $password . ";";
 	echo $displayname . ";";
@@ -89,6 +96,6 @@ foreach($users as $key=>$user) {
 \n<br /> 
 \n<br />Best regards";
         $email = 'edouard@coffeepoke.com';
-        mail($email, $title, $message, $headers);
+        //mail($email, $title, $message, $headers);
     }
 }

@@ -953,6 +953,8 @@ class ElggCoffee {
                     if (is_array($result->records)) {
                         foreach ($result->records as $key=>$row) {
                             $FeedIem = new SObject($row);
+                            $user = $mySforceConnection->query('Select FullPhotoUrl From User Where Id =\'' . $FeedIem->fields->CreatedById . '\'');
+                            $user = new SObject($user->records[0]);
                             $crawled = false;
                             /*if(isset($row['entities']['media'])) {
                                 $crawled = array(
@@ -971,10 +973,10 @@ class ElggCoffee {
                             }
                             $return['feed_data'][$i]['feeds'][$key] = format_post_array($FeedIem->fields->Body
                                                                             , $FeedIem->fields->CreatedDate
-                                                                            , $FeedIem->fields->CreatedBy->Id
+                                                                            , $FeedIem->fields->CreatedById
                                                                             , $FeedIem->fields->CreatedBy->Name
                                                                             , $FeedIem->fields->CreatedBy->Name
-                                                                            , $FeedIem->fields->CreatedBy->Profile->CreatedBy->FullPhotoUrl . '?oauth_token=' . $sessionId
+                                                                            , $user->fields->FullPhotoUrl . '?oauth_token=' . $sessionId
                                                                             , false
                                                                             , false
                                                                             , $crawled);

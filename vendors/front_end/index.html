@@ -410,7 +410,7 @@
                <div id="channel{{key}}" class="collapse">
                     <div id="isBroadcastMessage">
                         <label class="checkbox">
-                             <input type="checkbox" name="isBroadcastMessage" value="1"{{#broadcastMessages}} checked{{/broadcastMessages}}> Officials messages only.
+                             <input type="checkbox" name="isBroadcastMessage" value="1"{{^broadcastMessages}} checked{{/broadcastMessages}}> Officials messages only.
                         </label>
                     </div>
                     <div class="input-prepend users">
@@ -496,6 +496,39 @@
                </div>
            </li>
         </script>
+        <script type="text/html" id="ChatterTemplate">
+           <li class="tv-channel-setting content-module" id="Chatter">
+               {{>TvChannelHeaderTemplate}}
+               <div id="channel{{key}}" class="collapse">
+                     <div class="input-prepend">
+                         <span class="add-on">Login</span><input id="user_login" size="16" type="text" placeholder="Login" value="{{user_login}}">
+                     </div>
+                     <div class="input-prepend">
+                         <span class="add-on">Password</span><input id="password" size="16" type="password" placeholder="Password" value="{{password}}">
+                     </div>
+                    <div class="input-prepend">
+                          <span class="add-on">Query</span><input id="query" size="16" type="text" placeholder="Query" value="{{query}}">
+                     </div>
+                     <span class="tag">Default query</span>
+                     <div class="alert">
+                     SELECT Id
+		, Type
+		, CreatedById
+		, CreatedBy.Name
+		, CreatedDate
+		, Body
+		, Title
+		, LinkUrl
+		, ContentFileName
+		, ContentSize
+		, (SELECT CommentBody, CreatedDate, CreatedBy.Name FROM FeedComments ORDER BY CreatedDate DESC LIMIT 10)
+FROM FeedItem
+ORDER BY CreatedDate DESC
+LIMIT 10
+                    </div>
+               </div>
+           </li>
+        </script>
         <script type="text/html" id="FacebookTemplate">
            <li class="tv-channel-setting content-module" id="Facebook">
                {{>TvChannelHeaderTemplate}}
@@ -560,6 +593,7 @@
                       <option value="BlueKiwi">BlueKiwi</option>
                       <option value="RSS">RSS</option>
                       <option value="StaticURL">Static URL</option>
+                      <option value="Chatter">Chatter</option>
                     </select>
                     <button class="btn btn-primary add-channel" href="#"><i class="icon-plus icon-white"></i></button></p>
                     <p class="lead">Channel list</p>

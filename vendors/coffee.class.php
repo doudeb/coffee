@@ -941,6 +941,46 @@ class ElggCoffee {
                         }
                     }
                     break;
+                case 'Chatter':
+                    define("SOAP_CLIENT_BASEDIR", elgg_get_plugins_path().'coffee/vendors/external_api/chatter/soapclient');
+                    require_once (SOAP_CLIENT_BASEDIR.'/SforcePartnerClient.php');
+                    require_once (SOAP_CLIENT_BASEDIR.'/SforceHeaderOptions.php');
+                    $mySforceConnection = new SforcePartnerClient();
+                    $mySoapClient = $mySforceConnection->createConnection(SOAP_CLIENT_BASEDIR.'/partner.wsdl.xml');
+                    $mylogin = $mySforceConnection->login($channel->user_login,$channel->password );
+                    $sessionId = $mySforceConnection->getSessionId();
+                    $result = $mySforceConnection->query($channel->query);
+                    if (is_array($result->records)) {
+                        foreach ($result->records as $key=>$row) {
+                            $FeedIem = new SObject($row);
+                            $crawled = false;
+                            /*if(isset($row['entities']['media'])) {
+                                $crawled = array(
+                                                'time_created' => $row['created_at']
+                                                , 'friendly_time' => $row['created_at']
+                                                , 'title' => $row['entities']['media'][0]['media_url']
+                                                , 'description' => ''
+                                                , 'html' => null
+                                                , 'type' => 'image'
+                                                , 'mime' => 'image/jpg'
+                                                , 'url' => $row['entities']['media'][0]['media_url']
+                                                , 'thumbnail' => $row['entities']['media'][0]['media_url']. ':thumb');
+                            }*/
+                            if(isset($FeedIem->fields->LinkUrl)) {
+                               $crawled = ElggCoffee::get_url_data($FeedIem->fields->LinkUrl);
+                            }
+                            $return['feed_data'][$i]['feeds'][$key] = format_post_array($FeedIem->fields->Body
+                                                                            , $FeedIem->fields->CreatedDate
+                                                                            , $FeedIem->fields->CreatedBy->Id
+                                                                            , $FeedIem->fields->CreatedBy->Name
+                                                                            , $FeedIem->fields->CreatedBy->Name
+                                                                            , $FeedIem->fields->CreatedBy->Profile->CreatedBy->FullPhotoUrl . '?oauth_token=' . $sessionId
+                                                                            , false
+                                                                            , false
+                                                                            , $crawled);
+                        }
+                    }
+                    break;
                 case 'Facebook':
                     if (!class_exists($channel->ChannelName)) _elgg_autoload($channel->ChannelName);
                     $feed = new Facebook(array('appId'  => $channel->app_id,'secret' => $channel->app_secret));

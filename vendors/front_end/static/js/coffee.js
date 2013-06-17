@@ -759,33 +759,8 @@
             if (!_.isUndefined(channelType)) {
                 data = new Object();
                 data.ChannelName = channelType;
-                switch (channelType) {
-                    default:
-                        return false;
-                        break;
-                    case 'CoffeePoke':
-                        template = ich.CoffeePokeTemplate(data);
-                        break;
-                     case 'StaticURL':
-                        template = ich.StaticURLTemplate(data);
-                        break;
-                     case 'Twitter':
-                        template = ich.TwitterTemplate(data);
-                        break;
-                     case 'RSS':
-                        template = ich.RSSTemplate(data);
-                        break;
-                     case 'Facebook':
-                        template = ich.FacebookTemplate(data);
-                        break;
-                     case 'Yammer':
-                        template = ich.YammerTemplate(data);
-                        break;
-                     case 'BlueKiwi':
-                        template = ich.BlueKiwiTemplate(data);
-                        break;
-                }
-
+                templateName = data.ChannelName + "Template";
+                template = ich[templateName](data);
                 channelList.prepend(template);
                 App.initTypeAhead('#usersTvAdd', 'coffee.getUserList', self.addUsers);
                 App.initTypeAhead('#tagsTvAdd', 'coffee.getTagList', self.addTags);

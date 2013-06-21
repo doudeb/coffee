@@ -177,7 +177,8 @@
 
         initTypeAhead: function (elm, method, callback) {
             var results = []
-                , typeAheadResult = [];
+                , typeAheadResult = []
+                , caller = elm;
             $(elm).typeahead({
                 minLength: 2
                 , source: function (query, process) {
@@ -188,14 +189,13 @@
                                  results.push(item.name);
                                  typeAheadResult[item.name] = item.id;
                              });
-                             console.log(results);
                              return process(results);
                          }
                     });
                 }
                 , updater: function (item) {
                     if (_.isFunction(callback)) {
-                        callback (item,typeAheadResult[item]);
+                        callback (item,typeAheadResult[item],caller);
                     }
                 }
 
@@ -702,12 +702,6 @@
                 , elm = $(e.currentTarget)
                 , modal = $("#modal-view");
 
-                /*
-                , exist = $('body').find('.popover');
-                if (_.isObject(exist) && exist.length > 0) {
-                    exist.popover('destroy');
-                    return false;
-                }*/
                 $.ajax({
                     type: 'GET'
                     , url: App.resourceUrl
@@ -829,7 +823,7 @@
                         });
                         criteria.tags = tags,
                         criteria.users = users;
-                        criteria.broadcastMessages = $('input[name=isBroadcastMessage][checked]')?true:false;
+                        criteria.broadcastMessages = $(item).find('input[name=isBroadcastMessage]').is(":checked")?true:false;
                         break;
                     default:
                         _.each($(item).find('input'), function (item, key) {
@@ -844,7 +838,7 @@
             return tvChannel;
         },
 
-        addUsers: function (item, id) {
+        addUsers: function (item, id, elm) {
                     data = {name:item
                             , id:id
                             , css:'label-info user'

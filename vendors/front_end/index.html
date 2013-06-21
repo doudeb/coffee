@@ -410,7 +410,7 @@
                <div id="channel{{key}}" class="collapse">
                     <div id="isBroadcastMessage">
                         <label class="checkbox">
-                             <input type="checkbox" name="isBroadcastMessage" value="1"{{^broadcastMessages}} checked{{/broadcastMessages}}> Officials messages only.
+                             <input type="checkbox" name="isBroadcastMessage" value="1"{{#broadcastMessages}} checked{{/broadcastMessages}}> Officials messages only.
                         </label>
                     </div>
                     <div class="input-prepend users">

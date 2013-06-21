@@ -950,6 +950,13 @@ class ElggCoffee {
                     $mylogin = $mySforceConnection->login($channel->user_login,$channel->password );
                     $sessionId = $mySforceConnection->getSessionId();
                     $result = $mySforceConnection->query($channel->query);
+                    $backgroundGallery = ElggCoffee::get_posts(0, 0, 10, false, false, false, array('backgroundChatter'));
+                    $backgrounds[] = $return['site_data']['background_url'];
+                    if (is_array($backgroundGallery)) {
+                        foreach ($backgroundGallery as $key => $background) {
+                            $backgrounds[] = $background['attachment'][0]['url'];
+                        }
+                    }
                     if (is_array($result->records)) {
                         foreach ($result->records as $key=>$row) {
                             $FeedIem = new SObject($row);
@@ -977,7 +984,7 @@ class ElggCoffee {
                                                                             , $FeedIem->fields->CreatedBy->Name
                                                                             , $FeedIem->fields->CreatedBy->Name
                                                                             , $user->fields->FullPhotoUrl . '?oauth_token=' . $sessionId
-                                                                            , false
+                                                                            , $backgrounds[rand(0,count($backgrounds))]
                                                                             , false
                                                                             , $crawled);
                         }
@@ -1391,7 +1398,7 @@ class ElggCoffee {
             case 'url_article':
             case 'url_document':
             case 'youtube':
-                $thumbnail = $attached_ent->thumbnail;
+                $thumbnail = substr($attached_ent->thumbnail,0,strpos($attached_ent->thumbnail, '?'));
                 $url = $attached_ent->url;
                 break;
             case 'image':
@@ -1415,7 +1422,7 @@ class ElggCoffee {
                             , 'mime' => $attached_ent->mimetype
                             , 'url' => $url
                             , 'thumbnail' => $thumbnail
-                            , 'duration' => $attached_ent->duration
+                            , 'duration' => ($attached_ent->duration)>0?$attached_ent->duration:30
                             , 'video_id' => $attached_ent->video_id
             );
        return $return;

@@ -984,7 +984,7 @@ class ElggCoffee {
                                                                             , $FeedIem->fields->CreatedBy->Name
                                                                             , $FeedIem->fields->CreatedBy->Name
                                                                             , $user->fields->FullPhotoUrl . '?oauth_token=' . $sessionId
-                                                                            , $backgrounds[rand(0,count($backgrounds))]
+                                                                            , $backgrounds[rand(0,count($backgrounds)-1)] . '/2000x2000/'
                                                                             , false
                                                                             , $crawled);
                         }

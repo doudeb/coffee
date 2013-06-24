@@ -374,7 +374,7 @@ function render_dwl ($guid) {
     exit;
 }
 
-function format_post_array ($text,$time_created,$user_id,$username,$display_name,$icon_url,$cover_url,$baseline=false,$crawled=false) {
+function format_post_array ($text,$time_created,$user_id,$username,$display_name,$icon_url,$cover_url,$baseline=false,$crawled=false,$comments=false) {
     $return = array();
     $return['content']['text'] = nl2br($text);
     $return['content']['time_created'] = $time_created;
@@ -391,10 +391,29 @@ function format_post_array ($text,$time_created,$user_id,$username,$display_name
     } else {
         $return['attachment'] = false;
     }
+    if (is_array($comments)) {
+        $return['comments'][] = $comments;
+    } else {
+        $return['comments'] = false;
+    }
 
     return $return;
 }
 
+function format_post_comments ($comments) {
+    foreach ($comments as $comment) {
+        $return[] = array( 'owner_guid' => $comment['owner_guid']
+                                                , 'name' => $comment['display_name']
+                                                , 'icon_url' => $comment['icon_url']
+                                                , 'icon_medium' => $comment['icon_url']
+                                                , 'time_created' => $comment['time_created']
+                                                , 'friendly_time' => elgg_get_friendly_time($comment['time_created'])
+                                                , 'text' => $comment['text']
+                                                , 'mentioned' => false);
+    }
+    $return['total'] = count($return['comments']);
+    return $return;
+}
 
 /**
  * Return default results for searches on users.

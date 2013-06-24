@@ -513,7 +513,7 @@
                      <div class="alert">
                      SELECT Id
 		, Type
-		, CreatedBy.Profile.CreatedBy.FullPhotoUrl
+		, CreatedById
 		, CreatedBy.Name
 		, CreatedDate
 		, Body
@@ -521,7 +521,7 @@
 		, LinkUrl
 		, ContentFileName
 		, ContentSize
-		, (SELECT CommentBody, CreatedDate, CreatedBy.Name FROM FeedComments ORDER BY CreatedDate DESC LIMIT 10)
+		, (SELECT CommentBody, CreatedDate, CreatedBy.Name, CreatedById FROM FeedComments ORDER BY CreatedDate DESC LIMIT 10)
 FROM FeedItem
 ORDER BY CreatedDate DESC
 LIMIT 10

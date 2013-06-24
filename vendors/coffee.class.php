@@ -960,6 +960,17 @@ class ElggCoffee {
                     if (is_array($result->records)) {
                         foreach ($result->records as $key=>$row) {
                             $FeedIem = new SObject($row);
+                            $comments = array();
+                            foreach($FeedIem->queryResult[0]->records As $comment) {
+                                $FeedComments = new SObject($comment);
+                                $user = $mySforceConnection->query('Select FullPhotoUrl From User Where Id =\'' . $FeedComments->fields->CreatedById . '\'');
+                                $user = new SObject($user->records[0]);
+                                $comments[] = array('owner_guid' => $FeedComments->fields->CreatedById
+                                                        , 'display_name' => $FeedComments->fields->CreatedBy->fields->Name
+                                                        , 'icon_url' => $user->fields->FullPhotoUrl . '?oauth_token=' . $sessionId
+                                                        , 'time_created' => $FeedComments->fields->CreatedDate
+                                                        , 'text' => $FeedComments->fields->CommentBody);
+                            }
                             $user = $mySforceConnection->query('Select FullPhotoUrl From User Where Id =\'' . $FeedIem->fields->CreatedById . '\'');
                             $user = new SObject($user->records[0]);
                             $crawled = false;
@@ -986,7 +997,8 @@ class ElggCoffee {
                                                                             , $user->fields->FullPhotoUrl . '?oauth_token=' . $sessionId
                                                                             , $backgrounds[rand(0,count($backgrounds)-1)] . '/2000x2000/'
                                                                             , false
-                                                                            , $crawled);
+                                                                            , $crawled
+                                                                            , format_post_comments($comments));
                         }
                     }
                     break;

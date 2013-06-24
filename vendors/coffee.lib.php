@@ -392,18 +392,18 @@ function format_post_array ($text,$time_created,$user_id,$username,$display_name
         $return['attachment'] = false;
     }
     if (is_array($comments)) {
-        $return['comments'][] = $comments;
+        $return['comment'][] = $comments;
     } else {
-        $return['comments'] = false;
+        $return['comment'] = false;
     }
 
     return $return;
 }
 
 function format_post_comments ($comments) {
-    $return['comment'] = false;
+    $return['comments'] = false;
     foreach ($comments as $comment) {
-        $return['comment'][] = array( 'owner_guid' => $comment['owner_guid']
+        $return['comments'][] = array( 'owner_guid' => $comment['owner_guid']
                                                 , 'name' => $comment['display_name']
                                                 , 'icon_url' => $comment['icon_url']
                                                 , 'icon_medium' => $comment['icon_url']

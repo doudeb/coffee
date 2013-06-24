@@ -401,8 +401,9 @@ function format_post_array ($text,$time_created,$user_id,$username,$display_name
 }
 
 function format_post_comments ($comments) {
+    $return['comment'] = false;
     foreach ($comments as $comment) {
-        $return[] = array( 'owner_guid' => $comment['owner_guid']
+        $return['comment'][] = array( 'owner_guid' => $comment['owner_guid']
                                                 , 'name' => $comment['display_name']
                                                 , 'icon_url' => $comment['icon_url']
                                                 , 'icon_medium' => $comment['icon_url']

@@ -401,6 +401,7 @@ function format_post_array ($text,$time_created,$user_id,$username,$display_name
 }
 
 function format_post_comments ($comments) {
+    $return['total'] = count($comments);
     $return['comments'] = false;
     foreach ($comments as $comment) {
         $return['comments'][] = array( 'owner_guid' => $comment['owner_guid']
@@ -412,7 +413,6 @@ function format_post_comments ($comments) {
                                                 , 'text' => $comment['text']
                                                 , 'mentioned' => false);
     }
-    $return['total'] = count($return['comments']);
     return $return;
 }
 

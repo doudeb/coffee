@@ -392,7 +392,7 @@ function format_post_array ($text,$time_created,$user_id,$username,$display_name
         $return['attachment'] = false;
     }
     if (is_array($comments)) {
-        $return['comment'][] = $comments;
+        $return['comment'] = $comments;
     } else {
         $return['comment'] = false;
     }

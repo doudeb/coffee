@@ -899,6 +899,7 @@ class ElggCoffee {
         $i = 0;
         foreach ($tv_channels as $key => $channel) {
             $return['feed_data'][$i]['feed_name'] = $channel->ChannelName;
+            $return['feed_data'][$i]['feed_id'] = $channel->ChannelName . '_' . $key;
             $return['feed_data'][$i]['feed_type'] = 'social_feed';
             $return['feed_data'][$i]['feed_url_icon'] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($channel->ChannelName) . '_small.png';
             $return['feed_data'][$i]['feed_url_background'] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($channel->ChannelName) . '_big.png';
@@ -1138,7 +1139,11 @@ class ElggCoffee {
                 default:
                     break;
             }
-            $i++;
+            if(count($return['feed_data'][$i]['feeds']) === 0) {
+                unset($return['feed_data'][$i]);
+            } else {
+                $i++;
+            }
         }
         return $return;
     }

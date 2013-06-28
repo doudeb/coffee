@@ -1410,7 +1410,7 @@ class ElggCoffee {
             case 'url_article':
             case 'url_document':
             case 'youtube':
-                $thumbnail = substr($attached_ent->thumbnail,0,strpos($attached_ent->thumbnail, '?'));
+                $thumbnail = $attached_ent->thumbnail;
                 $url = $attached_ent->url;
                 break;
             case 'image':
@@ -1435,7 +1435,7 @@ class ElggCoffee {
                             , 'url' => $url
                             , 'thumbnail' => $thumbnail
                             , 'duration' => ($attached_ent->duration)>0?$attached_ent->duration:30
-                            , 'video_id' => $attached_ent->video_id
+                            , 'video_id' => trim($attached_ent->video_id)
             );
        return $return;
     }

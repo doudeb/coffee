@@ -404,14 +404,14 @@ function format_post_comments ($comments) {
     $return['total'] = count($comments);
     $return['comments'] = false;
     foreach ($comments as $comment) {
-        $return['comments'][] = array( 'owner_guid' => $comment['owner_guid']
+        $return['comments'][] = array( 'id' => rand(0,666)
+                                                , 'owner_guid' => $comment['owner_guid']
                                                 , 'name' => $comment['display_name']
                                                 , 'icon_url' => $comment['icon_url']
                                                 , 'icon_medium' => $comment['icon_url']
                                                 , 'time_created' => $comment['time_created']
                                                 , 'friendly_time' => elgg_get_friendly_time($comment['time_created'])
-                                                , 'text' => $comment['text']
-                                                , 'mentioned' => false);
+                                                , 'text' => $comment['text']);
     }
     return $return;
 }
@@ -513,7 +513,7 @@ function getYoutubeData($url){
     if (false == $result) {
         return false;
     }
-    $video_id = $matches[0];
+    $video_id = trim($matches[0]);
 
     $data_stream='http://gdata.youtube.com/feeds/api/videos/'.$video_id.'?v=2&alt=jsonc';
     $ch = curl_init();

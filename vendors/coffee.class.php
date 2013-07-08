@@ -450,9 +450,9 @@ class ElggCoffee {
                                     , 'html' => $content['content']);
         }
         if (is_array($return)) {
-            if (preg_match("/(youtu)/", $url)) {
+            $youtubeData = getYoutubeData($url);
+            if (preg_match("/(youtu)/", $url) && isset($youtubeData['id'])) {
                     $type = 'youtube';
-                    $youtubeData = getYoutubeData($url);
             }
             $link = new ElggObject();
             $link->subtype = COFFEE_LINK_SUBTYPE;
@@ -481,8 +481,9 @@ class ElggCoffee {
             $code = generate_random_cleartext_password();
             $user->setPrivateSetting('passwd_conf_code', $code);
             // generate link
-            $link = $_SERVER['HTTP_REFERER'] . "#resetPassword/" . $user->guid . "/$code";
+            $url = parse_url($_SERVER['HTTP_REFERER']);
 
+            $link = $url['scheme'] . '://' . $url['host'] . "/#resetPassword/" . $user->guid . "/$code";
             // generate email
             $email = elgg_echo('email:resetreq:body', array($user->name, $_SERVER['REMOTE_ADDR'], $link));
 
@@ -888,6 +889,7 @@ class ElggCoffee {
 
     public static function get_tv_channel () {
         global $CONFIG;
+        elgg_set_context('api/tv');
         $return = array();
         $user_ent = elgg_get_logged_in_user_entity();
         if ($user_ent instanceof ElggUser) {
@@ -913,7 +915,6 @@ class ElggCoffee {
                     //$post = $feed->statusesUserTimeline(null,'antoinepic',null,10);
                     if (is_array($post['statuses'])) {
                         foreach ($post['statuses'] as $key=>$row) {
-                            //var_dump($row['entities']);
                             $crawled = false;
                             if(isset($row['entities']['media'])) {
                                 $crawled = array(
@@ -1032,7 +1033,7 @@ class ElggCoffee {
                                                         , 'title' => $row['name']
                                                         , 'description' => $row['description']
                                                         , 'html' => null
-                                                        , 'type' => preg_match("/(youtu)/", $row['source'])?'youtube':'url_media'
+                                                        , 'type' => (preg_match("/(youtu)/", $row['source']) && isset($youtubeData['id']))?'youtube':'url_media'
                                                         , 'duration' => $youtubeData['duration']
                                                         , 'video_id' => $youtubeData['id']
                                                         , 'mime' => null

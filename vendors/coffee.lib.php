@@ -523,7 +523,7 @@ function getYoutubeData($url){
     $obj=json_decode($data);
     if (false===$data || $obj->error) return false;
     $duration = round($obj->data->duration*1.10);
-    return array('id' =>$video_id, 'duration' => $duration);
+    return array('id' =>$video_id, 'duration' => (int)$duration);
 }
 
 /**

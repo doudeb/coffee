@@ -898,6 +898,13 @@ class ElggCoffee {
         }
         $return['site_data'] = ElggCoffee::get_site_data();
         $return['feed_data'] = array();
+        $backgroundGallery = ElggCoffee::get_posts(0, 0, 10, false, false, false, array('backgroundChatter','backgroundGallery'));
+        $backgrounds[] = $return['site_data']['background_url'];
+        if (is_array($backgroundGallery)) {
+            foreach ($backgroundGallery as $key => $background) {
+                $backgrounds[] = $background['attachment'][0]['url'];
+            }
+        }
         $i = 0;
         foreach ($tv_channels as $key => $channel) {
             $return['feed_data'][$i]['feed_name'] = $channel->ChannelName;
@@ -926,10 +933,12 @@ class ElggCoffee {
                                                 , 'type' => 'image'
                                                 , 'mime' => 'image/jpg'
                                                 , 'url' => $row['entities']['media'][0]['media_url']
-                                                , 'thumbnail' => $row['entities']['media'][0]['media_url']. ':thumb');
+                                                , $backgrounds[rand(0,count($backgrounds)-1)] . '/2000x2000/');
+                                                //, 'thumbnail' => $row['entities']['media'][0]['media_url']. ':thumb');
                             }
                             if(is_array($row['entities']['urls']) && isset($row['entities']['urls'][0]['expanded_url'])) {
                                $crawled = ElggCoffee::get_url_data($row['entities']['urls'][0]['expanded_url']);
+                               $crawled['thumbnail'] = $backgrounds[rand(0,count($backgrounds)-1)] . '/2000x2000/';
                             }
                             $return['feed_data'][$i]['feeds'][$key] = format_post_array($row['text']
                                                                             , $row['created_at']
@@ -952,13 +961,6 @@ class ElggCoffee {
                     $mylogin = $mySforceConnection->login($channel->user_login,$channel->password );
                     $sessionId = $mySforceConnection->getSessionId();
                     $result = $mySforceConnection->query($channel->query);
-                    $backgroundGallery = ElggCoffee::get_posts(0, 0, 10, false, false, false, array('backgroundChatter'));
-                    $backgrounds[] = $return['site_data']['background_url'];
-                    if (is_array($backgroundGallery)) {
-                        foreach ($backgroundGallery as $key => $background) {
-                            $backgrounds[] = $background['attachment'][0]['url'];
-                        }
-                    }
                     if (is_array($result->records)) {
                         foreach ($result->records as $key=>$row) {
                             $FeedIem = new SObject($row);
@@ -990,6 +992,7 @@ class ElggCoffee {
                             }*/
                             if(isset($FeedIem->fields->LinkUrl)) {
                                $crawled = ElggCoffee::get_url_data($FeedIem->fields->LinkUrl);
+                               $crawled['thumbnail'] = $backgrounds[rand(0,count($backgrounds)-1)] . '/2000x2000/';
                             }
                             $return['feed_data'][$i]['feeds'][$key] = format_post_array($FeedIem->fields->Body
                                                                             , $FeedIem->fields->CreatedDate
@@ -1050,7 +1053,8 @@ class ElggCoffee {
                                                         , 'type' => 'url_article'
                                                         , 'mime' => null
                                                         , 'url' => $row['link']
-                                                        , 'thumbnail' => $row['picture']);
+                                                        , 'thumbnail' => $backgrounds[rand(0,count($backgrounds)-1)] . '/2000x2000/');
+                                                        //, 'thumbnail' => $row['picture']);
                                     break;
 
                             }
@@ -1127,8 +1131,11 @@ class ElggCoffee {
                     }
                     foreach (ElggCoffee::get_posts(0,0,10,$owner_guid,($channel->broadcastMessages?array(COFFEE_SUBTYPE_BROADCAST_MESSAGE):false),FALSE,$tags) as $key=>$row) {
                         $row['user']['cover_url'] = str_replace("?icontime", "/2000x2000?icontime", $row['user']['cover_url']);
-                        if(is_array($row['attachment']) && $row['attachment']['type'] === 'image') {
-                            $row['attachment']['url'] .= "/2000x2000/";
+                        if(is_array($row['attachment'])) {
+                            if ($row['attachment'][0]['type'] === 'image') {
+                                $row['attachment'][0]['url'] .= "/2000x2000/";
+                            }
+                            $row['attachment'][0]['thumbnail'] = $backgrounds[rand(0,count($backgrounds)-1)] . '/2000x2000/';
                         }
                         $return['feed_data'][$i]['feeds'][$key] = $row;
                     }

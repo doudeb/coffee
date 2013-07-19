@@ -148,6 +148,7 @@ class Yammer {
 		$data_stream = $url . '?' . http_build_query($data);
 		//curl_setopt($ch, CURLOPT_URL, $data_stream);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 
 		if($isPost)
 		{

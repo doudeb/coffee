@@ -733,12 +733,14 @@
                             templateName = channel.ChannelName + "Template";
                             channelData = ich[templateName](channel);
                             channelList.append(channelData);
+                            if (channel.ChannelName == 'CoffeePoke') {
+                                App.initTypeAhead('#usersTvAdd' + key, 'coffee.getUserList', self.addUsers);
+                                App.initTypeAhead('#tagsTvAdd' + key, 'coffee.getTagList', self.addTags);
+                            }
                         });
                         channelList.dragsort({ dragSelector: "li",dragSelectorExclude: ".del,.remove-channel,button,input"});
                         $('.add-channel').bind('click', self.addTvChannel);
                         $('.remove-channel').bind('click', self.removeChannel);
-                        App.initTypeAhead('#usersTvAdd', 'coffee.getUserList', self.addUsers);
-                        App.initTypeAhead('#tagsTvAdd', 'coffee.getTagList', self.addTags);
                         $('.del').bind('click', self.removeTag);
                         $('#saveConfig').bind('click', function (elm) {self.saveConfig();});
                     }
@@ -756,8 +758,10 @@
                 templateName = data.ChannelName + "Template";
                 template = ich[templateName](data);
                 channelList.prepend(template);
-                App.initTypeAhead('#usersTvAdd', 'coffee.getUserList', self.addUsers);
-                App.initTypeAhead('#tagsTvAdd', 'coffee.getTagList', self.addTags);
+                if (channel.ChannelName == 'CoffeePoke') {
+                    App.initTypeAhead('#usersTvAdd', 'coffee.getUserList', self.addUsers);
+                    App.initTypeAhead('#tagsTvAdd', 'coffee.getTagList', self.addTags);
+                }
                 $('.del').bind('click', self.removeTag);
                 $('.remove-channel').bind('click', self.removeChannel);
 
@@ -824,13 +828,13 @@
                         criteria.tags = tags,
                         criteria.users = users;
                         criteria.broadcastMessages = $(item).find('input[name=isBroadcastMessage]').is(":checked")?true:false;
+                        criteria.limit = $(item).find('#limit').val();
                         break;
                     default:
                         _.each($(item).find('input'), function (item, key) {
                             inputName = $(item).attr('id');
                             criteria[inputName] = $(item).val();
                         });
-                        //tvChannel[type] = criteria;
                         break;
                 }
                 tvChannel[key] = criteria;
@@ -838,24 +842,24 @@
             return tvChannel;
         },
 
-        addUsers: function (item, id, elm) {
-                    data = {name:item
-                            , id:id
-                            , css:'label-info user'
-                            , del:true};
-                    elm = ich.tagTemplate(data);
-                    $('#usersTvSelected').append(elm);
-                    elm.find('.del').bind('click', this.removeTag);
+        addUsers: function (item, id, fromElm) {
+            data = {name:item
+                    , id:id
+                    , css:'label-info user'
+                    , del:true};
+            elm = ich.tagTemplate(data);
+            $(fromElm).parent().parent().find('.usersTvSelected').append(elm);
+            elm.find('.del').bind('click', this.removeTag);
         },
 
-        addTags: function (item) {
-                    data = {name:item
-                            , id:item
-                            , css:'tag'
-                            , del:true};
-                    elm = ich.tagTemplate(data);
-                    $('#hashtagsTvSelected').append(elm);
-                    elm.find('.del').bind('click', this.removeTag);
+        addTags: function (item, id, fromElm) {
+            data = {name:item
+                    , id:item
+                    , css:'tag'
+                    , del:true};
+            elm = ich.tagTemplate(data);
+            $(fromElm).parent().parent().find('.hashtagsTvSelected').append(elm);
+            elm.find('.del').bind('click', this.removeTag);
         },
 
         removeTag: function (e) {
@@ -1947,10 +1951,9 @@
             }
         },
 
-        doUpload: function () {
+        doUpload: function (e) {
             var self = this
-            , upload = $('#upload')
-            , uploadForm = $('#uploadForm')
+            , uploadForm = $('#uploadForm');
 
             toggleUploadSpinner();
             self.isAttaching = true;
@@ -1964,8 +1967,8 @@
                     , auth_token: App.models.session.get('authToken')
                 }
             };
-            uploadForm
-            .ajaxSubmit(options);
+            uploadForm.ajaxSubmit(options);
+            e.preventDefault();
 
             return false;
         }

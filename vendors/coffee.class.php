@@ -1129,7 +1129,7 @@ class ElggCoffee {
                     foreach ($tv_filters_tags as $tag) {
                         $tags [] = $tag->name;
                     }
-                    foreach (ElggCoffee::get_posts(0,0,10,$owner_guid,($channel->broadcastMessages?array(COFFEE_SUBTYPE_BROADCAST_MESSAGE):false),FALSE,$tags) as $key=>$row) {
+                    foreach (ElggCoffee::get_posts(0,0,$channel->limit?$channel->limit:10,$owner_guid,($channel->broadcastMessages?array(COFFEE_SUBTYPE_BROADCAST_MESSAGE):false),FALSE,$tags) as $key=>$row) {
                         $row['user']['cover_url'] = str_replace("?icontime", "/2000x2000?icontime", $row['user']['cover_url']);
                         if(is_array($row['attachment'])) {
                             if ($row['attachment'][0]['type'] === 'image') {

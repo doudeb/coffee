@@ -907,11 +907,20 @@ class ElggCoffee {
         }
         $i = 0;
         foreach ($tv_channels as $key => $channel) {
+            $backgroundSplash = ElggCoffee::get_posts(0, 0, 10, false, false, false, array('splash' . $channel->ChannelName));
+            if (is_array($backgroundSplash)) {
+                $return['feed_data'][$i]['feed_url_icon'] = 'http://api.coffeepoke.com/empty';
+                foreach ($backgroundSplash as $key => $background) {
+                    $splash[] = $background['attachment'][0]['url'];
+                }
+            } else {
+                $return['feed_data'][$i]['feed_url_icon'] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($channel->ChannelName) . '_small.png';
+                $splash[] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($channel->ChannelName) . '_big.png';
+            }
             $return['feed_data'][$i]['feed_name'] = $channel->ChannelName;
             $return['feed_data'][$i]['feed_id'] = $channel->ChannelName . '_' . $key;
             $return['feed_data'][$i]['feed_type'] = 'social_feed';
-            $return['feed_data'][$i]['feed_url_icon'] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($channel->ChannelName) . '_small.png';
-            $return['feed_data'][$i]['feed_url_background'] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($channel->ChannelName) . '_big.png';
+            $return['feed_data'][$i]['feed_url_background'] = $splash[rand(0,count($splash)-1)] . '/2000x2000/';
             switch ($channel->ChannelName) {
                 case 'Twitter':
                     if (!class_exists($channel->ChannelName)) _elgg_autoload($channel->ChannelName);

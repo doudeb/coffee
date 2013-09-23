@@ -908,8 +908,9 @@ class ElggCoffee {
         $i = 0;
         foreach ($tv_channels as $key => $channel) {
             $backgroundSplash = ElggCoffee::get_posts(0, 0, 10, false, false, false, array('splash' . $channel->ChannelName));
-            if (is_array($backgroundSplash)) {
-                $return['feed_data'][$i]['feed_url_icon'] = 'http://api.coffeepoke.com/empty';
+            if (is_array($backgroundSplash) && isset($backgroundSplash[0]['guid'])) {
+                //$return['feed_data'][$i]['feed_url_icon'] = 'http://api.coffeepoke.com/empty';
+                $return['feed_data'][$i]['feed_url_icon'] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($channel->ChannelName) . '_small.png';
                 foreach ($backgroundSplash as $key => $background) {
                     $splash[] = $background['attachment'][0]['url'];
                 }

@@ -928,7 +928,7 @@ class ElggCoffee {
                     $feed = new Twitter($channel->consumer_key, $channel->consumer_secret);
                     $feed->setOAuthToken($channel->oauth_token);
                     $feed->setOAuthTokenSecret($channel->oauth_token_secret);
-                    $post = $feed->searchTweets($channel->query,null,null,null,'recent',10,false,false,false,true);
+                    $post = $feed->searchTweets($channel->query,null,null,null,'recent',$channel->limit?$channel->limit:10,false,false,false,true);
                     //$post = $feed->statusesUserTimeline(null,'antoinepic',null,10);
                     if (is_array($post['statuses'])) {
                         foreach ($post['statuses'] as $key=>$row) {
@@ -1020,7 +1020,7 @@ class ElggCoffee {
                 case 'Facebook':
                     if (!class_exists($channel->ChannelName)) _elgg_autoload($channel->ChannelName);
                     $feed = new Facebook(array('appId'  => $channel->app_id,'secret' => $channel->app_secret));
-                    $post = $feed->api($channel->query, array('access_token' => $channel->access_token,'limit'=>10));
+                    $post = $feed->api($channel->query, array('access_token' => $channel->access_token,'limit'=>$channel->limit?$channel->limit:10));
                     if (is_array($post['data'])) {
                         foreach ($post['data'] as $key=>$row) {
                             $crawled = false;

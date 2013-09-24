@@ -911,7 +911,7 @@ class ElggCoffee {
             if (is_array($backgroundSplash) && isset($backgroundSplash[0]['guid'])) {
                 //$return['feed_data'][$i]['feed_url_icon'] = 'http://api.coffeepoke.com/empty';
                 $return['feed_data'][$i]['feed_url_icon'] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($channel->ChannelName) . '_small.png';
-                foreach ($backgroundSplash as $key => $background) {
+                foreach ($backgroundSplash as $splahkey => $background) {
                     $splash[] = $background['attachment'][0]['url'] . '/2000x2000/';
                 }
             } else {

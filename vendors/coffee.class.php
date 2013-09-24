@@ -912,7 +912,7 @@ class ElggCoffee {
                 //$return['feed_data'][$i]['feed_url_icon'] = 'http://api.coffeepoke.com/empty';
                 $return['feed_data'][$i]['feed_url_icon'] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($channel->ChannelName) . '_small.png';
                 foreach ($backgroundSplash as $key => $background) {
-                    $splash[] = $background['attachment'][0]['url'];
+                    $splash[] = $background['attachment'][0]['url'] . '/2000x2000/';
                 }
             } else {
                 $return['feed_data'][$i]['feed_url_icon'] = 'http://cdn.coffeepoke.com/static/img/connector/' . strtolower($channel->ChannelName) . '_small.png';
@@ -921,7 +921,7 @@ class ElggCoffee {
             $return['feed_data'][$i]['feed_name'] = $channel->ChannelName;
             $return['feed_data'][$i]['feed_id'] = $channel->ChannelName . '_' . $key;
             $return['feed_data'][$i]['feed_type'] = 'social_feed';
-            $return['feed_data'][$i]['feed_url_background'] = $splash[rand(0,count($splash)-1)] . '/2000x2000/';
+            $return['feed_data'][$i]['feed_url_background'] = $splash[rand(0,count($splash)-1)];
             switch ($channel->ChannelName) {
                 case 'Twitter':
                     if (!class_exists($channel->ChannelName)) _elgg_autoload($channel->ChannelName);

@@ -396,6 +396,14 @@
                 </div>
             </div>
         </script>
+        <script  type="text/html" id="CommonTVConfig">
+            <div class="input-prepend">
+                <span class="add-on">Display name</span><input id="displayName" size="16" type="text" placeholder="Display name" value="{{displayName}}">
+            </div>
+            <div class="input-prepend">
+                <input id="displayLogo" type="checkbox" value="1"{{#displayLogo}} checked{{/displayLogo}}> Display logo
+            </div>
+        </script>
         <script type="text/html" id="TvChannelHeaderTemplate">
             <p>
                 <button type="button" class="btn" data-toggle="collapse" data-target="#channel{{key}}">
@@ -408,6 +416,7 @@
            <li class="tv-channel-setting content-module" id="CoffeePoke">
                {{>TvChannelHeaderTemplate}}
                <div id="channel{{key}}" class="collapse">
+                    {{>CommonTVConfig}}
                     <div id="isBroadcastMessage">
                         <label class="checkbox">
                              <input type="checkbox" name="isBroadcastMessage" value="1"{{#broadcastMessages}} checked{{/broadcastMessages}}> Officials messages only.
@@ -439,6 +448,7 @@
            <li class="tv-channel-setting content-module" id="BlueKiwi">
                {{>TvChannelHeaderTemplate}}
                <div id="channel{{key}}" class="collapse">
+                    {{>CommonTVConfig}}
                     <div class="input-prepend">
                         <span class="add-on">Url</span><input id="url" size="16" type="text" placeholder="Url" value="{{url}}">
                     </div>
@@ -464,9 +474,7 @@
            <li class="tv-channel-setting content-module" id="StaticURL">
                {{>TvChannelHeaderTemplate}}
                <div id="channel{{key}}" class="collapse">
-                    <div class="input-prepend">
-                        <span class="add-on">Display name</span><input id="displayName" size="16" type="text" placeholder="Display name" value="{{displayName}}">
-                    </div>
+                    {{>CommonTVConfig}}
                     <div class="input-prepend">
                         <span class="add-on">URL</span><input id="staticURL" size="16" type="text" placeholder="" value="{{staticURL}}">
                     </div>
@@ -481,24 +489,25 @@
            <li class="tv-channel-setting content-module" id="Twitter">
                {{>TvChannelHeaderTemplate}}
                <div id="channel{{key}}" class="collapse">
-                <div class="input-prepend">
-                     <span class="add-on">Query</span><input id="query" size="16" type="text" placeholder="Query" value="{{query}}">
-                 </div>
-                <div class="input-prepend">
-                     <span class="add-on">Consumer Key</span><input id="consumer_key" size="16" type="text" placeholder="Consumer Key" value="{{consumer_key}}">
-                 </div>
-                 <div class="input-prepend">
-                     <span class="add-on">Consumer Secret</span><input id="consumer_secret" size="16" type="text" placeholder="Consumer Secret" value="{{consumer_secret}}">
-                 </div>
-                 <div class="input-prepend">
-                     <span class="add-on">Oauth Token</span><input id="oauth_token" size="16" type="text" placeholder="Oauth Token" value="{{oauth_token}}">
-                 </div>
-                 <div class="input-prepend">
-                     <span class="add-on">Oauth Token Secret</span><input id="oauth_token_secret" size="16" type="text" placeholder="Oauth Token Secret" value="{{oauth_token_secret}}">
-                 </div>
-                <div class="input-prepend">
-                    <span class="add-on">Limit</span><input id="limit" size="16" type="text" placeholder="Limit" value="{{limit}}">
-                </div>
+                    {{>CommonTVConfig}}
+                    <div class="input-prepend">
+                         <span class="add-on">Query</span><input id="query" size="16" type="text" placeholder="Query" value="{{query}}">
+                     </div>
+                    <div class="input-prepend">
+                         <span class="add-on">Consumer Key</span><input id="consumer_key" size="16" type="text" placeholder="Consumer Key" value="{{consumer_key}}">
+                     </div>
+                     <div class="input-prepend">
+                         <span class="add-on">Consumer Secret</span><input id="consumer_secret" size="16" type="text" placeholder="Consumer Secret" value="{{consumer_secret}}">
+                     </div>
+                     <div class="input-prepend">
+                         <span class="add-on">Oauth Token</span><input id="oauth_token" size="16" type="text" placeholder="Oauth Token" value="{{oauth_token}}">
+                     </div>
+                     <div class="input-prepend">
+                         <span class="add-on">Oauth Token Secret</span><input id="oauth_token_secret" size="16" type="text" placeholder="Oauth Token Secret" value="{{oauth_token_secret}}">
+                     </div>
+                    <div class="input-prepend">
+                        <span class="add-on">Limit</span><input id="limit" size="16" type="text" placeholder="Limit" value="{{limit}}">
+                    </div>
                </div>
            </li>
         </script>
@@ -506,6 +515,7 @@
            <li class="tv-channel-setting content-module" id="Chatter">
                {{>TvChannelHeaderTemplate}}
                <div id="channel{{key}}" class="collapse">
+                    {{>CommonTVConfig}}
                      <div class="input-prepend">
                          <span class="add-on">Login</span><input id="user_login" size="16" type="text" placeholder="Login" value="{{user_login}}">
                      </div>
@@ -539,6 +549,7 @@ LIMIT 10
            <li class="tv-channel-setting content-module" id="Facebook">
                {{>TvChannelHeaderTemplate}}
                <div id="channel{{key}}" class="collapse">
+                    {{>CommonTVConfig}}
                     <div class="input-prepend">
                         <span class="add-on">Query</span><input id="query" size="16" type="text" placeholder="Query" value="{{query}}">
                     </div>
@@ -561,6 +572,7 @@ LIMIT 10
            <li class="tv-channel-setting content-module" id="Yammer">
                {{>TvChannelHeaderTemplate}}
                <div id="channel{{key}}" class="collapse">
+                    {{>CommonTVConfig}}
                     <div class="input-prepend">
                         <span class="add-on">Query</span><input id="query" size="16" type="text" placeholder="Query" value="{{query}}">
                     </div>

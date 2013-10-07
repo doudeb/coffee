@@ -835,6 +835,7 @@
                             inputName = $(item).attr('id');
                             criteria[inputName] = $(item).val();
                         });
+                        criteria.displayLogo = $(item).find('input[name=displayLogo]').is(":checked")?true:false;
                         break;
                 }
                 tvChannel[key] = criteria;

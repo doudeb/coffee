@@ -920,6 +920,8 @@ class ElggCoffee {
             }
             $return['feed_data'][$i]['feed_name'] = $channel->ChannelName;
             $return['feed_data'][$i]['feed_id'] = $channel->ChannelName . '_' . $key;
+            $return['feed_data'][$i]['display_name'] = $channel->displayName?$channel->displayName:false;
+            $return['feed_data'][$i]['display_logo'] = $channel->displayLogo;
             $return['feed_data'][$i]['feed_type'] = 'social_feed';
             $return['feed_data'][$i]['feed_url_background'] = $splash[rand(0,count($splash)-1)];
             switch ($channel->ChannelName) {

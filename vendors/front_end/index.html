@@ -400,8 +400,10 @@
             <div class="input-prepend">
                 <span class="add-on">Display name</span><input id="displayName" size="16" type="text" placeholder="Display name" value="{{displayName}}">
             </div>
-            <div class="input-prepend">
-                <input id="displayLogo" type="checkbox" value="1"{{#displayLogo}} checked{{/displayLogo}}> Display logo
+            <div>
+                <label class="checkbox">
+                    <input id="displayLogo" type="checkbox" value="1"{{#displayLogo}} checked{{/displayLogo}} /> Display logo.
+                </label>
             </div>
         </script>
         <script type="text/html" id="TvChannelHeaderTemplate">

@@ -907,6 +907,7 @@ class ElggCoffee {
         }
         $i = 0;
         foreach ($tv_channels as $key => $channel) {
+            $splash = array();
             $backgroundSplash = ElggCoffee::get_posts(0, 0, 10, false, false, false, array('splash' . $channel->ChannelName));
             if (is_array($backgroundSplash) && isset($backgroundSplash[0]['guid'])) {
                 //$return['feed_data'][$i]['feed_url_icon'] = 'http://api.coffeepoke.com/empty';

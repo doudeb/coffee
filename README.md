@@ -73,8 +73,8 @@ You just have to checkout, copy the coffeepoke source code to the elgg module di
 Once you've performed these steps, got to your Elgg admin section in your web 
 browser. [https://yourelgginstalation/admin/]
 
-  *. Make sure that the rest api is enabled (Configure => Settings => Advanced Settings) :  Enable Elgg's web services API must be checked.
-  *. Enable the coffeepoke module throught the plugins section.
+  * Make sure that the rest api is enabled (Configure => Settings => Advanced Settings) :  Enable Elgg's web services API must be checked.
+  * Enable the coffeepoke module throught the plugins section.
 
 All done, now enjoy coffeepoke.
 
